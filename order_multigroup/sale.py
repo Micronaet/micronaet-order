@@ -42,8 +42,7 @@ _logger = logging.getLogger(__name__)
 
 class SaleOrderLine(orm.Model):
     ''' Add extra field for manage master line
-    '''
-    
+    '''    
     _inherit = 'sale.order.line'
     
     _columns = {
@@ -54,4 +53,13 @@ class SaleOrderLine(orm.Model):
         'with_sub': fields.boolean('With subtotal'),
         }
 
+class SaleOrderLine(orm.Model):
+    ''' For *many relations
+    '''    
+    _inherit = 'sale.order.line'
+    
+    _columns = {
+        'master_child_ids': fields.one2many(
+            'sale.order.line', 'master_order_id', 'Multi line'),
+        }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

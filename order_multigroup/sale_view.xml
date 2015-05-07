@@ -8,7 +8,23 @@
             <field name="inherit_id" ref="sale.view_order_form"/> 
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='order_line']/form//field[@name='name']" position="after">
-                    <field name="master" />                    
+                    <group colspan="4" col="4">
+                        <field name="master" /> 
+                        <field name="with_sub" attrs="{'invisible':[('master','=',False)]}" colspan="4"/>
+                        <field name="master_title" attrs="{'invisible':[('master','=',False)]}" colspan="4"/>
+                        <field name="master_note" attrs="{'invisible':[('master','=',False)]}" colspan="4"/>
+                        <field name="master_child_ids" attrs="{'invisible':[('master','=',False)]}" colspan="4">
+                            <tree string="Multi group elements" editable="bottom">
+                                <field name="product_id" />
+                                <field name="tax_id" invisible="1" />
+                                <field name="discount" />
+                                <field name="product_uom" />
+                                <field name="price_unit" />
+                                <field name="product_uom_qty" />                                
+                                <field name="state" /> 
+                            </tree>
+                        </field>                        
+                    </group>
                 </xpath>
             </field>
         </record>
