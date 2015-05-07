@@ -1,6 +1,16 @@
 <?xml version="1.0"?>
 <openerp>
-    <data>    
-
+    <data>
+        <!--sale.order-->
+        <record model="ir.ui.view" id="view_sale_order_master_form">
+            <field name="name">sale.order.master</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/> 
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']/form//field[@name='name']" position="after">
+                    <field name="master" />                    
+                </xpath>
+            </field>
+        </record>
     </data>
-</openerp> 
+</openerp>

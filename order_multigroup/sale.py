@@ -40,5 +40,18 @@ from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
 
 _logger = logging.getLogger(__name__)
 
+class SaleOrderLine(orm.Model):
+    ''' Add extra field for manage master line
+    '''
+    
+    _inherit = 'sale.order.line'
+    
+    _columns = {
+        'master': fields.boolean('Master'),
+        'master_order_id': fields.many2one('sale.order.line', 'Master parent'),
+        'master_title': fields.text('Master title'),
+        'master_note': fields.text('Master note'),
+        'with_sub': fields.boolean('With subtotal'),
+        }
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
