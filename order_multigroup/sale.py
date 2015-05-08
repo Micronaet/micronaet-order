@@ -45,13 +45,34 @@ class SaleOrderLine(orm.Model):
     '''    
     _inherit = 'sale.order.line'
     
+    # Button events:
+    def write_subtotal(self, cr, uid, ids, context=None):
+        ''' Calculate and write subtotal
+        '''
+        res = 0.0
+        for item in self.browse(
+                cr, uid, ids, context=context).master_child_ids:
+            res += item.price_subtotal or 0.0            
+        return self.write(cr, uid, ids, {
+            'master_subtotal': res
+            }, context=context)    
+        
     _columns = {
         'master': fields.boolean('Master'),
         'master_order_id': fields.many2one('sale.order.line', 'Master parent'),
         'master_title': fields.text('Master title'),
         'master_note': fields.text('Master note'),
         'with_sub': fields.boolean('With subtotal'),
+        'master_subtotal': fields.float(
+            'Master subtotal', 
+            digits=(16, 2)),
+        'state': fields.selection( # for problem in view (not used)
+            [('draft', 'Draft')], 'State'),
         }
+    _defaults = {
+        'state': lambda *x: 'draft',
+        'with_sub': lambda *x: True,
+        }    
 
 class SaleOrderLine(orm.Model):
     ''' For *many relations

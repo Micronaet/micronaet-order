@@ -44,8 +44,8 @@ location.
     'init_xml': [], 
     'data': [
         #'security/ir.model.access.csv',
-        'sale_view.xml',
-        #'report/registry_report.xml',
+        'sale_view.xml',        
+        'report/order_report.xml',
         #'data/hr_timesheet_invoice_data.xml',
         ],
     'demo_xml': [],
