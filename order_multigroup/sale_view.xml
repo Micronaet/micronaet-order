@@ -7,9 +7,9 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/> 
             <field name="arch" type="xml">
-                <xpath expr="//notebook/page[@string='']" position="before">
+                <xpath expr="//notebook/page[@string='Order Lines']" position="before">
                     <page string="Master line">
-                        <field name="master_order_id">
+                        <field name="master_line_ids">
                             <tree string="Master line">
                                 <field name="sequence"/>
                                 <field name="name"/>
@@ -18,8 +18,8 @@
                                 <!--<button name="write_subtotal" string="Calculate" type="object" />-->
                                 <field name="sequence"/>
                                 <field name="name"/>                            
-                                <field name="master_title" colspan="5"/>
-                                <field name="master_note" colspan="5"/>
+                                <field name="master_title" />
+                                <!--<field name="master_note" />-->
                                 <field name="master_child_ids" colspan="5" context="{'default_order_id': parent.id}">
                                     <tree string="Multi group elements" editable="bottom">                            
                                         <field name="master_order_id" invisible="1"/>

@@ -159,7 +159,7 @@ class SaleOrderLineMaster(orm.Model):
     }
     
     _defaults = {
-        'product_uom' : _get_uom_id,
+        #'product_uom' : _get_uom_id,
         'discount': 0.0,
         'product_uom_qty': 1,
         'product_uos_qty': 1,
@@ -168,12 +168,6 @@ class SaleOrderLineMaster(orm.Model):
         'price_unit': 0.0,
         #'delay': 0.0,
     }
-        
-        }
-    _defaults = {
-        #'state': lambda *x: 'draft',
-        'with_sub': lambda *x: True,
-        }    
 
 class SaleOrderLine(orm.Model):
     ''' Master element for create a grouped quotation
@@ -181,7 +175,7 @@ class SaleOrderLine(orm.Model):
     _inherit = 'sale.order.line'
     
     _columns = {
-        'master_order_id': fields.many2one('sale.order.line', 'Master parent'),
+        'master_line_id': fields.many2one('sale.order.line.master', 'Master parent'),
         }
 
 class SaleOrderLineMaster(orm.Model):
@@ -190,7 +184,7 @@ class SaleOrderLineMaster(orm.Model):
     _inherit = 'sale.order.line.master'
     
     _columns = {
-        'master_child_ids': fields.one2many(
-            'sale.order.line', 'master_order_id', 'Multi line'),
+        'master_line_ids': fields.one2many(
+            'sale.order.line', 'master_line_id', 'Multi line'),
         }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
