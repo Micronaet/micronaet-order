@@ -49,19 +49,18 @@ class SaleOrder(orm.Model):
         'master_order': fields.boolean('Master order'),
         }
     
-    _defaults = {
-        'master_order': lambda *x: False,
-        }
-
-class SaleOrderLine(orm.Model):
-    ''' Add extra field for manage master line
+class SaleOrderLineMaster(orm.Model):
+    ''' Master element for create a grouped quotation
     '''    
-    _inherit = 'sale.order.line'
+    _name = 'sale.order.line.master'
+    _description = 'Master order line'
     
     # Button events:
     def write_subtotal(self, cr, uid, ids, context=None):
         ''' Calculate and write subtotal
         '''
+        # TODO 
+        return 0.0
         res = 0.0
         for item in self.browse(
                 cr, uid, ids, context=context).master_child_ids:
@@ -71,26 +70,34 @@ class SaleOrderLine(orm.Model):
             }, context=context)    
         
     _columns = {
-        'master': fields.boolean('Master'),
-        'master_order_id': fields.many2one('sale.order.line', 'Master parent'),
+        'sequence': fields.integer('Seq'),
         'master_title': fields.text('Master title'),
         'master_note': fields.text('Master note'),
         'with_sub': fields.boolean('With subtotal'),
         'master_subtotal': fields.float(
             'Master subtotal', 
             digits=(16, 2)),
-        'state': fields.selection( # for problem in view (not used)
-            [('draft', 'Draft')], 'State'),
+        #'state': fields.selection( # for problem in view (not used)
+        #    [('draft', 'Draft')], 'State'),
         }
     _defaults = {
-        'state': lambda *x: 'draft',
+        #'state': lambda *x: 'draft',
         'with_sub': lambda *x: True,
         }    
 
 class SaleOrderLine(orm.Model):
-    ''' For *many relations
+    ''' Master element for create a grouped quotation
     '''    
     _inherit = 'sale.order.line'
+    
+    _columns = {
+        'master_order_id': fields.many2one('sale.order.line', 'Master parent'),
+        }
+
+class SaleOrderLineMaster(orm.Model):
+    ''' For *many relations
+    '''    
+    _inherit = 'sale.order.line.master'
     
     _columns = {
         'master_child_ids': fields.one2many(

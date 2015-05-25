@@ -8,7 +8,7 @@
             <field name="inherit_id" ref="sale.view_order_form"/> 
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="before">
-                    <field name="master" invisible="1"/> 
+                    <field name="master"/> 
                     <field name="master_order_id" /> 
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree" position="attributes">
@@ -16,9 +16,6 @@
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
                     <field name="master_subtotal" sum="master"/>
-                </xpath>
-                <xpath expr="//field[@name='order_line']" position="attributes">
-                    <attribute name="domain">[('master_order_id','=',False)]</attribute>
                 </xpath>
                 <xpath expr="//field[@name='order_line']/form//field[@name='name']" position="after">
                     <group colspan="4" col="4">
@@ -47,6 +44,11 @@
                         </group>                        
                     </group>
                 </xpath>
+                <!--<xpath expr="//field[@name='order_line']" position="attributes">
+                    <attribute name="domain">[('master','=',True)]</attribute>
+                    <attribute name="widget">one2many_list</attribute>
+                    <attribute name="readonly">1</attribute>
+                </xpath>-->
             </field>
         </record>
     </data>
