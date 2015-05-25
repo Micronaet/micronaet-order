@@ -40,6 +40,19 @@ from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
 
 _logger = logging.getLogger(__name__)
 
+class SaleOrder(orm.Model):
+    ''' Add extra field for manage master orders
+    '''    
+    _inherit = 'sale.order'
+    
+    _columns = {
+        'master_order': fields.boolean('Master order'),
+        }
+    
+    _defaults = {
+        'master_order': lambda *x: False,
+        }
+
 class SaleOrderLine(orm.Model):
     ''' Add extra field for manage master line
     '''    
