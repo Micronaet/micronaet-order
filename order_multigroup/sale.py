@@ -54,6 +54,7 @@ class SaleOrderLineMaster(orm.Model):
     '''    
     _name = 'sale.order.line.master'
     _description = 'Master order line'
+    _order = 'order_id desc, sequence, id'
     
     # Button events:
     def write_subtotal(self, cr, uid, ids, context=None):
@@ -70,7 +71,16 @@ class SaleOrderLineMaster(orm.Model):
             }, context=context)    
         
     _columns = {
-        'sequence': fields.integer('Seq'),
+        'sequence': fields.integer(
+            'Sequence', 
+            help="Gives the sequence order when displaying master fields."),
+        'name': fields.text(
+            'Description', required=True, readonly=True, 
+            states={'draft': [('readonly', False)]}),
+        'order_id': fields.many2one(
+            'sale.order', 'Order Reference', required=True, 
+            ondelete='cascade', select=True, 
+            readonly=True, states={'draft':[('readonly',False)]}),
         'master_title': fields.text('Master title'),
         'master_note': fields.text('Master note'),
         'with_sub': fields.boolean('With subtotal'),
@@ -79,6 +89,86 @@ class SaleOrderLineMaster(orm.Model):
             digits=(16, 2)),
         #'state': fields.selection( # for problem in view (not used)
         #    [('draft', 'Draft')], 'State'),
+
+        # Not used for now:
+        'product_id': fields.many2one(
+            'product.product', 'Product', domain=[('sale_ok', '=', True)], 
+            change_default=True, readonly=True, 
+            states={'draft': [('readonly', False)]}, 
+            ondelete='restrict'),
+
+        #'invoice_lines': fields.many2many('account.invoice.line', 'sale_order_line_invoice_rel', 'order_line_id', 'invoice_id', 'Invoice Lines', readonly=True, copy=False),
+        #'invoiced': fields.function(_fnct_line_invoiced, string='Invoiced', type='boolean',
+        #    store={
+        #        'account.invoice': (_order_lines_from_invoice, ['state'], 10),
+        #        'sale.order.line': (lambda self,cr,uid,ids,ctx=None: ids, ['invoice_lines'], 10)
+        #    }),
+        'price_unit': fields.float(
+            'Unit Price', required=True, 
+            digits_compute= dp.get_precision('Product Price'), 
+            readonly=True, states={'draft': [('readonly', False)]}),
+        'price_subtotal': fields.float(
+            'Subtota', required=True, 
+            digits_compute=dp.get_precision('Product Price'), 
+            readonly=True, states={'draft': [('readonly', False)]}),
+        #'price_subtotal': fields.function(
+        #    _amount_line, string='Subtotal', 
+        #    digits_compute= dp.get_precision('Account')),
+        #'price_reduce': fields.function(_get_price_reduce, type='float', 
+        #    string='Price Reduce', 
+        #    digits_compute=dp.get_precision('Product Price')),
+        'tax_id': fields.many2many(
+            'account.tax', 'sale_order_tax', 'order_line_id', 'tax_id', 
+            'Taxes', readonly=True, states={'draft': [('readonly', False)]}),
+        #'address_allotment_id': fields.many2one('res.partner', 
+        #    'Allotment Partner',
+        #    help="A partner to whom the particular product was allotment."),
+        'product_uom_qty': fields.float(
+            'Quantity', digits_compute= dp.get_precision('Product UoS'),
+            required=True, readonly=True, 
+            states={'draft': [('readonly', False)]}),
+        'product_uom': fields.many2one(
+            'product.uom', 'Unit of Measure ', required=True, readonly=True, 
+            states={'draft': [('readonly', False)]}),
+        'product_uos_qty': fields.float(
+            'Quantity (UoS)', digits_compute= dp.get_precision('Product UoS'),
+            readonly=True, states={'draft': [('readonly', False)]}),
+        'product_uos': fields.many2one('product.uom', 'Product UoS'),
+        'discount': fields.float(
+            'Discount (%)', digits_compute= dp.get_precision('Discount'), 
+            readonly=True, states={'draft': [('readonly', False)]}),
+        #'th_weight': fields.float('Weight', readonly=True, 
+        #    states={'draft': [('readonly', False)]}),
+        #'state': fields.selection(
+        #    [('cancel', 'Cancelled'),('draft', 'Draft'),
+        #    ('confirmed', 'Confirmed'),('exception', 'Exception'),
+        #    ('done', 'Done')],
+        #    'Status', required=True, readonly=True, copy=False,),
+        #'order_partner_id': fields.related(
+        #    'order_id', 'partner_id', type='many2one', relation='res.partner',
+        #    store=True, string='Customer'),
+        #'salesman_id':fields.related('order_id', 'user_id', type='many2one', 
+        #    relation='res.users', store=True, string='Salesperson'),
+        #'company_id': fields.related('order_id', 'company_id', 
+        #    type='many2one', relation='res.company', string='Company', 
+        #    store=True, readonly=True),
+        #'delay': fields.float('Delivery Lead Time', required=True, 
+        #    readonly=True, states={'draft': [('readonly', False)]}),
+        #'procurement_ids': fields.one2many(
+        #    'procurement.order', 'sale_line_id', 'Procurements'),
+    }
+    
+    _defaults = {
+        'product_uom' : _get_uom_id,
+        'discount': 0.0,
+        'product_uom_qty': 1,
+        'product_uos_qty': 1,
+        'sequence': 10,
+        #'state': 'draft',
+        'price_unit': 0.0,
+        #'delay': 0.0,
+    }
+        
         }
     _defaults = {
         #'state': lambda *x: 'draft',
