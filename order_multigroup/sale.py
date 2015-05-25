@@ -66,26 +66,22 @@ class SaleOrderLineMaster(orm.Model):
             'Sequence', 
             help="Gives the sequence order when displaying master fields."),
         'name': fields.text(
-            'Description', required=True, readonly=True, 
+            'Description', required=True,
             states={'draft': [('readonly', False)]}),
         'order_id': fields.many2one(
-            'sale.order', 'Order Reference', required=True, 
-            ondelete='cascade', select=True, 
-            readonly=True, states={'draft':[('readonly',False)]}),
+            'sale.order', 'Order Reference',
+            ondelete='cascade', select=True, ),
         'master_title': fields.text('Master title'),
         'master_note': fields.text('Master note'),
         'with_sub': fields.boolean('With subtotal'),
         'master_subtotal': fields.float(
             'Master subtotal', 
             digits=(16, 2)),
-        #'state': fields.selection( # for problem in view (not used)
-        #    [('draft', 'Draft')], 'State'),
 
         # Not used for now:
         'product_id': fields.many2one(
             'product.product', 'Product', domain=[('sale_ok', '=', True)], 
-            change_default=True, readonly=True, 
-            states={'draft': [('readonly', False)]}, 
+            change_default=True, 
             ondelete='restrict'),
 
         #'invoice_lines': fields.many2many('account.invoice.line', 'sale_order_line_invoice_rel', 'order_line_id', 'invoice_id', 'Invoice Lines', readonly=True, copy=False),
@@ -95,13 +91,13 @@ class SaleOrderLineMaster(orm.Model):
         #        'sale.order.line': (lambda self,cr,uid,ids,ctx=None: ids, ['invoice_lines'], 10)
         #    }),
         'price_unit': fields.float(
-            'Unit Price', required=True, 
+            'Unit Price',
             digits_compute= dp.get_precision('Product Price'), 
-            readonly=True, states={'draft': [('readonly', False)]}),
+            states={'draft': [('readonly', False)]}),
         'price_subtotal': fields.float(
-            'Subtota', required=True, 
+            'Subtota',
             digits_compute=dp.get_precision('Product Price'), 
-            readonly=True, states={'draft': [('readonly', False)]}),
+            states={'draft': [('readonly', False)]}),
         #'price_subtotal': fields.function(
         #    _amount_line, string='Subtotal', 
         #    digits_compute= dp.get_precision('Account')),
@@ -110,24 +106,23 @@ class SaleOrderLineMaster(orm.Model):
         #    digits_compute=dp.get_precision('Product Price')),
         'tax_id': fields.many2many(
             'account.tax', 'sale_order_tax', 'order_line_id', 'tax_id', 
-            'Taxes', readonly=True, states={'draft': [('readonly', False)]}),
+            'Taxes', states={'draft': [('readonly', False)]}),
         #'address_allotment_id': fields.many2one('res.partner', 
         #    'Allotment Partner',
         #    help="A partner to whom the particular product was allotment."),
         'product_uom_qty': fields.float(
             'Quantity', digits_compute= dp.get_precision('Product UoS'),
-            required=True, readonly=True, 
             states={'draft': [('readonly', False)]}),
         'product_uom': fields.many2one(
-            'product.uom', 'Unit of Measure ', required=True, readonly=True, 
+            'product.uom', 'Unit of Measure ',
             states={'draft': [('readonly', False)]}),
         'product_uos_qty': fields.float(
             'Quantity (UoS)', digits_compute= dp.get_precision('Product UoS'),
-            readonly=True, states={'draft': [('readonly', False)]}),
+            states={'draft': [('readonly', False)]}),
         'product_uos': fields.many2one('product.uom', 'Product UoS'),
         'discount': fields.float(
             'Discount (%)', digits_compute= dp.get_precision('Discount'), 
-            readonly=True, states={'draft': [('readonly', False)]}),
+            states={'draft': [('readonly', False)]}),
         #'th_weight': fields.float('Weight', readonly=True, 
         #    states={'draft': [('readonly', False)]}),
         #'state': fields.selection(
@@ -147,6 +142,8 @@ class SaleOrderLineMaster(orm.Model):
         #    readonly=True, states={'draft': [('readonly', False)]}),
         #'procurement_ids': fields.one2many(
         #    'procurement.order', 'sale_line_id', 'Procurements'),
+        'state': fields.selection( # for problem in view (not used)
+            [('draft', 'Draft')], 'State'),
     }
     
     _defaults = {
@@ -155,9 +152,9 @@ class SaleOrderLineMaster(orm.Model):
         'product_uom_qty': 1,
         'product_uos_qty': 1,
         'sequence': 10,
-        #'state': 'draft',
         'price_unit': 0.0,
         #'delay': 0.0,
+        'state': 'draft',
     }
 
 class SaleOrderLine(orm.Model):
@@ -185,6 +182,21 @@ class SaleOrder(orm.Model):
     '''    
     _inherit = 'sale.order'
     
+    # Button event:
+    def set_master_quotation(self, cr, uid, ids, context=None):
+       ''' Set boolean 
+       '''
+       return self.write(cr, uid, ids, {
+           'master_order': True
+           }, context=context)
+
+    def set_normal_quotation(self, cr, uid, ids, context=None):
+       ''' Set boolean 
+       '''
+       return self.write(cr, uid, ids, {
+           'master_order': False
+           }, context=context)
+       
     _columns = {
         'master_order': fields.boolean('Master order'),
         'master_line_ids': fields.one2many('sale.order.line.master', 

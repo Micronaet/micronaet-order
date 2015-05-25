@@ -8,12 +8,21 @@
             <field name="inherit_id" ref="sale.view_order_form"/> 
             <field name="arch" type="xml">
                 <!--button for set master-->
+                <xpath expr="/form/sheet/notebook" position="before">
+                    <field name="master_order" invisible="1"/>
+                    <button name="set_master_quotation" type="object" string="Set master" icon="gtk-indent" attrs="{'invisible': [('master_order','=',True)]}" />
+                    <button name="set_normal_quotation" type="object" string="Set normal" icon="gtk-justify-fill" attrs="{'invisible': [('master_order','=',False)]}" />
+                </xpath>
+                <xpath expr="//notebook/page//field[@name='order_line']" position="attributes">
+                    <attribute name="attrs"> {'readonly': [('master_order','=',True)]}</attribute>
+                </xpath>
                 <xpath expr="//notebook/page[@string='Order Lines']" position="before">
-                    <page string="Master line">
+                    <page string="Master line" attrs="{'invisible': [('master_order','=',False)]}">
                         <field name="master_line_ids">
                             <tree string="Master line">
                                 <field name="sequence"/>
                                 <field name="name"/>
+                                <field name="state" invisible="1"/>
                             </tree>
                             <form string="Master line">
                                 <!--<button name="write_subtotal" string="Calculate" type="object" />-->
@@ -21,6 +30,7 @@
                                 <field name="name"/>                            
                                 <field name="master_title" />
                                 <!--<field name="master_note" />-->
+                                <field name="state" invisible="1"/>
                                 <field name="order_line_ids" colspan="5" context="{'default_order_id': parent.id}">
                                     <tree string="Multi group elements" editable="bottom">                            
                                         <field name="master_line_id" invisible="1"/>
