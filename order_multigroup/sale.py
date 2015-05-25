@@ -40,15 +40,6 @@ from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
 
 _logger = logging.getLogger(__name__)
 
-class SaleOrder(orm.Model):
-    ''' Add extra field for manage master orders
-    '''    
-    _inherit = 'sale.order'
-    
-    _columns = {
-        'master_order': fields.boolean('Master order'),
-        }
-    
 class SaleOrderLineMaster(orm.Model):
     ''' Master element for create a grouped quotation
     '''    
@@ -175,7 +166,8 @@ class SaleOrderLine(orm.Model):
     _inherit = 'sale.order.line'
     
     _columns = {
-        'master_line_id': fields.many2one('sale.order.line.master', 'Master parent'),
+        'master_line_id': fields.many2one(
+            'sale.order.line.master', 'Master parent'),
         }
 
 class SaleOrderLineMaster(orm.Model):
@@ -184,7 +176,19 @@ class SaleOrderLineMaster(orm.Model):
     _inherit = 'sale.order.line.master'
     
     _columns = {
-        'master_line_ids': fields.one2many(
-            'sale.order.line', 'master_line_id', 'Multi line'),
+        'order_line_ids': fields.one2many(
+            'sale.order.line', 'master_line_id', 'Sub line'),
         }
+
+class SaleOrder(orm.Model):
+    ''' Add extra field for manage master orders
+    '''    
+    _inherit = 'sale.order'
+    
+    _columns = {
+        'master_order': fields.boolean('Master order'),
+        'master_line_ids': fields.one2many('sale.order.line.master', 
+            'order_id', 'Master line'),
+        }
+    
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -7,6 +7,7 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/> 
             <field name="arch" type="xml">
+                <!--button for set master-->
                 <xpath expr="//notebook/page[@string='Order Lines']" position="before">
                     <page string="Master line">
                         <field name="master_line_ids">
@@ -20,9 +21,9 @@
                                 <field name="name"/>                            
                                 <field name="master_title" />
                                 <!--<field name="master_note" />-->
-                                <field name="master_child_ids" colspan="5" context="{'default_order_id': parent.id}">
+                                <field name="order_line_ids" colspan="5" context="{'default_order_id': parent.id}">
                                     <tree string="Multi group elements" editable="bottom">                            
-                                        <field name="master_order_id" invisible="1"/>
+                                        <field name="master_line_id" invisible="1"/>
                                         <field name="order_id" invisible="1"/>
                                         <field name="product_id" />
                                         <field name="tax_id" invisible="1" />
