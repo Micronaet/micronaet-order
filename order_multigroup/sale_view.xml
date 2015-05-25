@@ -7,48 +7,37 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/> 
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="before">
-                    <field name="master"/> 
-                    <field name="master_order_id" /> 
+                <xpath expr="//notebook/page[@string='']" position="before">
+                    <page string="Master line">
+                        <field name="master_order_id">
+                            <tree string="Master line">
+                                <field name="sequence"/>
+                                <field name="name"/>
+                            </tree>
+                            <form string="Master line">
+                                <!--<button name="write_subtotal" string="Calculate" type="object" />-->
+                                <field name="sequence"/>
+                                <field name="name"/>                            
+                                <field name="master_title" colspan="5"/>
+                                <field name="master_note" colspan="5"/>
+                                <field name="master_child_ids" colspan="5" context="{'default_order_id': parent.id}">
+                                    <tree string="Multi group elements" editable="bottom">                            
+                                        <field name="master_order_id" invisible="1"/>
+                                        <field name="order_id" invisible="1"/>
+                                        <field name="product_id" />
+                                        <field name="tax_id" invisible="1" />
+                                        <field name="discount" />
+                                        <field name="product_uom" />
+                                        <field name="price_unit" />
+                                        <field name="product_uom_qty" />                                
+                                        <field name="price_subtotal" sum="master"/>
+                                        <field name="state" invisible="1"/> 
+                                    </tree>
+                                </field> 
+                            </form>
+                        </field>
+                    </page>    
                 </xpath>
-                <xpath expr="//field[@name='order_line']/tree" position="attributes">
-                    <attribute name="colors">blue:master==True</attribute>
-                </xpath>
-                <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
-                    <field name="master_subtotal" sum="master"/>
-                </xpath>
-                <xpath expr="//field[@name='order_line']/form//field[@name='name']" position="after">
-                    <group colspan="4" col="4">
-                        <field name="master" /> 
-                        <newline />
-                        <group colspan="4" col="5" attrs="{'invisible':[('master','=',False)]}">
-                            <field name="with_sub"  />
-                            <field name="master_subtotal"  />
-                            <button name="write_subtotal" string="Calculate" type="object" />
-                            <field name="master_title" colspan="5"/>
-                            <field name="master_note" colspan="5"/>
-                            <field name="master_child_ids" colspan="5" context="{'default_order_id': parent.id}">
-                                <tree string="Multi group elements" editable="bottom">                            
-                                    <field name="master_order_id" invisible="1"/>
-                                    <field name="order_id" invisible="1"/>
-                                    <field name="product_id" />
-                                    <field name="tax_id" invisible="1" />
-                                    <field name="discount" />
-                                    <field name="product_uom" />
-                                    <field name="price_unit" />
-                                    <field name="product_uom_qty" />                                
-                                    <field name="price_subtotal" sum="master"/>
-                                    <field name="state" invisible="1"/> 
-                                </tree>
-                            </field> 
-                        </group>                        
-                    </group>
-                </xpath>
-                <!--<xpath expr="//field[@name='order_line']" position="attributes">
-                    <attribute name="domain">[('master','=',True)]</attribute>
-                    <attribute name="widget">one2many_list</attribute>
-                    <attribute name="readonly">1</attribute>
-                </xpath>-->
             </field>
         </record>
     </data>
