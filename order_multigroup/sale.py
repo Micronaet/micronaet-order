@@ -77,7 +77,12 @@ class SaleOrderLineMaster(orm.Model):
         'master_subtotal': fields.float(
             'Master subtotal', 
             digits=(16, 2)),
-
+        'show_mode': fields.selection([
+            ('none', 'Only master'),
+            ('list', 'Master with element'),
+            ('price', 'Master with element and price'),
+            ], 'Show mode', required=True),
+            
         # Not used for now:
         'product_id': fields.many2one(
             'product.product', 'Product', domain=[('sale_ok', '=', True)], 
@@ -95,7 +100,7 @@ class SaleOrderLineMaster(orm.Model):
             digits_compute= dp.get_precision('Product Price'), 
             states={'draft': [('readonly', False)]}),
         'price_subtotal': fields.float(
-            'Subtota',
+            'Subtotal',
             digits_compute=dp.get_precision('Product Price'), 
             states={'draft': [('readonly', False)]}),
         #'price_subtotal': fields.function(
@@ -164,7 +169,7 @@ class SaleOrderLine(orm.Model):
     
     _columns = {
         'master_line_id': fields.many2one(
-            'sale.order.line.master', 'Master parent'),
+            'sale.order.line.master', 'Master parent', ondelete='set null'),
         }
 
 class SaleOrderLineMaster(orm.Model):
