@@ -1,7 +1,72 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
+    <!--csv.import.order.element-->
+    <record model="ir.ui.view" id="view_csv_import_order_element_form">
+        <field name="name">csv.import.order.element.form</field>
+        <field name="model">csv.import.order.element</field>
+        <field name="arch" type="xml">
+            <form string="String" version="7.0">     
+                <sheet>
+                    <group col="4" colspan="4">
+                        <field name="code" readonly="1" />
+                        <field name="name" />
+                        <field name="filepath" />
+                        <field name="filename" />
+                        <field name="filemask" />
+                        <separator name="Note" colspan="4"/>
+                        <field name="note" colspan="4" nolabel="1" />
+                    </group>
+                </sheet>        
+            </form>
+        </field>
+    </record>
 
+    <record model="ir.ui.view" id="view_csv_import_order_element_tree">
+        <field name="name">csv.import.order.element.tree</field>
+        <field name="model">csv.import.order.element</field>
+        <field name="arch" type="xml">
+            <tree string="String" version="7.0">     
+                <field name="code" readonly="1" />
+                <field name="name" />
+                <field name="filepath" />
+                <field name="filename" />
+                <field name="filemask" />
+                <field name="note" colspan="4" nolabel="1" />
+            </tree>
+        </field>
+    </record>
+    
+    <record model="ir.actions.act_window" id="action_csv_import_order_element">
+        <field name="name">CSV import order list</field>
+        <field name="res_model">csv.import.order.element</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_csv_import_order_element_tree"/>
+        <field name="context">{}</field>
+        <field name="domain">[]</field>
+    </record>
+    
+    <!--log.importation-->
+    <record id="product_product_importation_tree_view" model="ir.ui.view">
+          <field name="name">Log import product</field>
+          <field name="model">log.importation</field>
+          <field name="inherit_id" ref="base_log.log_importation_tree_view"/>
+          <field name="arch" type="xml">
+              <field name="name" position="after">
+                  <field name="order_id"/> <!--TODO parametrize with context?!-->
+              </field>    
+          </field>
+    </record>
+
+    <menuitem 
+        parent="base_log.menu_product_import_root" 
+        id="menu_product_import_order_list" 
+        action="action_csv_import_order_element"
+        name="Order import list"
+        sequence="25"            
+        />
+    
     </data>
 </openerp>
 

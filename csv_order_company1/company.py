@@ -45,37 +45,26 @@ class CsvImportOrderElement(orm.Model):
         extra modules
     """
     
-    _name = 'csv.import.order.element'
-    _description = 'CSV Order import'
-    _rec_name = 'name'
+    _inherit = 'csv.import.order.element'
     
     # Virtual procedure:
-    def _csv_import_order(self, cr, uid, name, context=None):
+    def _csv_import_order(self, cr, uid, code, context=None):
         ''' Import procedure that will be called from modules (depend on this)
-            name is the name of element to load (data.xml of every new mod.)
+            code is the code of element to load (data.xml of every new mod.)
             Importatione will be as data in table
         '''
+        # Check other input
+        super(CsvImportOrderElement, self)._csv_import_order(
+            cr, uid, code, context=context)
+
+        # ---------------------------------------------------------------------
+        #                      Company 1 Import procedure:
+        # ---------------------------------------------------------------------
+        if name == 'company1':
+            pass # TODO
+
         return True
     
-    _columns = {
-        'code': fields.char('Code', size=20, required=True),
-        'name': fields.char('Name', size=64, required=True),
-        'filepath': fields.char('Path', size=180, required=True),
-        'filename': fields.char('File name', size=80),        
-        'filemask': fields.char('Mask', size=80), # Used?
-        'note': fields.text('Note') ,
-        }
-    
-class LogImportation(orm.Model):
-    """ Model name: LogImportation
-        Link log to order imported
-    """
-    
-    _inherit = 'log.importation'
-    
-    _columns = {
-        'order_id': fields.many2one('sale.order', 'Order'), 
-        }
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

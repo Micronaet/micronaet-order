@@ -18,27 +18,26 @@
 ###############################################################################
 
 {
-    'name': 'CSV import base',
+    'name': 'CSV import for company 1',
     'version': '0.1',
-    'category': '',
-    'description': '''
-        
+    'category': 'ETL',
+    'description': '''        
+        Import order from csv file, company 1
         ''',
     'author': 'Micronaet S.r.l. - Nicola Riolini',
     'website': 'http://www.micronaet.it',
     'license': 'AGPL-3',
     'depends': [
         'base',
-        'base_log', # Micronaet/mcironaet-product.git 
-        'sale',
+        'csv_order_import_base',
         ],
     'init_xml': [],
     'demo': [],
     'data': [
-        'data/mode_data.xml',    
+        'data/mode_data.xml',
         
-        'security/ir.model.access.csv',    
-        'base_view.xml',        
+        #'security/ir.model.access.csv',
+        'company_view.xml',
         ],
     'active': False,
     'installable': True,
