@@ -21,6 +21,7 @@ import os
 import sys
 import logging
 import openerp
+import shutil
 import csv
 import openerp.netsvc as netsvc
 import openerp.addons.decimal_precision as dp
@@ -95,6 +96,7 @@ class CsvImportOrderElement(orm.Model):
         _logger.info('Start import %s order' % (item_proxy.name))
 
         filepath = os.path.expanduser(item_proxy.filepath)
+        historypath = os.path.join(filepath, 'history') # TODO param
         filemask = item_proxy.filemask
         partner_id = item_proxy.partner_id.id
 
@@ -125,6 +127,7 @@ class CsvImportOrderElement(orm.Model):
         comment = ''
         for f in order_list:
             filename = os.path.join(filepath, f)
+            historyname = os.path.join(historypath, f)
             _logger.info('Read file: %s' % filename)
             f_in = open(filename)            
             
@@ -132,6 +135,7 @@ class CsvImportOrderElement(orm.Model):
             note = ''
             order_id = False
             destination_partner_id = False
+            move_history= True
             for line in f_in:
                 try:
                     # Read as CSV:
@@ -139,7 +143,9 @@ class CsvImportOrderElement(orm.Model):
                     line = line.split(';')
                     
                     if line[0] == 't': 
-                        # header data:                    
+                        # -----------------------------------------------------
+                        #                      header data:
+                        # -----------------------------------------------------
                         destination_code = line[1]
                         number = line[4]
                         insert_date = self._csv_format_date(line[6])
@@ -153,12 +159,14 @@ class CsvImportOrderElement(orm.Model):
                                 ], context=context)
                             if destination_ids:
                                 destination_partner_id = destination_ids[0]
-                            else:    
+                            else:
+                                move_history = False
                                 error += 'File: %s destination code %sno found in ODOO\n' % (
                                     filename,
                                     destination_code,
                                     ) # XXX continue without destination
                         else:
+                            move_history = False
                             error += 'File: %s destination code %s no found in file\n' % (
                                 filename,
                                 destination_code,
@@ -184,7 +192,11 @@ class CsvImportOrderElement(orm.Model):
                                 }, context=context)
                     
                     elif line[0] == 'r': 
+                        # -----------------------------------------------------
+                        #                 Details:
+                        # -----------------------------------------------------
                         if not order_id: 
+                            move_history = False
                             error += 'File: %s order heder not created\n' % (
                                 filename)
                             continue # next order
@@ -209,6 +221,7 @@ class CsvImportOrderElement(orm.Model):
                                 ' ', '   ')),
                             ], context=context)
                         if not product_ids:
+                            move_history = False
                             error += 'File: %s product not found: %s\n' % (
                                 filename , product_code)
                             continue # jumnp all order # TODO delete order?    
@@ -255,11 +268,17 @@ class CsvImportOrderElement(orm.Model):
                             line_pool.create(cr, uid, data, context=context)    
                     
                     elif line[0] == 'c': # comment:
+                        # -----------------------------------------------------
+                        #                 Footer:
+                        # -----------------------------------------------------
                         note += line[9]
                     
                     else:
+                        move_history = False
                         error += 'Type line not found: %s\n' % line[0]
                         continue                        
+                 
+                    
                 except:
                     # Generic record error:
                     error += '%s\n' % (sys.exc_info(), )
@@ -268,6 +287,13 @@ class CsvImportOrderElement(orm.Model):
             order_pool.write(cr, uid, order_id, {
                 'text_note_post': note,
                 }, context=context)
+                
+            # History file if not error:
+            if move_history:
+                _logger.info('History file: %s > %s' % (
+                    filename, historyname))
+                shutil.move(filename, historyname)
+
         if error:
             log_pool.write(cr, uid, importation_id, {
                 'error': error,
