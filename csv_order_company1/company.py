@@ -99,6 +99,9 @@ class CsvImportOrderElement(orm.Model):
         historypath = os.path.join(filepath, 'history') # TODO param
         filemask = item_proxy.filemask
         partner_id = item_proxy.partner_id.id
+        code_mapping = {}
+        for mapping in item_proxy.mapping_ids:
+            code_mapping[mapping.code] = mapping.product_id.id
 
         # ------------------
         # Start log message:
@@ -215,18 +218,25 @@ class CsvImportOrderElement(orm.Model):
                         # XXX Problem with spaces (1 not 3)
                         product_ids = product_pool.search(cr, uid, ['|', '|',
                             ('default_code', '=', product_code),
+                            # TODO remove:
                             ('default_code', '=', product_code.replace(
                                 ' ', '  ')),
                             ('default_code', '=', product_code.replace(
                                 ' ', '   ')),
                             ], context=context)
-                        if not product_ids:
-                            move_history = False
-                            error += 'File: %s product not found: %s\n' % (
-                                filename , product_code)
-                            continue # jumnp all order # TODO delete order?    
+                            
+                        if product_ids:
+                            product_id = product_ids[0]                        
+                        else:
+                            # Try search in mapping code:
+                            product_id = code_mapping.get(
+                                product_customer, False)
+                            if not product_id:    
+                                move_history = False
+                                error += 'File: %s product not found: %s\n' % (
+                                    filename , product_code)
+                                continue # jumnp all order # TODO delete order?    
 
-                        product_id = product_ids[0]                        
                         # Partner - product partic:
                         partic_ids = partic_pool.search(cr, uid, [
                             ('partner_id', '=', partner_id),
