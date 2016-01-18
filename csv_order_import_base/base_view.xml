@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-
-
+    <!--INHERIT res.partner-->
     <record model="ir.ui.view" id="view_res_partner_import_code_form">
         <field name="name">res.partner.form</field>
         <field name="model">res.partner</field>
@@ -13,6 +12,7 @@
             </field>
         </field>
     </record>
+    
     <!--csv.import.order.element-->
     <record model="ir.ui.view" id="view_csv_import_order_element_form">
         <field name="name">csv.import.order.element.form</field>
@@ -29,6 +29,14 @@
 
                         <field name="filepath" />
                         <field name="filename" />
+                        
+                        <separator name="Code mapping" colspan="4"/>
+                        <field name="mapping_ids" colspan="4" nolabel="1">
+                            <tree string="Mapping" editable="bottom">
+                                <field name="name"/>
+                                <field name="product_id"/>
+                            </tree>
+                        </field>
                         
                         <separator name="Note" colspan="4"/>
                         <field name="note" colspan="4" nolabel="1" />

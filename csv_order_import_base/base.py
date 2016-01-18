@@ -66,6 +66,37 @@ class CsvImportOrderElement(orm.Model):
         'partner_id': fields.many2one('res.partner', 'Customer'),
         'note': fields.text('Note') ,
         }
+
+class CsvImportOrderElementMapping(orm.Model):
+    """ Mapp partner code with ours
+    """
+    
+    _name = 'csv.import.order.element.mapping'
+    _description = 'CSV Order mapping import'
+    _rec_name = 'name'
+    
+    _columns = {
+        'name': fields.char('Customer code', size=20, required=True),
+        'product_id': fields.many2one(
+            'product.product', 'Product', required=True), 
+        'item_id': fields.many2one(
+            'csv.import.order.element', 'Import ref.'),
+        }
+    
+class CsvImportOrderElement(orm.Model):
+    """ Model name: CsvImportOrderTrace
+        Object for save list of type of order that could be imported
+        Virtual import procedure that will be overrided from all 
+        extra modules
+    """
+    
+    _inherit = 'csv.import.order.element'
+    
+    _columns = {
+        'mapping_ids': fields.one2many(
+            'csv.import.order.element.mapping', 'item_id', 
+            'Code mapping'), 
+        }
     
 class SaleOrder(orm.Model):
     """ Link order to log
