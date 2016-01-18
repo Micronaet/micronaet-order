@@ -110,7 +110,6 @@ class CsvImportOrderElement(orm.Model):
             }, context=context)
 
         # Loop on files in folder:
-        import pdb; pdb.set_trace()
         order_list = []
         for f in os.listdir(filepath):
             if os.path.isfile(os.path.join(filepath, f)) and f.startswith(
@@ -165,12 +164,17 @@ class CsvImportOrderElement(orm.Model):
                                 destination_code,
                                 ) # XXX continue without destination
                         order_ids = order_pool.search(cr, uid, [
-                            ('client_order_ref': number)
+                            ('client_order_ref', '=', number),
                             ('partner_id', '=', partner_id),
                             ], context=context)
                         if order_ids: # on same order:
                             order_id = order_ids[0]
-                        else:   
+                            # move parent log:
+                            order_pool.write(cr, uid, order_id, {
+                                'importation_id': importation_id,
+                                }, context=context)
+                            
+                        else:
                             order_id = order_pool.create(cr, uid, {
                                 'importation_id': importation_id,
                                 'partner_id': partner_id,
@@ -196,8 +200,14 @@ class CsvImportOrderElement(orm.Model):
                         price_unit = float(line[14].replace(',', '.'))
                                             
                         # Product:
-                        product_ids = product_pool.search(cr, uid, [
-                            ('default_code', '=', product_code)], context=context)
+                        # XXX Problem with spaces (1 not 3)
+                        product_ids = product_pool.search(cr, uid, ['|', '|',
+                            ('default_code', '=', product_code),
+                            ('default_code', '=', product_code.replace(
+                                ' ', '  ')),
+                            ('default_code', '=', product_code.replace(
+                                ' ', '   ')),
+                            ], context=context)
                         if not product_ids:
                             error += 'File: %s product not found: %s\n' % (
                                 filename , product_code)
@@ -235,7 +245,7 @@ class CsvImportOrderElement(orm.Model):
                             # TODO discount, scale vat ecc.
                             }
                         # Search sequence for update?    
-                        line_ids = line_pool.search(cr, iud, [
+                        line_ids = line_pool.search(cr, uid, [
                             ('order_id', '=', order_id),
                             ('sequence', '=', sequence),
                             ], context=context)
@@ -261,7 +271,18 @@ class CsvImportOrderElement(orm.Model):
         if error:
             log_pool.write(cr, uid, importation_id, {
                 'error': error,
-                }, context=context)        
-        return True
+                }, context=context)
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Log importation',
+            'res_model': 'log.importation',
+            'res_id': importation_id,
+            'view_type': 'form',
+            'view_mode': 'form',
+            #'view_id': view_id,
+            #'target': 'new',
+            #'nodestroy': True,
+            }
+
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -81,6 +81,7 @@
                               <field name="user_id" />
                               <field name="amount_total" />
                               <field name="state"  />
+                              <button name="open_order_form_id" string="Open" type="object" />
                           </tree>    
                       </field>
                   </page>    

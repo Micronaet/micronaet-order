@@ -72,6 +72,22 @@ class SaleOrder(orm.Model):
     """    
     _inherit = 'sale.order'
     
+    def open_order_form_id(self, cr, uid, ids, context=None):
+        '''        
+        '''
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Imported order',
+            'res_model': 'sale.order',
+            'res_id': ids[0],
+            'view_type': 'form',
+            'view_mode': 'form',
+            #'view_id': view_id,
+            #'target': 'new',
+            #'nodestroy': True,
+            }
+ 
+        
     _columns = {
         'importation_id': fields.many2one('log.importation', 'Log link'), 
         }
