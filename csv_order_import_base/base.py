@@ -63,19 +63,35 @@ class CsvImportOrderElement(orm.Model):
         'filepath': fields.char('Path', size=180, required=True),
         'filename': fields.char('File name', size=80),        
         'filemask': fields.char('Mask', size=80), # Used?
+        'partner_id': fields.many2one('res.partner', 'Customer'),
         'note': fields.text('Note') ,
         }
     
-class LogImportation(orm.Model):
-    """ Model name: LogImportation
-        Link log to order imported
-    """
+class SaleOrder(orm.Model):
+    """ Link order to log
+    """    
+    _inherit = 'sale.order'
     
+    _columns = {
+        'importation_id': fields.many2one('log.importation', 'Log link'), 
+        }
+
+class LogImportation(orm.Model):
     _inherit = 'log.importation'
     
     _columns = {
-        'order_id': fields.many2one('sale.order', 'Order'), 
+        'order_ids': fields.one2many('sale.order', 'importation_id', 'Order'), 
         }
+
+class ResPartner(orm.Model):
+    """ Link order to log (for destination or partner)
+    """    
+    _inherit = 'res.partner'
+    
+    _columns = {
+        'csv_import_code': fields.char('Import code', size=10), 
+        }
+
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

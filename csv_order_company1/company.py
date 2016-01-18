@@ -21,6 +21,7 @@ import os
 import sys
 import logging
 import openerp
+import csv
 import openerp.netsvc as netsvc
 import openerp.addons.decimal_precision as dp
 from openerp.osv import fields, osv, expression, orm
@@ -61,7 +62,133 @@ class CsvImportOrderElement(orm.Model):
         #                      Company 1 Import procedure:
         # ---------------------------------------------------------------------
         if name == 'company1':
-            pass # TODO
+            item_ids = self.search(cr, uid, [
+                ('code', '=', 'company1')], context=context)
+            if not item_ids:
+                _logger.error(
+                    'Import code not found: company1 (record deleted?)')
+                return False    
+
+            # Pool used:
+            import_log = self.pool.get('log.importation')
+            
+            # ---------------------
+            # Read parametric data:
+            # ---------------------
+            item_proxy = self.browse(cr, uid, item_ids, context=context)[0]
+            _logger.info('Start import %s order' % (item_proxy.name))
+
+            filepath = os.path.expanduser(item_proxy.filepath)
+            filemask = item_proxy.filemask
+            partner_id = item_proxy.partner_id.id
+
+            # ------------------
+            # Start log message:
+            # ------------------
+            importation_id = import_log.create(cr, uid, ids, {
+                'name': 'Import Company 1 order '
+                'user_id': uid,
+                'mode': 'order',
+                'note': False,
+                'error': False,
+                }, context=context)
+
+            # -----------------------------------------------------------------
+            #                      Import order:
+            # -----------------------------------------------------------------            
+            # pool used:
+            order_pool = self.pool.get('sale.order')
+            line_pool = self.pool.get('sale.order.line')
+            partne_pool = self.pool.get('res.partner')
+            
+            filename = os.path.join(filepath, 'exportcsv_13973327.csv') # TODO Change:          
+            f_in = open(filename)
+            
+            # Init log elements:
+            error = ''
+            comment = ''
+            
+            # reset header / footer element:
+            note = ''
+            order_id = False
+            destination_partner_id = False
+            for line in f_in:
+                # Read as CSV:
+                line = line.strip()
+                line = line.split(';')
+                
+                if line[0] == 't': 
+                    # header data:                    
+                    destination_code = t[1]
+                    number = t[4]
+                    inser_date = t[6]
+                    order_date = t[7] #  TODO format date
+                    
+                    # Create order:
+                    if destination_code: 
+                        destination_ids = partner_pool.search(cr, uid, [
+                            ('parent_id', '=', partner_id),
+                            ('import_code', '=', destination_code),
+                            ], context=context)
+                        if destination_ids:
+                            destination_partner_id = destination_ids[0]
+                        else:    
+                            error += 'File: %s destination code %sno found in ODOO:' % (
+                                filename,
+                                destination_code,
+                                ) # XXX continue without destination
+                    else:
+                        error += 'File: %s destination code %s no found in file:' % (
+                            filename,
+                            destination_code,
+                            ) # XXX continue without destination
+                    order_id =  order_pool.create(cr, uid, {
+                        'importation_id': importation_id,
+                        'partner_id': partner_id,
+                        #'date_order': 
+                        'client_order_ref': number,
+                        'destination_partner_id': destination_partner_id,
+                        }, context=context)
+                
+                elif line[0] == 'r': 
+                    if not order_id: 
+                        error += 'File: %s order heder not created' % filename 
+                        continue # next order
+                        
+                    # detail data:
+                    sequence = t[8]
+                    # destination EAN
+                    product_code = t[10]
+                    product_customer = t[11]
+                    description = t[12]
+                    qty = t[13]
+                    price = t[14]
+                    
+                    product_ids = product_pool.search(cr, uid, [], context=context)
+                    # TODO onchange for extra data??
+                    data = {
+                        'order_id': order_id,
+                        'sequence': sequence,
+                        
+                        
+                        }
+                
+                elif line[0] == 'c': # comment:
+                    note += t[9]
+                
+                else:
+                    error += 'Type line not found: %s' % line[0]
+                    continue
+                    
+                    
+            data = {
+                'importation_id': importation_id,
+                'partner_id': partner_id,
+                }
+                
+            # Create record:
+            order_pool.create(cr, uid, data, context=context)    
+                
 
         return True
     

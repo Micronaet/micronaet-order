@@ -11,9 +11,13 @@
                     <group col="4" colspan="4">
                         <field name="code" readonly="1" />
                         <field name="name" />
+                        
+                        <field name="partner_id" />
+                        <field name="filemask" />
+
                         <field name="filepath" />
                         <field name="filename" />
-                        <field name="filemask" />
+                        
                         <separator name="Note" colspan="4"/>
                         <field name="note" colspan="4" nolabel="1" />
                     </group>
@@ -29,6 +33,7 @@
             <tree string="String" version="7.0">     
                 <field name="code" readonly="1" />
                 <field name="name" />
+                <field name="partner_id" />
                 <field name="filepath" />
                 <field name="filename" />
                 <field name="filemask" />
@@ -48,14 +53,26 @@
     </record>
     
     <!--log.importation-->
-    <record id="product_product_importation_tree_view" model="ir.ui.view">
+    <record id="product_product_importation_form_order_page_view" model="ir.ui.view">
           <field name="name">Log import product</field>
           <field name="model">log.importation</field>
-          <field name="inherit_id" ref="base_log.log_importation_tree_view"/>
+          <field name="inherit_id" ref="base_log.log_importation_form_view"/>
           <field name="arch" type="xml">
-              <field name="name" position="after">
-                  <field name="order_id"/> <!--TODO parametrize with context?!-->
-              </field>    
+              <xpath expr="//notebook/page" position="after">
+                  <page string="Order imported:">
+                      <field name="order_ids" readonly="1">
+                         <!--TODO for fast open <button name="signal" string="Untitle" type="object/action/workflow" />-->>
+                          <tree string="Order: " editable="bottom">
+                              <field name="name" />                      
+                              <field name="date_order" />
+                              <field name="partner_id" />
+                              <field name="user_id" />
+                              <field name="amount_total" />
+                              <field name="state"  />
+                          </tree>    
+                      </field>
+                  </page>    
+              </xpath>
           </field>
     </record>
 
