@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+       <!-- product.product.csv.import.wizard -->
+       <record id="csv_import_order_company_wizard_form" model="ir.ui.view">
+            <field name="name">CSV Order import</field>
+            <field name="model">sale.order.csv.import.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Product CSV import" version="7.0">
+                   <header>
+                       <button string="Cancel" special="cancel" />
+                       <button name="action_import_csv" string="Import" type="object" icon="gtk-jump-to" class="oe_highlight" />
+                   </header>
+                   <group colspan="4" col="4">
+                        <field name="item_id" />
+
+                        <separator string="Note" colspan="4"/>
+                        <field name="note" colspan="4" nolabel="1"/>
+                   </group>
+                </form>
+            </field>
+      </record>
+
+    <record model="ir.actions.act_window" id="action_csv_import_order_company_wizard">
+        <field name="name">Import CSV</field>
+        <field name="res_model">sale.order.csv.import.wizard</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="context">{}</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="csv_import_order_company_wizard_form"/>
+    </record>
+
+    <menuitem 
+        parent="base_log.menu_product_import_root" 
+        id="menu_csv_import_order_company_wizard" 
+        action="action_csv_import_order_company_wizard"
+        name="Import order wizard"
+        sequence="50"
+        />
+
+    </data>
+</openerp>
+

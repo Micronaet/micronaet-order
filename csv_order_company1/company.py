@@ -61,7 +61,7 @@ class CsvImportOrderElement(orm.Model):
         # ---------------------------------------------------------------------
         #                      Company 1 Import procedure:
         # ---------------------------------------------------------------------
-        if name == 'company1':
+        if code == 'company1':
             item_ids = self.search(cr, uid, [
                 ('code', '=', 'company1')], context=context)
             if not item_ids:
@@ -85,7 +85,7 @@ class CsvImportOrderElement(orm.Model):
             # ------------------
             # Start log message:
             # ------------------
-            importation_id = import_log.create(cr, uid, ids, {
+            importation_id = import_log.create(cr, uid, {
                 'name': 'Import Company 1 order',
                 'user_id': uid,
                 'mode': 'order',
@@ -100,8 +100,11 @@ class CsvImportOrderElement(orm.Model):
             # pool used:
             order_pool = self.pool.get('sale.order')
             line_pool = self.pool.get('sale.order.line')
-            partne_pool = self.pool.get('res.partner')
+            partner_pool = self.pool.get('res.partner')
+            partic_pool = self.pool.get('res.partner.product.partic')
+            product_pool = self.pool.get('product.product')
             
+            import pdb; pdb.set_trace()
             filename = os.path.join(filepath, 'exportcsv_13973327.csv') # TODO Change:          
             f_in = open(filename)
             
@@ -120,16 +123,16 @@ class CsvImportOrderElement(orm.Model):
                 
                 if line[0] == 't': 
                     # header data:                    
-                    destination_code = t[1]
-                    number = t[4]
-                    inser_date = t[6]
-                    order_date = t[7] #  TODO format date
+                    destination_code = line[1]
+                    number = line[4]
+                    insert_date = line[6]
+                    order_date = line[7] #  TODO format date
                     
                     # Create order:
                     if destination_code: 
                         destination_ids = partner_pool.search(cr, uid, [
                             ('parent_id', '=', partner_id),
-                            ('import_code', '=', destination_code),
+                            ('csv_import_code', '=', destination_code),
                             ], context=context)
                         if destination_ids:
                             destination_partner_id = destination_ids[0]
@@ -157,14 +160,14 @@ class CsvImportOrderElement(orm.Model):
                         continue # next order
                         
                     # detail data:
-                    sequence = t[8]
-                    ean = t[9]
+                    sequence = line[8]
+                    ean = line[9]
                     # destination EAN
-                    product_code = t[10]
-                    product_customer = t[11]
-                    description = t[12]
-                    product_uom_qty = t[13]
-                    price_unit = t[14]
+                    product_code = line[10]
+                    product_customer = line[11]
+                    description = line[12]
+                    product_uom_qty = float(line[13].replace(',', '.'))
+                    price_unit = float(line[14].replace(',', '.'))
                     
                     # Product:
                     product_ids = product_pool.search(cr, uid, [
@@ -199,7 +202,7 @@ class CsvImportOrderElement(orm.Model):
                         }
                 
                 elif line[0] == 'c': # comment:
-                    note += t[9]
+                    note += line[9]
                 
                 else:
                     error += 'Type line not found: %s' % line[0]

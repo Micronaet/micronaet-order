@@ -39,6 +39,7 @@
         
         'security/ir.model.access.csv',    
         'base_view.xml',        
+        'wizard/csv_import_views.xml',
         ],
     'active': False,
     'installable': True,
