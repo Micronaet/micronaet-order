@@ -70,7 +70,12 @@ class CsvImportOrderElement(orm.Model):
                 return False    
 
             # Pool used:
-            import_log = self.pool.get('log.importation')
+            log_pool = self.pool.get('log.importation')
+            order_pool = self.pool.get('sale.order')
+            line_pool = self.pool.get('sale.order.line')
+            partner_pool = self.pool.get('res.partner')
+            partic_pool = self.pool.get('res.partner.product.partic')
+            product_pool = self.pool.get('product.product')
             
             # ---------------------
             # Read parametric data:
@@ -85,7 +90,7 @@ class CsvImportOrderElement(orm.Model):
             # ------------------
             # Start log message:
             # ------------------
-            importation_id = import_log.create(cr, uid, {
+            importation_id = log_pool.create(cr, uid, {
                 'name': 'Import Company 1 order',
                 'user_id': uid,
                 'mode': 'order',
@@ -97,14 +102,6 @@ class CsvImportOrderElement(orm.Model):
             # -----------------------------------------------------------------
             #                      Import order:
             # -----------------------------------------------------------------            
-            # pool used:
-            order_pool = self.pool.get('sale.order')
-            line_pool = self.pool.get('sale.order.line')
-            partner_pool = self.pool.get('res.partner')
-            partic_pool = self.pool.get('res.partner.product.partic')
-            product_pool = self.pool.get('product.product')
-            
-            import pdb; pdb.set_trace()
             filename = os.path.join(filepath, 'exportcsv_13973327.csv') # TODO Change:          
             f_in = open(filename)
             
@@ -137,12 +134,12 @@ class CsvImportOrderElement(orm.Model):
                         if destination_ids:
                             destination_partner_id = destination_ids[0]
                         else:    
-                            error += 'File: %s destination code %sno found in ODOO:' % (
+                            error += 'File: %s destination code %sno found in ODOO\n' % (
                                 filename,
                                 destination_code,
                                 ) # XXX continue without destination
                     else:
-                        error += 'File: %s destination code %s no found in file:' % (
+                        error += 'File: %s destination code %s no found in file\n' % (
                             filename,
                             destination_code,
                             ) # XXX continue without destination
@@ -156,7 +153,8 @@ class CsvImportOrderElement(orm.Model):
                 
                 elif line[0] == 'r': 
                     if not order_id: 
-                        error += 'File: %s order heder not created' % filename 
+                        error += 'File: %s order heder not created\n' % (
+                            filename)
                         continue # next order
                         
                     # detail data:
@@ -168,16 +166,16 @@ class CsvImportOrderElement(orm.Model):
                     description = line[12]
                     product_uom_qty = float(line[13].replace(',', '.'))
                     price_unit = float(line[14].replace(',', '.'))
-                    
+                                        
                     # Product:
                     product_ids = product_pool.search(cr, uid, [
                         ('default_code', '=', product_code)], context=context)
-                    if product_ids:
-                        product_id = product_ids[0]    
-                    else:
-                        error += 'File: %s product not found: %s' % (
+                    if not product_ids:
+                        error += 'File: %s product not found: %s\n' % (
                             filename , product_code)
                         continue # jumnp all order # TODO delete order?    
+
+                    product_id = product_ids[0]    
                     
                     # Partner - product partic:
                     partic_ids = partic_pool.search(cr, uid, [
@@ -190,12 +188,21 @@ class CsvImportOrderElement(orm.Model):
                             'partner_code': '%s - EAN %s' % (
                                 product_customer, ean)
                             }, context=context)
+                    else: # create        
+                        partic_pool.create(cr, uid, {
+                            'partner_id': partner_id,
+                            'product_id': product_id,
+                            'partner_price': price_unit,
+                            'partner_code': '%s - EAN %s' % (
+                                product_customer, ean)
+                            }, context=context)
                             
                     # TODO onchange for extra data??
                     data = {
                         'order_id': order_id,
                         'sequence': sequence,
-                        'product_uom_qty': roduct_uom_qty,
+                        'product_id': product_id,
+                        'product_uom_qty': product_uom_qty,
                         'price_unit': price_unit,
                         'name': description,
                         # TODO discount, scale vat ecc.
@@ -205,14 +212,17 @@ class CsvImportOrderElement(orm.Model):
                     note += line[9]
                 
                 else:
-                    error += 'Type line not found: %s' % line[0]
+                    error += 'Type line not found: %s\n' % line[0]
                     continue
-                    
                     
             # Update with comend:
             order_pool.write(cr, uid, order_id, {
                 'text_note_post': note,
                 }, context=context)
+        if error:
+            log_pool.write(cr, uid, importation_id, {
+                'error': error,
+                }, context=context)        
         return True
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
