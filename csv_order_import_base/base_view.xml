@@ -1,6 +1,18 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
+
+
+    <record model="ir.ui.view" id="view_res_partner_import_code_form">
+        <field name="name">res.partner.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <field name="ref" position="after">
+               <field name="csv_import_code" />
+            </field>
+        </field>
+    </record>
     <!--csv.import.order.element-->
     <record model="ir.ui.view" id="view_csv_import_order_element_form">
         <field name="name">csv.import.order.element.form</field>

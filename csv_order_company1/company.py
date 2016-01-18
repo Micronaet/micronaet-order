@@ -86,13 +86,14 @@ class CsvImportOrderElement(orm.Model):
             # Start log message:
             # ------------------
             importation_id = import_log.create(cr, uid, ids, {
-                'name': 'Import Company 1 order '
+                'name': 'Import Company 1 order',
                 'user_id': uid,
                 'mode': 'order',
                 'note': False,
                 'error': False,
                 }, context=context)
 
+            # TODO loop on files:
             # -----------------------------------------------------------------
             #                      Import order:
             # -----------------------------------------------------------------            
@@ -157,20 +158,44 @@ class CsvImportOrderElement(orm.Model):
                         
                     # detail data:
                     sequence = t[8]
+                    ean = t[9]
                     # destination EAN
                     product_code = t[10]
                     product_customer = t[11]
                     description = t[12]
-                    qty = t[13]
-                    price = t[14]
+                    product_uom_qty = t[13]
+                    price_unit = t[14]
                     
-                    product_ids = product_pool.search(cr, uid, [], context=context)
+                    # Product:
+                    product_ids = product_pool.search(cr, uid, [
+                        ('default_code', '=', product_code)], context=context)
+                    if product_ids:
+                        product_id = product_ids[0]    
+                    else:
+                        error += 'File: %s product not found: %s' % (
+                            filename , product_code)
+                        continue # jumnp all order # TODO delete order?    
+                    
+                    # Partner - product partic:
+                    partic_ids = partic_pool.search(cr, uid, [
+                        ('partner_id', '=', partner_id),
+                        ('product_id', '=', product_id),
+                        ], context=context)
+                    if partic_ids:
+                        partic_pool.write(cr, uid, partic_ids[0], {
+                            'partner_price': price_unit,
+                            'partner_code': '%s - EAN %s' % (
+                                product_customer, ean)
+                            }, context=context)
+                            
                     # TODO onchange for extra data??
                     data = {
                         'order_id': order_id,
                         'sequence': sequence,
-                        
-                        
+                        'product_uom_qty': roduct_uom_qty,
+                        'price_unit': price_unit,
+                        'name': description,
+                        # TODO discount, scale vat ecc.
                         }
                 
                 elif line[0] == 'c': # comment:
@@ -181,17 +206,10 @@ class CsvImportOrderElement(orm.Model):
                     continue
                     
                     
-            data = {
-                'importation_id': importation_id,
-                'partner_id': partner_id,
-                }
-                
-            # Create record:
-            order_pool.create(cr, uid, data, context=context)    
-                
-
+            # Update with comend:
+            order_pool.write(cr, uid, order_id, {
+                'text_note_post': note,
+                }, context=context)
         return True
-    
-
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

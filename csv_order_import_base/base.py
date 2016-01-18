@@ -89,9 +89,7 @@ class ResPartner(orm.Model):
     _inherit = 'res.partner'
     
     _columns = {
-        'csv_import_code': fields.char('Import code', size=10), 
+        'csv_import_code': fields.char('CSV Import code', size=10), 
         }
-
-
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
