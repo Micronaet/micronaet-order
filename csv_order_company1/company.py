@@ -101,7 +101,7 @@ class CsvImportOrderElement(orm.Model):
         partner_id = item_proxy.partner_id.id
         code_mapping = {}
         for mapping in item_proxy.mapping_ids:
-            code_mapping[mapping.code] = mapping.product_id.id
+            code_mapping[mapping.name] = mapping.product_id.id
 
         # ------------------
         # Start log message:
@@ -233,8 +233,8 @@ class CsvImportOrderElement(orm.Model):
                                 product_customer, False)
                             if not product_id:    
                                 move_history = False
-                                error += 'File: %s product not found: %s\n' % (
-                                    filename , product_code)
+                                error += 'File: %s product not found: %s > %s\n' % (
+                                    filename , product_customer, product_code)
                                 continue # jumnp all order # TODO delete order?    
 
                         # Partner - product partic:

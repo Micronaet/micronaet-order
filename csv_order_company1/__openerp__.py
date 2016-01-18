@@ -30,6 +30,7 @@
     'depends': [
         'base',
         'csv_order_import_base',
+        'base_log', # Micronaet/mcironaet-product.git 
         ],
     'init_xml': [],
     'demo': [],
