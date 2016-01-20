@@ -82,7 +82,7 @@
                   <page string="Order imported:">
                       <field name="order_ids" readonly="1">
                          <!--TODO for fast open <button name="signal" string="Untitle" type="object/action/workflow" />-->>
-                          <tree string="Order: " editable="bottom">
+                          <!--<tree string="Order: " editable="bottom">
                               <field name="name" />                      
                               <field name="date_order" />
                               <field name="partner_id" />
@@ -90,7 +90,7 @@
                               <field name="amount_total" />
                               <field name="state"  />
                               <button name="open_order_form_id" string="Open" type="object" />
-                          </tree>    
+                          </tree>    -->
                       </field>
                   </page>    
               </xpath>

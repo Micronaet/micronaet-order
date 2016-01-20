@@ -124,10 +124,12 @@ class SaleOrder(orm.Model):
         }
 
 class LogImportation(orm.Model):
+    ''' Add *many relation field
+    '''
     _inherit = 'log.importation'
     
     _columns = {
-        'order_ids': fields.one2many('sale.order', 'importation_id', 'Order'), 
+        #'order_ids': fields.one2many('sale.order', 'importation_id', 'Order'), 
         }
 
 class ResPartner(orm.Model):
