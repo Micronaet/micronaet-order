@@ -152,7 +152,8 @@ class CsvImportOrderElement(orm.Model):
                         destination_code = line[1]
                         number = line[4]
                         insert_date = self._csv_format_date(line[6])
-                        order_date = self._csv_format_date(line[7]) #  TODO format date
+                        order_date = self._csv_format_date(line[7])
+                        date_deadline = self._csv_format_date(line[23]) 
                         
                         # Create order:
                         if destination_code: 
@@ -190,6 +191,7 @@ class CsvImportOrderElement(orm.Model):
                                 'importation_id': importation_id,
                                 'partner_id': partner_id,
                                 #'date_order': order_date,
+                                'date_deadline': date_deadline,
                                 'client_order_ref': number,
                                 'destination_partner_id': destination_partner_id,
                                 }, context=context)
