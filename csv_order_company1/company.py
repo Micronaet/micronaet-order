@@ -53,10 +53,10 @@ class CsvImportOrderElement(orm.Model):
         ''' Return correct date from YYYMMDD
         '''
         try:
-            return '%s-%s-%s' (
+            return '%s-%s-%s' % (
                  value[:4],
-                 value[5:7],
-                 value[8:10])
+                 value[4:6],
+                 value[6:8])
         except:
             return False         
                  
@@ -139,6 +139,7 @@ class CsvImportOrderElement(orm.Model):
             order_id = False
             destination_partner_id = False
             move_history= True
+            date_deadline = False # keep header in line!
             for line in f_in:
                 try:
                     # Read as CSV:
@@ -150,10 +151,10 @@ class CsvImportOrderElement(orm.Model):
                         #                      header data:
                         # -----------------------------------------------------
                         destination_code = line[1]
-                        number = line[4]
+                        number = line[3]
                         insert_date = self._csv_format_date(line[6])
                         order_date = self._csv_format_date(line[7])
-                        date_deadline = self._csv_format_date(line[23]) 
+                        date_deadline = self._csv_format_date(line[23])
                         
                         # Create order:
                         if destination_code: 
@@ -267,6 +268,7 @@ class CsvImportOrderElement(orm.Model):
                             'product_uom_qty': product_uom_qty,
                             'price_unit': price_unit,
                             'name': description,
+                            'date_deadline': date_deadline,
                             # TODO discount, scale vat ecc.
                             }
                         # Search sequence for update?    
@@ -296,9 +298,10 @@ class CsvImportOrderElement(orm.Model):
                     error += '%s\n' % (sys.exc_info(), )
                     
             # Update with coment once ad the end:
-            order_pool.write(cr, uid, order_id, {
-                'text_note_post': note,
-                }, context=context)
+            # XXX Note not used!
+            #order_pool.write(cr, uid, order_id, {
+            #    'text_note_post': note,
+            #    }, context=context)
                 
             # History file if not error:
             if move_history:
