@@ -166,13 +166,13 @@ class CsvImportOrderElement(orm.Model):
                                 destination_partner_id = destination_ids[0]
                             else:
                                 move_history = False
-                                error += 'File: %s destination code %sno found in ODOO\n' % (
+                                error += 'File: %s destination code %s not found in ODOO\n' % (
                                     filename,
                                     destination_code,
                                     ) # XXX continue without destination
                         else:
                             move_history = False
-                            error += 'File: %s destination code %s no found in file\n' % (
+                            error += 'File: %s destination code %s not found in file\n' % (
                                 filename,
                                 destination_code,
                                 ) # XXX continue without destination
@@ -180,22 +180,35 @@ class CsvImportOrderElement(orm.Model):
                             ('client_order_ref', '=', number),
                             ('partner_id', '=', partner_id),
                             ], context=context)
+                        
                         if order_ids: # on same order:
                             order_id = order_ids[0]
                             # move parent log:
                             order_pool.write(cr, uid, order_id, {
                                 'importation_id': importation_id,
-                                }, context=context)
-                            
+                                }, context=context)                            
                         else:
-                            order_id = order_pool.create(cr, uid, {
+                            try:
+                                onchange_data = order_pool.onchange_partner_id(
+                                    cr, uid, [], partner_id, context=context)[
+                                        'value']
+                            except:
+                                error += '''
+                                    Onchange partner data not 
+                                    'present in order %s!''' % number
+                                onchange_data = {} # error
+                                            
+                            onchange_data.update({
                                 'importation_id': importation_id,
                                 'partner_id': partner_id,
                                 #'date_order': order_date,
                                 'date_deadline': date_deadline,
                                 'client_order_ref': number,
-                                'destination_partner_id': destination_partner_id,
-                                }, context=context)
+                                'destination_partner_id':  
+                                    destination_partner_id,                                
+                                })
+                            order_id = order_pool.create(
+                                cr, uid, onchange_data, context=context)
                     
                     elif line[0] == 'r': 
                         # -----------------------------------------------------
@@ -290,8 +303,7 @@ class CsvImportOrderElement(orm.Model):
                     else:
                         move_history = False
                         error += 'Type line not found: %s\n' % line[0]
-                        continue                        
-                 
+                        continue
                     
                 except:
                     # Generic record error:
