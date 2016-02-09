@@ -85,7 +85,6 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
         'to_date': fields.date('To', help='Date <'),
         'from_deadline': fields.date('From deadline', help='Date deadline >='),
         'to_deadline': fields.date('To deadline', help='Date deadline <'),
-
         }
         
     _defaults = {

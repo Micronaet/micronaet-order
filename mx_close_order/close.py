@@ -85,8 +85,7 @@ class SaleOrder(orm.Model):
         if close_ids:
             self.write(cr, uid, close_ids, {
                 'mx_closed': True
-                }, context=context)                
-    
+                }, context=context)    
     
     _columns = {
         'mx_closed': fields.boolean('MX closed'),

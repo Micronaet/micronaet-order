@@ -86,7 +86,8 @@ class Parser(report_sxw.rml_parse):
         # Default:
         domain = [
             ('state', 'not in', ('cancel', 'draft', 'sent')), # 'done'
-            ('pricelist_order', '=', False), 
+            #('pricelist_order', '=', False), # needed? (yet in mx_closed
+            ('mx_closed', '=', False), 
             ]
 
         # -------------------------
@@ -102,6 +103,7 @@ class Parser(report_sxw.rml_parse):
             self.filter_description += _(', date < %s') % to_date
         
         order_ids = sale_pool.search(self.cr, self.uid, domain)
+        _logger.info('Found %s orders' % len(order_ids))
 
         # ---------------------------------------------------------------------
         #                      Sale order line filter
@@ -115,8 +117,10 @@ class Parser(report_sxw.rml_parse):
             domain.append(('date_deadline', '<', to_deadline))
             self.filter_description += _(', deadline < %s') % to_deadline
             
-        line_ids = line_pool.search(self.cr, self.uid, domain)
+        line_ids = line_pool.search(self.cr, self.uid, domain, 
+            order='order_id, id')
         res = []
+        _logger.info('Found %s order line' % len(line_ids))
         for line in line_pool.browse(self.cr, self.uid, line_ids):
             if line.product_uom_qty - line.delivered_qty > 0.0:
                 res.append(line.id)
