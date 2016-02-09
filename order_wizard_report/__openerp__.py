@@ -31,6 +31,7 @@
     'depends': [
         'base',
         'sale',
+        'mx_close_order',
         ],
     'init_xml': [],
     'demo': [],
