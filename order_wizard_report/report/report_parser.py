@@ -119,12 +119,12 @@ class Parser(report_sxw.rml_parse):
             
         line_ids = line_pool.search(self.cr, self.uid, domain, 
             order='order_id, id')
-        res = []
-        _logger.info('Found %s order line' % len(line_ids))
-        for line in line_pool.browse(self.cr, self.uid, line_ids):
-            if line.product_uom_qty - line.delivered_qty > 0.0:
-                res.append(line.id)
+        #res = []
+        #_logger.info('Found %s order line' % len(line_ids))
+        #for line in line_pool.browse(self.cr, self.uid, line_ids):
+        #    if line.product_uom_qty - line.delivered_qty > 0.0:
+        #        res.append(line.id)
             
-        return line_pool.browse(self.cr, self.uid, res)
+        return line_pool.browse(self.cr, self.uid, line_ids)#res)
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
