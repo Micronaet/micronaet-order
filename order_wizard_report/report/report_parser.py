@@ -118,7 +118,7 @@ class Parser(report_sxw.rml_parse):
             self.filter_description += _(', deadline < %s') % to_deadline
             
         line_ids = line_pool.search(self.cr, self.uid, domain, 
-            order='order_id, id')
+            order='date_deadline, order_id, id')
         #res = []
         #_logger.info('Found %s order line' % len(line_ids))
         #for line in line_pool.browse(self.cr, self.uid, line_ids):
