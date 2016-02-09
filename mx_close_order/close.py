@@ -47,6 +47,26 @@ class SaleOrder(orm.Model):
     def scheduled_check_close_order(self, cr, uid, context=None):
         ''' Check closed order (completely delivered)
         '''
+        # ------------------------------
+        # Close all pricelist confirmed:
+        # ------------------------------
+        order_ids = self.search(cr, uid, [
+            ('state', 'not in', ('cancel', 'sent', 'draft')),
+            ('mx_closed', '=', False),
+            ('pricelist_order', '=', True),
+            ], context=context)            
+        if order_ids:    
+            self.write(cr, uid, order_ids, {
+                'mx_closed': True
+                }, context=context)                
+
+        # ----------------------------
+        # TODO Close forecasted order:
+        # ----------------------------
+        
+        # --------------------------
+        # Close all delivered order:
+        # --------------------------
         order_ids = self.search(cr, uid, [
             ('state', 'not in', ('cancel', 'sent', 'draft')),
             ('mx_closed', '=', False),
