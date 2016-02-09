@@ -29,6 +29,8 @@
     'license': 'AGPL-3',
     'depends': [
         'base',
+        'sale',
+        'mx_agent', # for agent filter
         ],
     'init_xml': [],
     'demo': [],

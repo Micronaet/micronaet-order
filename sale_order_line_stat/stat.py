@@ -38,4 +38,36 @@ from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
 
 _logger = logging.getLogger(__name__)
 
+class SaleOrderLine(orm.Model):
+    """ Model name: SaleOrderLine
+    """
+    
+    _inherit = 'sale.order.line'
+    
+    def _get_date_order_from_order(self, cr, uid, ids, context=None):
+        ''' When change sol line order
+        '''
+        sale_pool = self.pool['sale.order']
+        res = []
+        for sale in sale_pool.browse(cr, uid, ids, context=context):
+            for line in sale.order_line:
+                res.append(line.id)
+        return res
+
+    def _get_date_order_from_sol(self, cr, uid, ids, context=None):
+        ''' When change sol line order
+        '''
+        return ids
+
+    _columns = {
+        'order_date': fields.related(
+            'order_id', 'date_order', type='date',
+            store={
+                'sale.order.line': (_get_date_order_from_sol, ['order_id'], 10),
+                'sale.order': (_get_date_order_from_order, [
+                    'date_order'], 10),
+                }, string='Order date',            
+            )
+        }
+    
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
