@@ -6,6 +6,12 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form" />
         <field name="arch" type="xml">
+            <!--sale.order.line HEADER:-->
+                <!---TODO add check for show hide columns-->
+            <!--<xpath expr="//page/field[@name='order_line']" position="before">
+                <field name="show_stock_status" />
+            </xpath>-->
+
             <!--sale.order.line LINE:-->
             <xpath expr="//page/field[@name='order_line']/tree/field[@name='product_uom_qty']" position="after">
                 <field name="mx_net_qty" />
