@@ -188,6 +188,15 @@ class CsvImportOrderElement(orm.Model):
                         
                         if order_ids: # on same order:
                             order_id = order_ids[0]
+                            
+                            # delete all previous line:
+                            line_unlink_ids = line_pool.search(cr, uid, [
+                                ('order_id', '=', order_id)], context=context)
+                            if line_unlink_ids:    
+                                line_pool.unlink(cr, uid, line_unlink_ids, 
+                                    context=context)
+                                _logger.warning('Delete all previous line')
+
                             # move parent log:
                             order_pool.write(cr, uid, order_id, {
                                 'importation_id': importation_id,
@@ -293,15 +302,15 @@ class CsvImportOrderElement(orm.Model):
                             # TODO discount, scale vat ecc.
                             }
                         # Search sequence for update?    
-                        line_ids = line_pool.search(cr, uid, [
-                            ('order_id', '=', order_id),
-                            ('sequence', '=', sequence),
-                            ], context=context)
-                        if line_ids:
-                            line_pool.write(cr, uid, line_ids[0], data, 
-                                context=context)    
-                        else:    
-                            line_pool.create(cr, uid, data, context=context)    
+                        #line_ids = line_pool.search(cr, uid, [
+                        #    ('order_id', '=', order_id),
+                        #    ('sequence', '=', sequence),
+                        #    ], context=context)
+                        #if line_ids:
+                        #    line_pool.write(cr, uid, line_ids[0], data, 
+                        #        context=context)    
+                        #else:    
+                        line_pool.create(cr, uid, data, context=context)    
                     
                     elif line[0] == 'c': # comment:
                         # -----------------------------------------------------
