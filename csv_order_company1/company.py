@@ -92,6 +92,7 @@ class CsvImportOrderElement(orm.Model):
         # ---------------------
         # Read parametric data:
         # ---------------------
+        import pdb; pdb.set_trace()
         item_proxy = self.browse(cr, uid, item_ids, context=context)[0]
         _logger.info('Start import %s order' % (item_proxy.name))
 
@@ -166,16 +167,20 @@ class CsvImportOrderElement(orm.Model):
                                 destination_partner_id = destination_ids[0]
                             else:
                                 move_history = False
-                                error += 'File: %s destination code %s not found in ODOO\n' % (
+                                error += '''
+                                    File: %s destination code %s 
+                                    not found in ODOO\n''' % (
+                                        filename,
+                                        destination_code,
+                                        ) # XXX continue without destination
+                        else:
+                            move_history = False
+                            error += '''
+                                File: %s destination code %s 
+                                not found in file\n''' % (
                                     filename,
                                     destination_code,
                                     ) # XXX continue without destination
-                        else:
-                            move_history = False
-                            error += 'File: %s destination code %s not found in file\n' % (
-                                filename,
-                                destination_code,
-                                ) # XXX continue without destination
                         order_ids = order_pool.search(cr, uid, [
                             ('client_order_ref', '=', number),
                             ('partner_id', '=', partner_id),
@@ -229,7 +234,7 @@ class CsvImportOrderElement(orm.Model):
                         description = line[12]
                         product_uom_qty = float(line[13].replace(',', '.'))
                         price_unit = float(line[14].replace(',', '.'))
-                                            
+                 
                         # Product:
                         # XXX Problem with spaces (1 not 3)
                         product_ids = product_pool.search(cr, uid, ['|', '|',
@@ -249,8 +254,11 @@ class CsvImportOrderElement(orm.Model):
                                 product_customer, False)
                             if not product_id:    
                                 move_history = False
-                                error += 'File: %s product not found: %s > %s\n' % (
-                                    filename , product_customer, product_code)
+                                error += \
+                                    'File: %s product not found: %s > %s\n' % (
+                                       filename , 
+                                       product_customer, 
+                                       product_code)
                                 continue # jumnp all order # TODO delete order?    
 
                         # Partner - product partic:
@@ -290,7 +298,8 @@ class CsvImportOrderElement(orm.Model):
                             ('sequence', '=', sequence),
                             ], context=context)
                         if line_ids:
-                            line_pool.write(cr, uid, line_ids[0], data, context=context)    
+                            line_pool.write(cr, uid, line_ids[0], data, 
+                                context=context)    
                         else:    
                             line_pool.create(cr, uid, data, context=context)    
                     
@@ -336,6 +345,5 @@ class CsvImportOrderElement(orm.Model):
             #'target': 'new',
             #'nodestroy': True,
             }
-
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
