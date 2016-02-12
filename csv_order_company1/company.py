@@ -59,6 +59,14 @@ class CsvImportOrderElement(orm.Model):
                  value[6:8])
         except:
             return False         
+
+    def _csv_float(self, value):
+        ''' Return remove . and / 10.000
+        '''
+        try:
+            return float(value.replace('.', '')) / 10000
+        except:
+            return 0.0
                  
     
     # Virtual procedure:
@@ -92,7 +100,6 @@ class CsvImportOrderElement(orm.Model):
         # ---------------------
         # Read parametric data:
         # ---------------------
-        import pdb; pdb.set_trace()
         item_proxy = self.browse(cr, uid, item_ids, context=context)[0]
         _logger.info('Start import %s order' % (item_proxy.name))
 
@@ -141,8 +148,10 @@ class CsvImportOrderElement(orm.Model):
             destination_partner_id = False
             move_history= True
             date_deadline = False # keep header in line!
+            counter = 0
             for line in f_in:
                 try:
+                    counter += 1
                     # Read as CSV:
                     line = line.strip()
                     line = line.split(';')
@@ -169,7 +178,7 @@ class CsvImportOrderElement(orm.Model):
                                 move_history = False
                                 error += '''
                                     File: %s destination code %s 
-                                    not found in ODOO\n''' % (
+                                    not found in ODOO<br/>\n''' % (
                                         filename,
                                         destination_code,
                                         ) # XXX continue without destination
@@ -177,8 +186,8 @@ class CsvImportOrderElement(orm.Model):
                             move_history = False
                             error += '''
                                 File: %s destination code %s 
-                                not found in file\n''' % (
-                                    filename,
+                                not found in file<br/>\n''' % (
+                                    f,
                                     destination_code,
                                     ) # XXX continue without destination
                         order_ids = order_pool.search(cr, uid, [
@@ -195,7 +204,9 @@ class CsvImportOrderElement(orm.Model):
                             if line_unlink_ids:    
                                 line_pool.unlink(cr, uid, line_unlink_ids, 
                                     context=context)
-                                _logger.warning('Delete all previous line')
+                                _logger.warning(
+                                    'Delete all previous line: %s' % (
+                                        len(line_unlink_ids), ))
 
                             # move parent log:
                             order_pool.write(cr, uid, order_id, {
@@ -230,8 +241,8 @@ class CsvImportOrderElement(orm.Model):
                         # -----------------------------------------------------
                         if not order_id: 
                             move_history = False
-                            error += 'File: %s order heder not created\n' % (
-                                filename)
+                            error += 'File: %s header not created<br/>\n' % (
+                                f)
                             continue # next order
                             
                         # detail data:
@@ -241,8 +252,8 @@ class CsvImportOrderElement(orm.Model):
                         product_code = line[10]
                         product_customer = line[11]
                         description = line[12]
-                        product_uom_qty = float(line[13].replace(',', '.'))
-                        price_unit = float(line[14].replace(',', '.'))
+                        product_uom_qty = self._csv_float(line[13])
+                        price_unit = self._csv_float(line[14])
                  
                         # Product:
                         # XXX Problem with spaces (1 not 3)
@@ -264,10 +275,12 @@ class CsvImportOrderElement(orm.Model):
                             if not product_id:    
                                 move_history = False
                                 error += \
-                                    'File: %s product not found: %s > %s\n' % (
-                                       filename , 
-                                       product_customer, 
-                                       product_code)
+                                    '%s. File: %s no product: %s>%s<br/>\n' % (
+                                        counter,
+                                        f, 
+                                        product_customer, 
+                                        product_code,
+                                        )
                                 continue # jumnp all order # TODO delete order?    
 
                         # Partner - product partic:
@@ -311,6 +324,7 @@ class CsvImportOrderElement(orm.Model):
                         #        context=context)    
                         #else:    
                         line_pool.create(cr, uid, data, context=context)    
+                        _logger.info('Create line: %s' % data)
                     
                     elif line[0] == 'c': # comment:
                         # -----------------------------------------------------
@@ -325,7 +339,7 @@ class CsvImportOrderElement(orm.Model):
                     
                 except:
                     # Generic record error:
-                    error += '%s\n' % (sys.exc_info(), )
+                    error += '%s. %s<br/>\n' % (counter, sys.exc_info(), )
                     
             # Update with coment once ad the end:
             # XXX Note not used!
