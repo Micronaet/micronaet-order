@@ -45,6 +45,7 @@ class Parser(report_sxw.rml_parse):
         super(Parser, self).__init__(cr, uid, name, context)
         self.localcontext.update({
             'get_object_line': self.get_object_line,
+            'get_object_order_line': self.get_object_order_line,
 
             'get_datetime': self.get_datetime,
             'get_date': self.get_date,

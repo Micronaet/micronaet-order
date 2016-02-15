@@ -60,7 +60,7 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
         if wiz_proxy.report_type == 'deadlined':
             report_name = 'mx_order_list_report'
         else: # 'line'    
-            report_name = 'action_mx_order_list_line_repor'
+            report_name = 'mx_order_list_line_report'
                
         datas['from_date'] = wiz_proxy.from_date or False
         datas['to_date'] = wiz_proxy.to_date or False
