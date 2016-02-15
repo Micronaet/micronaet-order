@@ -102,7 +102,7 @@ class Parser(report_sxw.rml_parse):
             domain.append(('date_order', '<', to_date))
             self.filter_description += _(', date < %s') % to_date
         
-        order_ids = sale_pool.search(self.cr, self.uid, domain)
+        order_ids = sale_pool.search(self.cr, self.uid, domain) # TODO order ?!
         _logger.info('Found %s orders' % len(order_ids))
 
         # ---------------------------------------------------------------------
@@ -123,8 +123,16 @@ class Parser(report_sxw.rml_parse):
         #_logger.info('Found %s order line' % len(line_ids))
         #for line in line_pool.browse(self.cr, self.uid, line_ids):
         #    if line.product_uom_qty - line.delivered_qty > 0.0:
-        #        res.append(line.id)
-            
+        #        res.append(line.id)            
         return line_pool.browse(self.cr, self.uid, line_ids)#res)
+
+    def get_object_order_line(self, data):
+        ''' Order line delivered
+        '''
+        order_list = []
+        for line in self.get_object_line(data):                        
+            if line.order_id not in order_list:#line.open_amount_total > 0 and 
+                order_list.append(line.order_id)
+        return order_list
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

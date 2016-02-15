@@ -32,6 +32,7 @@
         'base',
         'sale',
         'mx_close_order',
+        'sale_delivery_partial_data',
         ],
     'init_xml': [],
     'demo': [],

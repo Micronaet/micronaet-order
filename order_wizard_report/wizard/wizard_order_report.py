@@ -57,8 +57,10 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
         datas = {}
         datas['wizard'] = True # started from wizard
         
-        #if wiz_proxy.report_type == 'deadlined':
-        report_name = 'mx_order_list_report' 
+        if wiz_proxy.report_type == 'deadlined':
+            report_name = 'mx_order_list_report'
+        else: # 'line'    
+            report_name = 'action_mx_order_list_line_repor'
                
         datas['from_date'] = wiz_proxy.from_date or False
         datas['to_date'] = wiz_proxy.to_date or False
@@ -75,6 +77,7 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
     _columns = {
         'report_type': fields.selection([
             ('deadlined', 'Order deadline'),
+            ('line', 'Order line deadline'),
             #('grouped', 'Order grouped by frame'),
             ], 'Report type', required=True),
         'partner_id': fields.many2one('res.partner', 'Partner'),
