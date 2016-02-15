@@ -30,8 +30,8 @@
     'depends': [
         'base',
         'sale',
-        'sale_order_line_stat',        
-        'production_family',
+        'sale_order_line_stat',                
+        'production_accounting_external',
         ],
     'init_xml': [],
     'demo': [],

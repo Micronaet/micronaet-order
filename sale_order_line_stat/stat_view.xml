@@ -15,8 +15,9 @@
                         <!--<filter name="order_closed" string="Order closed" domain="[('mx_closed','=',True)]"/>
                         <filter name="order_opened" string="Order opened" domain="[('mx_closed','=',False)]"/>-->
                         <field name="default_code" filter_domain="[('default_code','ilike',self)]"/>
-                        <field name="date_deadline" string="From deadline &gt;=" domain="[('date_deadline','&gt;=',self)]"/>
-                        <field name="date_deadline" string="To deadline &lt;" domain="[('date_deadline','&lt;',self)]"/>
+
+                        <field name="date_deadline" string="Deadline from &gt;=" filter_domain="[('date_deadline','&gt;=',self)]"/> 
+                        <field name="date_deadline" string="Deadline to &lt;=" filter_domain="[('date_deadline','&lt;=',self)]"/> 
                         
                         <group expand="0" string="Group By">
                             <filter name="group_partner" string="Partner" context="{'group_by': 'partner_id'}"/>
