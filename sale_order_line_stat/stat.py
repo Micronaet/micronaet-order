@@ -59,7 +59,19 @@ class SaleOrderLine(orm.Model):
         '''
         return ids
 
+    def _get_default_code_from_sol(self, cr, uid, ids, context=None):
+        ''' When change sol line order
+        '''
+        return ids
+
     _columns = {
+        'default_code': fields.related(
+            'product_id', 'default_code', type='char',
+            store={
+                'sale.order.line': (
+                    _get_default_code_from_sol, ['product_id'], 10),
+                }, string='Default code', 
+            ),
         'order_date': fields.related(
             'order_id', 'date_order', type='date',
             store={

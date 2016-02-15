@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_sale_order_line_stat_search">
+            <field name="name">sale.order.line.search</field>
+            <field name="model">sale.order.line</field>
+            <field name="inherit_id" ref="sale_order_line_stat.view_sale_order_line_stat_search" />
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                    <field name="mrp_id" filter_domain="[('mrp_id','ilike',self)]"/>
+                </field>
+                <filter name="group_mrp" position="after">
+                    <filter name="group_mrp" string="Production" context="{'group_by': 'mrp_id'}"/>
+                </filter>    
+            </field>
+        </record>
+         <record model="ir.ui.view" id="view_sale_order_line_tree">
+             <field name="name">sale.order.line.tree</field>
+             <field name="model">sale.order.line</field>
+             <field name="inherit_id" ref="sale_order_line_stat.view_sale_order_line_tree"/>
+             <field name="arch" type="xml">
+                  <field name="state" position="before"> 
+                      <field name="mrp_id" readonly="1" /> 
+                  </field>    
+                  <field name="product_uom_qty" position="after"> 
+                      <field name="product_uom_maked_sync_id" readonly="1" /> 
+                  </field>    
+             </field>
+         </record>
+    </data>
+</openerp>
+
