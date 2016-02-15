@@ -14,8 +14,8 @@
                         <filter name="order_state" string="Order" domain="[('state','not in',('draft','sent','cancel'))]"/>
                         <!--<filter name="order_closed" string="Order closed" domain="[('mx_closed','=',True)]"/>
                         <filter name="order_opened" string="Order opened" domain="[('mx_closed','=',False)]"/>-->
-                        <filter name="from_date_deadline" string="From deadline &gt;=" domain="[('date_deadline','&gt;=',self)]"/>
-                        <filter name="to_date_deadline" string="To deadline &lt;" domain="[('date_deadline','&lt;',self)]"/>
+                        <field name="from_date_deadline" string="From deadline &gt;=" domain="[('date_deadline','&gt;=',self)]"/>
+                        <field name="to_date_deadline" string="To deadline &lt;" domain="[('date_deadline','&lt;',self)]"/>
                         
                         <group expand="0" string="Group By">
                             <filter name="group_partner" string="Partner" context="{'group_by': 'partner_id'}"/>
