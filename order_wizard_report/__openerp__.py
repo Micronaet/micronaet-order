@@ -18,7 +18,7 @@
 ###############################################################################
 
 {
-    'name': 'Procurement report wizard',
+    'name': 'Order report wizard',
     'version': '0.1',
     'category': '',
     'description': '''        

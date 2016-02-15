@@ -1,0 +1,188 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* order_wizard_report
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-02-15 11:48+0000\n"
+"PO-Revision-Date: 2016-02-15 12:53+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: order_wizard_report
+#: code:addons/order_wizard_report/report/report_parser.py:104
+#, python-format
+msgid ", date < %s"
+msgstr ", data < %s"
+
+#. module: order_wizard_report
+#: code:addons/order_wizard_report/report/report_parser.py:101
+#, python-format
+msgid ", date >= %s"
+msgstr ", data >= %s"
+
+#. module: order_wizard_report
+#: code:addons/order_wizard_report/report/report_parser.py:119
+#, python-format
+msgid ", deadline < %s"
+msgstr ", scadenza < %s"
+
+#. module: order_wizard_report
+#: code:addons/order_wizard_report/report/report_parser.py:116
+#, python-format
+msgid ", deadline >= %s"
+msgstr ", scadenza >= %s"
+
+#. module: order_wizard_report
+#: view:sale.order.general.report.wizard:order_wizard_report.sale_order_general_report_wizard_view
+msgid "Analytic report"
+msgstr "Report analitico"
+
+#. module: order_wizard_report
+#: view:sale.order.general.report.wizard:order_wizard_report.sale_order_general_report_wizard_view
+msgid "Cancel"
+msgstr "Annulla"
+
+#. module: order_wizard_report
+#: field:sale.order.general.report.wizard,create_uid:0
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: order_wizard_report
+#: field:sale.order.general.report.wizard,create_date:0
+msgid "Created on"
+msgstr "Creato il "
+
+#. module: order_wizard_report
+#: help:sale.order.general.report.wizard,to_date:0
+msgid "Date <"
+msgstr "Data <"
+
+#. module: order_wizard_report
+#: help:sale.order.general.report.wizard,from_date:0
+msgid "Date >="
+msgstr "Data >="
+
+#. module: order_wizard_report
+#: help:sale.order.general.report.wizard,to_deadline:0
+msgid "Date deadline <"
+msgstr "Data scadenza <"
+
+#. module: order_wizard_report
+#: help:sale.order.general.report.wizard,from_deadline:0
+msgid "Date deadline >="
+msgstr "Data scadenza >="
+
+#. module: order_wizard_report
+#: view:sale.order.general.report.wizard:order_wizard_report.sale_order_general_report_wizard_view
+msgid "Date filter:"
+msgstr "Filtro dati:"
+
+#. module: order_wizard_report
+#: field:sale.order.general.report.wizard,from_date:0
+msgid "From"
+msgstr "Da"
+
+#. module: order_wizard_report
+#: field:sale.order.general.report.wizard,from_deadline:0
+msgid "From deadline"
+msgstr "Da scadenza"
+
+#. module: order_wizard_report
+#: model:ir.actions.act_window,name:order_wizard_report.action_sale_order_general_report_wizard
+msgid "General report wizard"
+msgstr "Report wizard"
+
+#. module: order_wizard_report
+#: field:sale.order.general.report.wizard,id:0
+msgid "ID"
+msgstr "ID"
+
+#. module: order_wizard_report
+#: field:sale.order.general.report.wizard,write_uid:0
+msgid "Last Updated by"
+msgstr "Ultimo aggiornamento da"
+
+#. module: order_wizard_report
+#: field:sale.order.general.report.wizard,write_date:0
+msgid "Last Updated on"
+msgstr "Ultimo aggiornamento il"
+
+#. module: order_wizard_report
+#: model:ir.actions.report.xml,name:order_wizard_report.aeroo_mx_order_list_line_report_id
+msgid "Mx order line report"
+msgstr "Report lista ordini"
+
+#. module: order_wizard_report
+#: model:ir.actions.report.xml,name:order_wizard_report.aeroo_mx_order_list_report_id
+msgid "Mx order list report"
+msgstr "Report lista ordini"
+
+#. module: order_wizard_report
+#: field:sale.order.general.report.wizard,only_remain:0
+msgid "Only remain"
+msgstr "Solo i rimanenti"
+
+#. module: order_wizard_report
+#: selection:sale.order.general.report.wizard,report_type:0
+msgid "Order deadline"
+msgstr "Scadenza ordine"
+
+#. module: order_wizard_report
+#: selection:sale.order.general.report.wizard,report_type:0
+msgid "Order line deadline"
+msgstr "Scadenza riga ordine"
+
+#. module: order_wizard_report
+#: code:addons/order_wizard_report/report/report_parser.py:97
+#, python-format
+msgid "Order open, not pricelist order"
+msgstr "Ordine aperto, non ordine listino"
+
+#. module: order_wizard_report
+#: model:ir.ui.menu,name:order_wizard_report.menu_sale_order_general_report
+msgid "Order report"
+msgstr "Report ordine"
+
+#. module: order_wizard_report
+#: field:sale.order.general.report.wizard,partner_id:0
+msgid "Partner"
+msgstr "Partner"
+
+#. module: order_wizard_report
+#: view:sale.order.general.report.wizard:order_wizard_report.sale_order_general_report_wizard_view
+msgid "Print"
+msgstr "Stampa"
+
+#. module: order_wizard_report
+#: field:sale.order.general.report.wizard,report_type:0
+msgid "Report type"
+msgstr "Tipo report"
+
+#. module: order_wizard_report
+#: model:ir.model,name:order_wizard_report.model_sale_order_general_report_wizard
+msgid "Sale general wizard"
+msgstr "Wizard generale vendite"
+
+#. module: order_wizard_report
+#: help:sale.order.general.report.wizard,only_remain:0
+msgid "Show only element to procuce"
+msgstr "Mostro solo elementi da produrre"
+
+#. module: order_wizard_report
+#: field:sale.order.general.report.wizard,to_date:0
+msgid "To"
+msgstr "Da"
+
+#. module: order_wizard_report
+#: field:sale.order.general.report.wizard,to_deadline:0
+msgid "To deadline"
+msgstr "Alla scadenza"
