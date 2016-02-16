@@ -76,6 +76,8 @@ class Parser(report_sxw.rml_parse):
         sale_pool = self.pool.get('sale.order')
         line_pool = self.pool.get('sale.order.line')
         
+        fiscal_position = data.get('fiscal_position', 'all')
+        partner_id = data.get('partner_id', False)
         from_date = data.get('from_date', False)
         to_date = data.get('to_date', False)
         from_deadline = data.get('from_deadline', False)
@@ -90,11 +92,23 @@ class Parser(report_sxw.rml_parse):
             #('pricelist_order', '=', False), # needed? (yet in mx_closed
             ('mx_closed', '=', False), 
             ]
+        self.filter_description = _('Order open, not pricelist order')
+
+        if fiscal_position == 'italy': 
+            # TODO not all!!!!!
+            domain.append(('partner_id.property_account_position', '=', 1))    
+            self.filter_description += _(', Italia')
+        else:
+            domain.append(('partner_id.property_account_position', '!=', 1))    
+            self.filter_description += _(', non Italia')
+            
+        if partner_id:
+            domain.append(('partner_id', '=', partner_id))    
+            self.filter_description += _(', Partner filter')                
 
         # -------------------------
         # Start filter description:
         # -------------------------
-        self.filter_description = _('Order open, not pricelist order')
 
         if from_date:
             domain.append(('date_order', '>=', from_date))

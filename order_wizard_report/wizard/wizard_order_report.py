@@ -61,7 +61,9 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
             report_name = 'mx_order_list_report'
         else: # 'line'    
             report_name = 'mx_order_list_line_report'
-               
+
+        datas['partner_id'] = wiz_proxy.partner_id.id or False
+        datas['fiscal_position'] = wiz_proxy.fiscal_position
         datas['from_date'] = wiz_proxy.from_date or False
         datas['to_date'] = wiz_proxy.to_date or False
         datas['from_deadline'] = wiz_proxy.from_deadline or False
@@ -75,6 +77,11 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
             }
 
     _columns = {
+        'fiscal_position': fields.selection([
+            ('italy', 'Italy'),
+            ('extxra', 'Not Italy'),
+            ('all', 'All'),
+            ], 'Fiscal position', required=True),
         'report_type': fields.selection([
             ('deadlined', 'Order deadline'),
             ('line', 'Order line deadline'),
@@ -91,6 +98,7 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
         }
         
     _defaults = {
+        'fiscal_position': lambda *x: 'all',
         'report_type': lambda *x: 'deadlined',
         'only_remain': lambda *x: True,
         #'to_date': datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT),
