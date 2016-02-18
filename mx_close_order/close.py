@@ -55,17 +55,21 @@ class SaleOrder(orm.Model):
         # ------------------------------
         # Close all pricelist confirmed:
         # ------------------------------
+        sol_pool = self.pool.get('sale.order.line')
+        _logger.info('Start setup order as closed')
         # Pricelist order are set to closed:        
         order_ids = self.search(cr, uid, [
             ('state', 'not in', ('cancel', 'sent', 'draft')),
             ('mx_closed', '=', False),
             ('pricelist_order', '=', True),
-            ], context=context)            
+            ], context=context)
         if order_ids:    
             self.write(cr, uid, order_ids, {
                 'mx_closed': True,
                 #'all_produced': True,
                 }, context=context) 
+        _logger.info('Update order not closed but pricelist (# %s)' % len(
+            order_ids))
 
         # -----------------------------------------------
         # Force produced line and closed in closed order: 
@@ -75,14 +79,18 @@ class SaleOrder(orm.Model):
             ('state', 'not in', ('cancel', 'sent', 'draft')),
             ('mx_closed', '=', True),
             ], context=context)            
+        _logger.info('Order closed: %s' % len(
+            order_ids))
         line_ids = sol_pool.search(cr, uid, [
             ('order_id', 'in', order_ids),
             ], context=context)
         if line_ids:
-            sol_pool.write(cr, uid, order_ids, {
+            sol_pool.write(cr, uid, line_ids, {
                 'mx_closed': True,
                 #'all_produced': True,
                 }, context=context) 
+        _logger.info('Close lines: %s' % len(
+            line_ids))
 
         # --------------------------
         # TODO check Forecast order:
@@ -94,7 +102,10 @@ class SaleOrder(orm.Model):
         order_ids = self.search(cr, uid, [
             ('state', 'not in', ('cancel', 'sent', 'draft')),
             ('mx_closed', '=', False),
+            #('pricelist_order', '=', False), # not necessary
             ], context=context)            
+        _logger.info('Check open order: %s' % len(
+            order_ids))
            
         close_ids = []    
         for order in self.browse(cr, uid, order_ids, context=context):
@@ -108,7 +119,9 @@ class SaleOrder(orm.Model):
         if close_ids:
             self.write(cr, uid, close_ids, {
                 'mx_closed': True
-                }, context=context)    
+                }, context=context)
+            _logger.info('Closed now: %s' % len(
+                close_ids))
         return True        
     
     _columns = {
