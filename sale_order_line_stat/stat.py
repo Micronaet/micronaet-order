@@ -44,6 +44,18 @@ class SaleOrderLine(orm.Model):
     
     _inherit = 'sale.order.line'
     
+    def force_all_mrp_id(self, cr, uid, ids, context=None):
+        ''' Update
+        '''
+        sol_ids = self.search(cr, uid, [
+            ('family_id', '=', False)], context=context)
+        for line in self.browse(cr, uid, sol_ids, context=context):
+            self.write(cr, uid, line.id, {
+                'is_manufactured': line.product_id.internal_manufacture,
+                'family_id': line.product_id.family_id.id or False,
+                }, context=context)                
+        return True
+        
     def _get_date_order_from_order(self, cr, uid, ids, context=None):
         ''' When change sol line order
         '''

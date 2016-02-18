@@ -43,6 +43,11 @@ class SaleOrder(orm.Model):
     """
     _inherit = 'sale.order'
 
+    #def get_write_close_line(self, line):
+    #    ''' Internal procedure for close (overrided for mrp line)
+    #    '''
+        
+    
     # Scheduled events:
     def scheduled_check_close_order(self, cr, uid, context=None):
         ''' Check closed order (completely delivered)
@@ -50,6 +55,7 @@ class SaleOrder(orm.Model):
         # ------------------------------
         # Close all pricelist confirmed:
         # ------------------------------
+        # Pricelist order are set to closed:        
         order_ids = self.search(cr, uid, [
             ('state', 'not in', ('cancel', 'sent', 'draft')),
             ('mx_closed', '=', False),
@@ -57,22 +63,39 @@ class SaleOrder(orm.Model):
             ], context=context)            
         if order_ids:    
             self.write(cr, uid, order_ids, {
-                'mx_closed': True
-                }, context=context)                
+                'mx_closed': True,
+                #'all_produced': True,
+                }, context=context) 
 
-        # ----------------------------
-        # TODO Close forecasted order:
-        # ----------------------------
+        # -----------------------------------------------
+        # Force produced line and closed in closed order: 
+        # -----------------------------------------------
+        #TODO temp?!?
+        order_ids = self.search(cr, uid, [
+            ('state', 'not in', ('cancel', 'sent', 'draft')),
+            ('mx_closed', '=', True),
+            ], context=context)            
+        line_ids = sol_pool.search(cr, uid, [
+            ('order_id', 'in', order_ids),
+            ], context=context)
+        if line_ids:
+            sol_pool.write(cr, uid, order_ids, {
+                'mx_closed': True,
+                #'all_produced': True,
+                }, context=context) 
+
+        # --------------------------
+        # TODO check Forecast order:
+        # --------------------------
         
-        # --------------------------
-        # Close all delivered order:
-        # --------------------------
+        # -------------------------
+        # Check line in order open:        
+        # -------------------------
         order_ids = self.search(cr, uid, [
             ('state', 'not in', ('cancel', 'sent', 'draft')),
             ('mx_closed', '=', False),
-            #('pricelist_order', '=', False), <<< FORCE ALL CLOSED?
-            ], context=context)
-            
+            ], context=context)            
+           
         close_ids = []    
         for order in self.browse(cr, uid, order_ids, context=context):
             to_close = True
@@ -86,21 +109,19 @@ class SaleOrder(orm.Model):
             self.write(cr, uid, close_ids, {
                 'mx_closed': True
                 }, context=context)    
+        return True        
     
     _columns = {
         'mx_closed': fields.boolean('MX closed'),
         }
 
-#class SaleOrderLine(orm.Model):
-#    """ Model name: SaleOrderLine
-#    """
-#    
-#    _inherit = 'sale.order'
-#    
-#    _columns = {
-#        'mx_closed': fields.related(
-#            'order_id', 'mx_closed',
-#            type='boolean', string='Closed'), 
-#        }
+class SaleOrderLine(orm.Model):
+    """ Model name: SaleOrderLine
+    """    
+    _inherit = 'sale.order.line'
+    
+    _columns = {
+        'mx_closed': fields.boolean('Line closed'),
+        }
         
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
