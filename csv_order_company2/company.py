@@ -82,6 +82,7 @@ class CsvImportOrderElement(orm.Model):
         # ---------------------------------------------------------------------
         #                      Company 1 Import procedure:
         # ---------------------------------------------------------------------
+        import pdb; pdb.set_trace()
         item_ids = self.search(cr, uid, [
             ('code', '=', 'company2')], context=context)
         if not item_ids:
@@ -242,10 +243,22 @@ class CsvImportOrderElement(orm.Model):
                 # Order
                 order_ids = order_pool.search(cr, uid, [
                     ('client_order_ref', '=', client_order_ref),
+                    ('partner_id', '=', partner_id),
                     ], context=context)
 
                 if order_ids and len(order_ids) == 1:
                     order_id = order_ids[0]
+                    
+                    # delete all previous line:
+                    line_unlink_ids = line_pool.search(cr, uid, [
+                        ('order_id', '=', order_id)], context=context)
+                    if line_unlink_ids:    
+                        line_pool.unlink(cr, uid, line_unlink_ids, 
+                            context=context)
+                        _logger.warning(
+                            'Delete all previous line: %s' % (
+                                len(line_unlink_ids), ))
+
                 else:
                     data = partner_pool.onchange_partner_id(
                         cr, uid, False, partner_id, context=context).get(
@@ -257,15 +270,19 @@ class CsvImportOrderElement(orm.Model):
                         'mx_agent_id': agent_id,
                         'date_order': date_order,
                         })
-                    order_id = order_pool.create(cr, uid, data, context=context)
-                    
+                    order_id = order_pool.create(
+                        cr, uid, data, context=context)                    
                 break
                 
             f1_in.close()
             if not order_id:
                 continue # next file
-            
 
+            # move parent log:
+            order_pool.write(cr, uid, order_id, {
+                'importation_id': importation_id,
+                }, context=context)                            
+            
             # -----------------------------------------------------------------
             # Line file:
             # -----------------------------------------------------------------
@@ -284,7 +301,7 @@ class CsvImportOrderElement(orm.Model):
                     # There's other row (description)
                     pass
                     
-                product_code = line[8]
+                default_code = line[8]
                 product_uom = line[10]
                 product_uom_qty = line[11]
                 price = line[12]
@@ -293,7 +310,37 @@ class CsvImportOrderElement(orm.Model):
                 deadline = self._csv_format_date(line[18])
                 # parcel 22
                 # parcel q 23
-            
+
+                # Product:
+                product_ids = product_pool.search(cr, uid, ['|', '|',
+                    ('default_code', '=', product_code),
+                    ], context=context)
+                if product_ids:
+                    product_id = product_ids[0]                        
+                else:
+                    # Try search in mapping code:
+                    #product_id = code_mapping.get(
+                    #    product_customer, False)
+                    #if not product_id:    
+                    move_history = False
+                    error += \
+                        '%s. File: %s no product code: %s<br/>\n' % (
+                            i, f, default_code)
+                    continue # import other only for log (order incomplete!)
+                
+                # TODO onchange for calculate all other fields?????????????????
+                data = {
+                    'order_id': order_id,
+                    'sequence': sequence,
+                    'product_id': product_id,
+                    'product_uom_qty': product_uom_qty,
+                    'price_unit': price_unit,
+                    'name': description,
+                    'date_deadline': date_deadline,
+                    # TODO discount, scale vat ecc.
+                    }
+                line_pool.create(cr, uid, data, context=context)
+                _logger.info('Create line: %s' % data)            
             f2_in.close()    
 
             # -----------------------------------------------------------------
@@ -302,188 +349,7 @@ class CsvImportOrderElement(orm.Model):
             #f3_in = open(fn3, 'r')
             #f3_in.close()
             # XXX not used
-                
-                        # Create order:
-                        if destination_code: 
-                            destination_ids = partner_pool.search(cr, uid, [
-                                ('parent_id', '=', partner_id),
-                                ('csv_import_code', '=', destination_code),
-                                ], context=context)
-                            if destination_ids:
-                                destination_partner_id = destination_ids[0]
-                            else:
-                                move_history = False
-                                error += '''
-                                    File: %s destination code %s 
-                                    not found in ODOO<br/>\n''' % (
-                                        filename,
-                                        destination_code,
-                                        ) # XXX continue without destination
-                        else:
-                            move_history = False
-                            error += '''
-                                File: %s destination code %s 
-                                not found in file<br/>\n''' % (
-                                    f,
-                                    destination_code,
-                                    ) # XXX continue without destination
-                        order_ids = order_pool.search(cr, uid, [
-                            ('client_order_ref', '=', number),
-                            ('partner_id', '=', partner_id),
-                            ], context=context)
-                        
-                        if order_ids: # on same order:
-                            order_id = order_ids[0]
-                            
-                            # delete all previous line:
-                            line_unlink_ids = line_pool.search(cr, uid, [
-                                ('order_id', '=', order_id)], context=context)
-                            if line_unlink_ids:    
-                                line_pool.unlink(cr, uid, line_unlink_ids, 
-                                    context=context)
-                                _logger.warning(
-                                    'Delete all previous line: %s' % (
-                                        len(line_unlink_ids), ))
-
-                            # move parent log:
-                            order_pool.write(cr, uid, order_id, {
-                                'importation_id': importation_id,
-                                }, context=context)                            
-                        else:
-                            try:
-                                onchange_data = order_pool.onchange_partner_id(
-                                    cr, uid, [], partner_id, context=context)[
-                                        'value']
-                            except:
-                                error += '''
-                                    Onchange partner data not 
-                                    'present in order %s!''' % number
-                                onchange_data = {} # error
-                                            
-                            onchange_data.update({
-                                'importation_id': importation_id,
-                                'partner_id': partner_id,
-                                #'date_order': order_date,
-                                'date_deadline': date_deadline,
-                                'client_order_ref': number,
-                                'destination_partner_id':  
-                                    destination_partner_id,                                
-                                })
-                            order_id = order_pool.create(
-                                cr, uid, onchange_data, context=context)
                     
-                    elif line[0] == 'r': 
-                        # -----------------------------------------------------
-                        #                 Details:
-                        # -----------------------------------------------------
-                        if not order_id: 
-                            move_history = False
-                            error += 'File: %s header not created<br/>\n' % (
-                                f)
-                            continue # next order
-                            
-                        # detail data:
-                        sequence = line[8]
-                        ean = line[9]
-                        # destination EAN
-                        product_code = line[10]
-                        product_customer = line[11]
-                        description = line[12]
-                        product_uom_qty = self._csv_float(line[13])
-                        price_unit = self._csv_float(line[14])
-                 
-                        # Product:
-                        # XXX Problem with spaces (1 not 3)
-                        product_ids = product_pool.search(cr, uid, ['|', '|',
-                            ('default_code', '=', product_code),
-                            # TODO remove:
-                            ('default_code', '=', product_code.replace(
-                                ' ', '  ')),
-                            ('default_code', '=', product_code.replace(
-                                ' ', '   ')),
-                            ], context=context)
-                            
-                        if product_ids:
-                            product_id = product_ids[0]                        
-                        else:
-                            # Try search in mapping code:
-                            product_id = code_mapping.get(
-                                product_customer, False)
-                            if not product_id:    
-                                move_history = False
-                                error += \
-                                    '%s. File: %s no product: %s>%s<br/>\n' % (
-                                        counter,
-                                        f, 
-                                        product_customer, 
-                                        product_code,
-                                        )
-                                continue # jumnp all order # TODO delete order?    
-
-                        # Partner - product partic:
-                        partic_ids = partic_pool.search(cr, uid, [
-                            ('partner_id', '=', partner_id),
-                            ('product_id', '=', product_id),
-                            ], context=context)
-                        if partic_ids:
-                            partic_pool.write(cr, uid, partic_ids[0], {
-                                'partner_price': price_unit,
-                                'partner_code': '%s - EAN %s' % (
-                                    product_customer, ean)
-                                }, context=context)
-                        else: # create        
-                            partic_pool.create(cr, uid, {
-                                'partner_id': partner_id,
-                                'product_id': product_id,
-                                'partner_price': price_unit,
-                                'partner_code': '%s - EAN %s' % (
-                                    product_customer, ean)
-                                }, context=context)
-                                
-                        # TODO onchange for extra data??
-                        data = {
-                            'order_id': order_id,
-                            'sequence': sequence,
-                            'product_id': product_id,
-                            'product_uom_qty': product_uom_qty,
-                            'price_unit': price_unit,
-                            'name': description,
-                            'date_deadline': date_deadline,
-                            # TODO discount, scale vat ecc.
-                            }
-                        # Search sequence for update?    
-                        #line_ids = line_pool.search(cr, uid, [
-                        #    ('order_id', '=', order_id),
-                        #    ('sequence', '=', sequence),
-                        #    ], context=context)
-                        #if line_ids:
-                        #    line_pool.write(cr, uid, line_ids[0], data, 
-                        #        context=context)    
-                        #else:    
-                        line_pool.create(cr, uid, data, context=context)    
-                        _logger.info('Create line: %s' % data)
-                    
-                    elif line[0] == 'c': # comment:
-                        # -----------------------------------------------------
-                        #                 Footer:
-                        # -----------------------------------------------------
-                        note += line[9]
-                    
-                    else:
-                        move_history = False
-                        error += 'Type line not found: %s\n' % line[0]
-                        continue
-                    
-                except:
-                    # Generic record error:
-                    error += '%s. %s<br/>\n' % (counter, sys.exc_info(), )
-                    
-            # Update with coment once ad the end:
-            # XXX Note not used!
-            #order_pool.write(cr, uid, order_id, {
-            #    'text_note_post': note,
-            #    }, context=context)
-                
             # History file if not error:
             if move_history:
                 _logger.info('History file: %s > %s' % (
@@ -494,6 +360,7 @@ class CsvImportOrderElement(orm.Model):
             log_pool.write(cr, uid, importation_id, {
                 'error': error,
                 }, context=context)
+
         return {
             'type': 'ir.actions.act_window',
             'name': 'Log importation',
