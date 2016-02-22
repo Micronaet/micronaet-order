@@ -49,14 +49,25 @@ class CsvImportOrderElement(orm.Model):
     
     _inherit = 'csv.import.order.element'
     
-    def _csv_format_date(self, value):
+    def _csv_format_code(self, value):
+        ''' 000600001 > 06.00001
+        '''
+        try:
+            return '%s.%s' % (
+                 value[2:4],
+                 value[4:],
+                 )
+        except:
+            return False    
+                 
+    def _csv_format_date(self, value, separator=False):
         ''' Return correct date from YYYMMDD
         '''
         try:
             return '%s-%s-%s' % (
-                 value[:4],
-                 value[4:6],
-                 value[6:8])
+                 value[4:8],
+                 value[2:4],
+                 value[:2])
         except:
             return False         
 
@@ -64,7 +75,7 @@ class CsvImportOrderElement(orm.Model):
         ''' Return remove . and / 10.000
         '''
         try:
-            return float(value.replace('.', '')) / 10000
+            return float(value.replace(',', '.'))
         except:
             return 0.0
                  
@@ -82,7 +93,6 @@ class CsvImportOrderElement(orm.Model):
         # ---------------------------------------------------------------------
         #                      Company 1 Import procedure:
         # ---------------------------------------------------------------------
-        import pdb; pdb.set_trace()
         item_ids = self.search(cr, uid, [
             ('code', '=', 'company2')], context=context)
         if not item_ids:
@@ -97,6 +107,7 @@ class CsvImportOrderElement(orm.Model):
         partner_pool = self.pool.get('res.partner')
         partic_pool = self.pool.get('res.partner.product.partic')
         product_pool = self.pool.get('product.product')
+        pay_pool = self.pool.get('account.payment.term')
         
         # ---------------------
         # Read parametric data:
@@ -107,10 +118,7 @@ class CsvImportOrderElement(orm.Model):
         filepath = os.path.expanduser(item_proxy.filepath)
         historypath = os.path.join(filepath, 'history') # TODO param
         filemask = item_proxy.filemask
-        partner_id = item_proxy.partner_id.id
-        code_mapping = {}
-        for mapping in item_proxy.mapping_ids:
-            code_mapping[mapping.name] = mapping.product_id.id
+        company_tag = item_proxy.company_tag
 
         # ------------------
         # Start log message:
@@ -143,9 +151,9 @@ class CsvImportOrderElement(orm.Model):
             _logger.info('Read file: %s' % filename)
             
             # TODO: 
-            f1 = 'orte_fia.csv' 
-            f2 = 'orri_fia.csv' 
-            f3 = 'orag_fia.csv' # not used
+            f1 = 'orte_%s.csv' % company_tag
+            f2 = 'orri_%s.csv' % company_tag
+            f3 = 'orag_%s.csv' % company_tag
             fn1 = os.path.join(filepath, f1)
             fn2 = os.path.join(filepath, f2)
             fn3 = os.path.join(filepath, f3)
@@ -163,7 +171,7 @@ class CsvImportOrderElement(orm.Model):
             except:
                 pass                
             # Unzip in 3 files:
-            os.shell('unzip %s -d %s' (
+            os.system('unzip \'%s\' -d %s' % (
                 filename, filepath))
                 
             move_history = True
@@ -183,18 +191,26 @@ class CsvImportOrderElement(orm.Model):
                 line = line.strip()
                 line = line.split(';')
                 
-                partner_code = line[4]
+                partner_code = self._csv_format_code(line[4])
                 date_order = self._csv_format_date(line[6])
                 #11 vendita
-                agent_code = line[13]
-                client_order_ref = line[15] # note
+                agent_code = line[14]
+                client_order_ref = line[16] # note
                 # max 16
-                dest_description = line[18]
-                dest_address = line[19]
-                dest_cap = line[20]
-                dest_city = line[21]
-                dest_province = line[22]
-                pay_code = line[27]
+                dest_description = line[19] or ''
+                dest_address = line[20] or ''
+                dest_cap = line[21] or ''
+                dest_city = line[22] or ''
+                dest_province = line[23] or ''       
+                pay_code = line[28] or ''
+
+                text_note_post = '%s\n%s\n%s %s (%s)' % (
+                    dest_description,
+                    dest_address,
+                    dest_cap,
+                    dest_city,
+                    dest_province,
+                    )                    
 
                 # -------------------------------------------------------------
                 # Create header:
@@ -221,34 +237,45 @@ class CsvImportOrderElement(orm.Model):
                 partner_id = partner_ids[0]
 
                 # Agent:
-                if not agent_code: 
+                agent_id = False
+                if not agent_code:                 
                     error += '''
                         File: %s agent not present, code %s<br/>\n''' % (
                             filename, agent_code)
-                    break
-            
-                agent_ids = partner_pool.search(cr, uid, [
-                    ('sql_supplier_code', '=', agent_code),
-                    ], context=context)
-                if agent_ids:
-                    agent_id = agent_ids[0]
-                
-                    error += '''
-                        File: %s agent ID from code %s 
-                        not found in ODOO<br/>\n''' % (
-                            filename, agent_code)
-                else:
-                    agent_id = False
-                
+                else:                
+                    agent_ids = partner_pool.search(cr, uid, [
+                        ('sql_supplier_code', '=', agent_code),
+                        ], context=context)
+                    if agent_ids:
+                        agent_id = agent_ids[0]
+                    else:
+                        error += '''
+                            File: %s agent ID from code %s 
+                            not found in ODOO<br/>\n''' % (
+                                filename, agent_code)
+
+                # Payment term:
+                payment_term_id = False                    
+                if pay_code:
+                    pay_ids = pay_pool.search(cr, uid, [
+                        ('import_id', '=', pay_code)], context=context)
+                    if pay_ids:
+                        payment_term_id = pay_ids[0]
+                    else:                         
+                        error += '''
+                            File: %s pay code %s 
+                            not found in ODOO<br/>\n''' % (
+                                filename, pay_code)
+                    
                 # Order
                 order_ids = order_pool.search(cr, uid, [
                     ('client_order_ref', '=', client_order_ref),
                     ('partner_id', '=', partner_id),
+                    # TODO payment
                     ], context=context)
 
                 if order_ids and len(order_ids) == 1:
-                    order_id = order_ids[0]
-                    
+                    order_id = order_ids[0]                    
                     # delete all previous line:
                     line_unlink_ids = line_pool.search(cr, uid, [
                         ('order_id', '=', order_id)], context=context)
@@ -260,15 +287,21 @@ class CsvImportOrderElement(orm.Model):
                                 len(line_unlink_ids), ))
 
                 else:
-                    data = partner_pool.onchange_partner_id(
+                    data = order_pool.onchange_partner_id(
                         cr, uid, False, partner_id, context=context).get(
                             'value', {})
-                    
+                            
+                    if payment_term_id:
+                        # TODO log difference!!!!!!!
+                        data['payment_term_id'] = payment_term_id
+                        data['payment_term'] = payment_term_id # double!!
+
                     data.update({
                         'partner_id': partner_id,
                         'client_order_ref': client_order_ref,
                         'mx_agent_id': agent_id,
                         'date_order': date_order,
+                        'text_note_post': text_note_post,                        
                         })
                     order_id = order_pool.create(
                         cr, uid, data, context=context)                    
@@ -289,7 +322,7 @@ class CsvImportOrderElement(orm.Model):
             f2_in = open(fn2, 'r')
 
             i = 0
-            for line in f1_in:
+            for line in f2_in:
                 i += 1
                 if i < 2: # jump header
                     continue
@@ -302,18 +335,24 @@ class CsvImportOrderElement(orm.Model):
                     pass
                     
                 default_code = line[8]
-                product_uom = line[10]
-                product_uom_qty = line[11]
-                price = line[12]
-                vat = line[13]
+                #product_uom = line[10] # TODO use product one's
+                product_uom_qty = self._csv_float(line[11])
+                price_unit = self._csv_float(line[12])
+                vat = line[13] # >>> taxes_ids!!!
                 discount_scale = line[15]
-                deadline = self._csv_format_date(line[18])
-                # parcel 22
-                # parcel q 23
+                date_deadline = self._csv_format_date(line[18])
+                sequence = line[89]
+                # TODO doesn't work:
+                if i == 2: # update date dedaline in header
+                    order_pool.write(cr, uid, order_id, {
+                        'date_dadline': date_deadline,
+                        }, context=context) 
+                
+                # XXX parcel 22  # parcel q 23
 
                 # Product:
-                product_ids = product_pool.search(cr, uid, ['|', '|',
-                    ('default_code', '=', product_code),
+                product_ids = product_pool.search(cr, uid, [
+                    ('default_code', '=', default_code),
                     ], context=context)
                 if product_ids:
                     product_id = product_ids[0]                        
@@ -328,17 +367,33 @@ class CsvImportOrderElement(orm.Model):
                             i, f, default_code)
                     continue # import other only for log (order incomplete!)
                 
+                product_proxy = product_pool.browse(
+                    cr, uid, product_id, context=context)
                 # TODO onchange for calculate all other fields?????????????????
-                data = {
+                data = line_pool.on_change_multi_discount(
+                    cr, uid, False, discount_scale, context=context).get(
+                        'value', {})
+
+                data.update({                    
                     'order_id': order_id,
                     'sequence': sequence,
                     'product_id': product_id,
                     'product_uom_qty': product_uom_qty,
                     'price_unit': price_unit,
-                    'name': description,
+                    'name': product_proxy.name,
+                    'product_uom': product_proxy.uom_id.id,
                     'date_deadline': date_deadline,
+                    'multi_discount_rates': discount_scale,
                     # TODO discount, scale vat ecc.
-                    }
+                    })
+                #import pdb; pdb.set_trace()
+                try:    
+                    tax_id = product_proxy.taxes_id[0].id
+                    if tax_id: 
+                        data['tax_id'] = [(6, 0, (tax_id, ))]
+                except:
+                    pass # TODO raise error    
+
                 line_pool.create(cr, uid, data, context=context)
                 _logger.info('Create line: %s' % data)            
             f2_in.close()    

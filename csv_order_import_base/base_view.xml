@@ -25,10 +25,13 @@
                         <field name="name" />
                         
                         <field name="partner_id" />
-                        <field name="filemask" />
+                        <field name="company_tag" />
 
                         <field name="filepath" />
                         <field name="filename" />
+
+                        <field name="filemask" />
+                        <newline />
                         
                         <separator name="Code mapping" colspan="4"/>
                         <field name="mapping_ids" colspan="4" nolabel="1">
@@ -54,6 +57,7 @@
                 <field name="code" readonly="1" />
                 <field name="name" />
                 <field name="partner_id" />
+                <field name="company_tag" />
                 <field name="filepath" />
                 <field name="filename" />
                 <field name="filemask" />
