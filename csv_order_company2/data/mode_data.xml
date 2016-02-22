@@ -5,7 +5,8 @@
            <field name="code">company2</field>
            <field name="name">Company 2</field>
            <field name="note">Note for company 2</field>
-           <field name="filepath">~/etl/order/comapny2</field>
+           <field name="filepath">~/etl/order/company2</field>
+           <field name="filemask">ocweb</field>
        </record>
     </data>
 </openerp>

@@ -75,7 +75,7 @@ class CsvImportOrderElement(orm.Model):
             code is the code of element to load (data.xml of every new mod.)
             Importatione will be as data in table
         '''
-        if code != 'company1':
+        if code != 'company2':
             return super(CsvImportOrderElement, self)._csv_import_order(
                 cr, uid, code, context=context)
         
@@ -83,10 +83,10 @@ class CsvImportOrderElement(orm.Model):
         #                      Company 1 Import procedure:
         # ---------------------------------------------------------------------
         item_ids = self.search(cr, uid, [
-            ('code', '=', 'company1')], context=context)
+            ('code', '=', 'company2')], context=context)
         if not item_ids:
             _logger.error(
-                'Import code not found: company1 (record deleted?)')
+                'Import code not found: company2 (record deleted?)')
             return False    
 
         # Pool used:
@@ -126,7 +126,7 @@ class CsvImportOrderElement(orm.Model):
         order_list = []
         for f in os.listdir(filepath):
             if os.path.isfile(os.path.join(filepath, f)) and f.startswith(
-                    filemask) and f.endswith('csv'):
+                    filemask) and f.endswith('zip'):
                 order_list.append(f)
         order_list.sort()
         
@@ -140,32 +140,169 @@ class CsvImportOrderElement(orm.Model):
             filename = os.path.join(filepath, f)
             historyname = os.path.join(historypath, f)
             _logger.info('Read file: %s' % filename)
-            f_in = open(filename)            
             
-            # reset header / footer element:
-            note = ''
+            # TODO: 
+            f1 = 'orte_fia.csv' 
+            f2 = 'orri_fia.csv' 
+            f3 = 'orag_fia.csv' # not used
+            fn1 = os.path.join(filepath, f1)
+            fn2 = os.path.join(filepath, f2)
+            fn3 = os.path.join(filepath, f3)
+            # Delete if present:
+            try: 
+                os.remove(fn1)
+            except:
+                pass
+            try: 
+                os.remove(fn2)
+            except:
+                pass
+            try: 
+                os.remove(fn3)
+            except:
+                pass                
+            # Unzip in 3 files:
+            os.shell('unzip %s -d %s' (
+                filename, filepath))
+                
+            move_history = True
+            
+            # -----------------------------------------------------------------
+            # Header file:
+            # -----------------------------------------------------------------
+            f1_in = open(fn1, 'r')
+            i = 0
             order_id = False
-            destination_partner_id = False
-            move_history= True
-            date_deadline = False # keep header in line!
-            counter = 0
-            for line in f_in:
-                try:
-                    counter += 1
-                    # Read as CSV:
-                    line = line.strip()
-                    line = line.split(';')
+            for line in f1_in:
+                i += 1
+                if i != 2:
+                    continue
                     
-                    if line[0] == 't': 
-                        # -----------------------------------------------------
-                        #                      header data:
-                        # -----------------------------------------------------
-                        destination_code = line[1]
-                        number = line[3]
-                        insert_date = self._csv_format_date(line[6])
-                        order_date = self._csv_format_date(line[7])
-                        date_deadline = self._csv_format_date(line[23])
-                        
+                # Read header from file:
+                line = line.strip()
+                line = line.split(';')
+                
+                partner_code = line[4]
+                date_order = self._csv_format_date(line[6])
+                #11 vendita
+                agent_code = line[13]
+                client_order_ref = line[15] # note
+                # max 16
+                dest_description = line[18]
+                dest_address = line[19]
+                dest_cap = line[20]
+                dest_city = line[21]
+                dest_province = line[22]
+                pay_code = line[27]
+
+                # -------------------------------------------------------------
+                # Create header:
+                # -------------------------------------------------------------
+                # Partner:
+                if not partner_code: 
+                    move_history = False
+                    error += '''
+                        File: %s no partner code %s<br/>\n''' % (
+                            filename, partner_code)
+                    break
+            
+                partner_ids = partner_pool.search(cr, uid, [
+                    ('is_company', '=', True),
+                    ('sql_customer_code', '=', partner_code),
+                    ], context=context)
+                if not partner_ids:
+                    move_history = False
+                    error += '''
+                        File: %s partner ID from code %s 
+                        not found in ODOO<br/>\n''' % (
+                            filename, partner_code)
+                    break                                    
+                partner_id = partner_ids[0]
+
+                # Agent:
+                if not agent_code: 
+                    error += '''
+                        File: %s agent not present, code %s<br/>\n''' % (
+                            filename, agent_code)
+                    break
+            
+                agent_ids = partner_pool.search(cr, uid, [
+                    ('sql_supplier_code', '=', agent_code),
+                    ], context=context)
+                if agent_ids:
+                    agent_id = agent_ids[0]
+                
+                    error += '''
+                        File: %s agent ID from code %s 
+                        not found in ODOO<br/>\n''' % (
+                            filename, agent_code)
+                else:
+                    agent_id = False
+                
+                # Order
+                order_ids = order_pool.search(cr, uid, [
+                    ('client_order_ref', '=', client_order_ref),
+                    ], context=context)
+
+                if order_ids and len(order_ids) == 1:
+                    order_id = order_ids[0]
+                else:
+                    data = partner_pool.onchange_partner_id(
+                        cr, uid, False, partner_id, context=context).get(
+                            'value', {})
+                    
+                    data.update({
+                        'partner_id': partner_id,
+                        'client_order_ref': client_order_ref,
+                        'mx_agent_id': agent_id,
+                        'date_order': date_order,
+                        })
+                    order_id = order_pool.create(cr, uid, data, context=context)
+                    
+                break
+                
+            f1_in.close()
+            if not order_id:
+                continue # next file
+            
+
+            # -----------------------------------------------------------------
+            # Line file:
+            # -----------------------------------------------------------------
+            f2_in = open(fn2, 'r')
+
+            i = 0
+            for line in f1_in:
+                i += 1
+                if i < 2: # jump header
+                    continue
+                line = line.strip()
+                line = line.split(';')
+                
+                row_type = line[6] # R (data)
+                if row_type != 'R':
+                    # There's other row (description)
+                    pass
+                    
+                product_code = line[8]
+                product_uom = line[10]
+                product_uom_qty = line[11]
+                price = line[12]
+                vat = line[13]
+                discount_scale = line[15]
+                deadline = self._csv_format_date(line[18])
+                # parcel 22
+                # parcel q 23
+            
+            f2_in.close()    
+
+            # -----------------------------------------------------------------
+            # Agent file:
+            # -----------------------------------------------------------------
+            #f3_in = open(fn3, 'r')
+            #f3_in.close()
+            # XXX not used
+                
                         # Create order:
                         if destination_code: 
                             destination_ids = partner_pool.search(cr, uid, [
