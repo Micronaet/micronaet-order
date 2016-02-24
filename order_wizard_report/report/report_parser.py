@@ -109,7 +109,6 @@ class Parser(report_sxw.rml_parse):
         # -------------------------
         # Start filter description:
         # -------------------------
-
         if from_date:
             domain.append(('date_order', '>=', from_date))
             self.filter_description += _(', date >= %s') % from_date
@@ -131,7 +130,7 @@ class Parser(report_sxw.rml_parse):
         if to_deadline:
             domain.append(('date_deadline', '<=', to_deadline))
             self.filter_description += _(', deadline <= %s') % to_deadline
-            
+
         line_ids = line_pool.search(self.cr, self.uid, domain, 
             order='date_deadline, order_id, id')
         #res = []
