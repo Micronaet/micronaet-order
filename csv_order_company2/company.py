@@ -49,7 +49,7 @@ class CsvImportOrderElement(orm.Model):
     
     _inherit = 'csv.import.order.element'
     
-    def _csv_format_code(self, value):
+    def _csv_format_c2_code(self, value):
         ''' 000600001 > 06.00001
         '''
         try:
@@ -60,7 +60,7 @@ class CsvImportOrderElement(orm.Model):
         except:
             return False    
                  
-    def _csv_format_date(self, value, separator=False):
+    def _csv_format_c2_date(self, value, separator=False):
         ''' Return correct date from YYYMMDD
         '''
         try:
@@ -71,7 +71,7 @@ class CsvImportOrderElement(orm.Model):
         except:
             return False         
 
-    def _csv_float(self, value):
+    def _csv_c2_float(self, value):
         ''' Return remove . and / 10.000
         '''
         try:
@@ -191,8 +191,8 @@ class CsvImportOrderElement(orm.Model):
                 line = line.strip()
                 line = line.split(';')
                 
-                partner_code = self._csv_format_code(line[4])
-                date_order = self._csv_format_date(line[6])
+                partner_code = self._csv_format_c2_code(line[4])
+                date_order = self._csv_format_c2_date(line[6])
                 #11 vendita
                 agent_code = line[14]
                 client_order_ref = line[16] # note
@@ -336,11 +336,11 @@ class CsvImportOrderElement(orm.Model):
                     
                 default_code = line[8]
                 #product_uom = line[10] # TODO use product one's
-                product_uom_qty = self._csv_float(line[11])
-                price_unit = self._csv_float(line[12])
+                product_uom_qty = self._csv_c2_float(line[11])
+                price_unit = self._csv_c2_float(line[12])
                 vat = line[13] # >>> taxes_ids!!!
                 discount_scale = line[15]
-                date_deadline = self._csv_format_date(line[18])
+                date_deadline = self._csv_format_c2_date(line[18])
                 sequence = line[89]
                 # TODO doesn't work:
                 if i == 2: # update date dedaline in header

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+    <record model="ir.ui.view" id="view_sale_order_outsource_form_view">
+        <field name="name">sale.order.outsource.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form" />
+        <field name="arch" type="xml">
+            <!--sale.order.line LINE:-->
+            <xpath expr="//page/field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
+                <field name="outsource" invisible="1"/>
+                <button name="nothing" string="Outsource product" type="object" icon="gtk-convert" attrs="{'invisible': [('outsource', '=', False)]}" />            
+            </xpath>
+        </field>
+    </record>
+
+    </data>
+</openerp>
+

@@ -49,7 +49,7 @@ class CsvImportOrderElement(orm.Model):
     
     _inherit = 'csv.import.order.element'
     
-    def _csv_format_date(self, value):
+    def _csv_format_c1_date(self, value):
         ''' Return correct date from YYYMMDD
         '''
         try:
@@ -60,7 +60,7 @@ class CsvImportOrderElement(orm.Model):
         except:
             return False         
 
-    def _csv_float(self, value):
+    def _csv_c1_float(self, value):
         ''' Return remove . and / 10.000
         '''
         try:
@@ -162,9 +162,9 @@ class CsvImportOrderElement(orm.Model):
                         # -----------------------------------------------------
                         destination_code = line[1]
                         number = line[3]
-                        insert_date = self._csv_format_date(line[6])
-                        order_date = self._csv_format_date(line[7])
-                        date_deadline = self._csv_format_date(line[23])
+                        insert_date = self._csv_format_c1_date(line[6])
+                        order_date = self._csv_format_c1_date(line[7])
+                        date_deadline = self._csv_format_c1_date(line[23])
                         
                         # Create order:
                         if destination_code: 
@@ -252,8 +252,8 @@ class CsvImportOrderElement(orm.Model):
                         product_code = line[10]
                         product_customer = line[11]
                         description = line[12]
-                        product_uom_qty = self._csv_float(line[13])
-                        price_unit = self._csv_float(line[14])
+                        product_uom_qty = self._csv_c1_float(line[13])
+                        price_unit = self._csv_c1_float(line[14])
                  
                         # Product:
                         # XXX Problem with spaces (1 not 3)
