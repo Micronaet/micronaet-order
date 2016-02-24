@@ -114,8 +114,8 @@ class Parser(report_sxw.rml_parse):
             domain.append(('date_order', '>=', from_date))
             self.filter_description += _(', date >= %s') % from_date
         if to_date:
-            domain.append(('date_order', '<', to_date))
-            self.filter_description += _(', date < %s') % to_date
+            domain.append(('date_order', '<=', to_date))
+            self.filter_description += _(', date <= %s') % to_date
         
         order_ids = sale_pool.search(self.cr, self.uid, domain) # TODO order ?!
         _logger.info('Found %s orders' % len(order_ids))
@@ -129,8 +129,8 @@ class Parser(report_sxw.rml_parse):
             domain.append(('date_deadline', '>=', from_deadline))
             self.filter_description += _(', deadline >= %s') % from_deadline
         if to_deadline:
-            domain.append(('date_deadline', '<', to_deadline))
-            self.filter_description += _(', deadline < %s') % to_deadline
+            domain.append(('date_deadline', '<=', to_deadline))
+            self.filter_description += _(', deadline <= %s') % to_deadline
             
         line_ids = line_pool.search(self.cr, self.uid, domain, 
             order='date_deadline, order_id, id')

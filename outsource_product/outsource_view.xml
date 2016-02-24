@@ -13,6 +13,29 @@
         </field>
     </record>
 
+    <record model="ir.ui.view" id="view_product_prodcut_outsource_form">
+        <field name="name">product.product.outsourceform</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_product_tree_view"/>
+        <field name="arch" type="xml">
+            <field name="default_code" position="before">
+                 <field name="outsource" invisible="1"/>
+                 <button name="nothing" string="Outsource product" type="object" icon="gtk-convert" attrs="{'invisible': [('outsource', '=', False)]}" />            
+            </field>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_outsource_product_search">
+        <field name="name">product.product.search</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_search_form_view"/>
+        <field name="arch" type="xml">            
+            <field name="name" position="after">
+                <filter name="outsource_on" string="Outsource" domain="[('outsource','=',True)]"/>
+            </field>
+        </field>
+    </record>
+    
     <record model="ir.ui.view" id="view_res_company_pick_type_form">
         <field name="name">res.company.form</field>
         <field name="model">res.company</field>
