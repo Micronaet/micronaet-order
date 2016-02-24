@@ -79,7 +79,7 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
     _columns = {
         'fiscal_position': fields.selection([
             ('italy', 'Italy'),
-            ('extxra', 'Not Italy'),
+            ('extra', 'Not Italy'),
             ('all', 'All'),
             ], 'Fiscal position', required=True),
         'report_type': fields.selection([
