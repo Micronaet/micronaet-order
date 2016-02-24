@@ -78,8 +78,7 @@ class CsvImportOrderElement(orm.Model):
             return float(value.replace(',', '.'))
         except:
             return 0.0
-                 
-    
+
     # Virtual procedure:
     def _csv_import_order(self, cr, uid, code, context=None):
         ''' Import procedure that will be called from modules (depend on this)

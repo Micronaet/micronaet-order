@@ -75,6 +75,18 @@ class CsvImportOrderElement(orm.Model):
             code is the code of element to load (data.xml of every new mod.)
             Importatione will be as data in table
         '''
+        def only_ascii(value):
+            ''' Remove not ascii char
+            '''
+            res = ''
+            value = (value or '').strip()
+            for c in value:
+                if ord(c) < 128:
+                    res += c
+                else:  
+                    res += '#'
+            return res
+                        
         if code != 'company1':
             return super(CsvImportOrderElement, self)._csv_import_order(
                 cr, uid, code, context=context)
@@ -310,7 +322,7 @@ class CsvImportOrderElement(orm.Model):
                             'product_id': product_id,
                             'product_uom_qty': product_uom_qty,
                             'price_unit': price_unit,
-                            'name': description,
+                            'name': only_ascii(description),
                             'date_deadline': date_deadline,
                             # TODO discount, scale vat ecc.
                             }
