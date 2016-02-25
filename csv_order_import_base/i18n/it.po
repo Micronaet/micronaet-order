@@ -1,0 +1,230 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* csv_order_import_base
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-02-17 11:41+0000\n"
+"PO-Revision-Date: 2016-02-17 12:54+0100\n"
+"Last-Translator: Anna <anna@micronaet.it>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"X-Generator: Poedit 1.5.4\n"
+
+#. module: csv_order_import_base
+#: field:res.partner,csv_import_code:0
+msgid "CSV Import code"
+msgstr "CSV Codice import"
+
+#. module: csv_order_import_base
+#: model:ir.model,name:csv_order_import_base.model_csv_import_order_element
+msgid "CSV Order import"
+msgstr "CSV Ordine import"
+
+#. module: csv_order_import_base
+#: model:ir.model,name:csv_order_import_base.model_csv_import_order_element_mapping
+msgid "CSV Order mapping import"
+msgstr "CSV Mappatura ordine import"
+
+#. module: csv_order_import_base
+#: model:ir.actions.act_window,name:csv_order_import_base.action_csv_import_order_element
+msgid "CSV import order list"
+msgstr "CSV lista degli ordini import"
+
+#. module: csv_order_import_base
+#: view:sale.order.csv.import.wizard:csv_order_import_base.csv_import_order_company_wizard_form
+msgid "Cancel"
+msgstr "Annulla"
+
+#. module: csv_order_import_base
+#: field:csv.import.order.element,code:0
+msgid "Code"
+msgstr "Codice"
+
+#. module: csv_order_import_base
+#: field:csv.import.order.element,mapping_ids:0
+msgid "Code mapping"
+msgstr "Mappatura codice"
+
+#. module: csv_order_import_base
+#: field:csv.import.order.element,create_uid:0
+#: field:csv.import.order.element.mapping,create_uid:0
+#: field:sale.order.csv.import.wizard,create_uid:0
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: csv_order_import_base
+#: field:csv.import.order.element,create_date:0
+#: field:csv.import.order.element.mapping,create_date:0
+#: field:sale.order.csv.import.wizard,create_date:0
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: csv_order_import_base
+#: field:csv.import.order.element,partner_id:0
+msgid "Customer"
+msgstr "Cliente"
+
+#. module: csv_order_import_base
+#: field:csv.import.order.element.mapping,name:0
+msgid "Customer code"
+msgstr "Codice cliente"
+
+#. module: csv_order_import_base
+#: field:csv.import.order.element,filename:0
+msgid "File name"
+msgstr "Nome del file"
+
+#. module: csv_order_import_base
+#: field:log.importation,filename:0
+msgid "Filename"
+msgstr "Nome del file"
+
+#. module: csv_order_import_base
+#: field:log.importation,fullname:0
+msgid "Fullname"
+msgstr "Nome per esteso"
+
+#. module: csv_order_import_base
+#: field:csv.import.order.element,id:0
+#: field:csv.import.order.element.mapping,id:0
+#: field:sale.order.csv.import.wizard,id:0
+msgid "ID"
+msgstr "ID"
+
+#. module: csv_order_import_base
+#: view:sale.order.csv.import.wizard:csv_order_import_base.csv_import_order_company_wizard_form
+msgid "Import"
+msgstr "Importato"
+
+#. module: csv_order_import_base
+#: model:ir.actions.act_window,name:csv_order_import_base.action_csv_import_order_company_wizard
+msgid "Import CSV"
+msgstr "CSV importato"
+
+#. module: csv_order_import_base
+#: field:sale.order.csv.import.wizard,item_id:0
+msgid "Import order for partner"
+msgstr "Importazione ordine dal partner"
+
+#. module: csv_order_import_base
+#: model:ir.ui.menu,name:csv_order_import_base.menu_csv_import_order_company_wizard
+msgid "Import order wizard"
+msgstr "Wizard importazione ordine"
+
+#. module: csv_order_import_base
+#: field:csv.import.order.element.mapping,item_id:0
+msgid "Import ref."
+msgstr "Rif. importazione"
+
+#. module: csv_order_import_base
+#: model:ir.model,name:csv_order_import_base.model_log_importation
+msgid "Importation log"
+msgstr "Log importazione"
+
+#. module: csv_order_import_base
+#: field:csv.import.order.element,write_uid:0
+#: field:csv.import.order.element.mapping,write_uid:0
+#: field:sale.order.csv.import.wizard,write_uid:0
+msgid "Last Updated by"
+msgstr "Ultimo aggiornamento di"
+
+#. module: csv_order_import_base
+#: field:csv.import.order.element,write_date:0
+#: field:csv.import.order.element.mapping,write_date:0
+#: field:sale.order.csv.import.wizard,write_date:0
+msgid "Last Updated on"
+msgstr "Ultimo aggiornamento su"
+
+#. module: csv_order_import_base
+#: field:sale.order,importation_id:0
+msgid "Log link"
+msgstr "Collegamento link"
+
+#. module: csv_order_import_base
+#: view:csv.import.order.element:csv_order_import_base.view_csv_import_order_element_form
+msgid "Mapping"
+msgstr "Mappatura"
+
+#. module: csv_order_import_base
+#: field:csv.import.order.element,filemask:0
+msgid "Mask"
+msgstr "Maschera"
+
+#. module: csv_order_import_base
+#: field:log.importation,mode_id:0
+msgid "Mode"
+msgstr "Modo"
+
+#. module: csv_order_import_base
+#: field:csv.import.order.element,name:0
+msgid "Name"
+msgstr "Nome"
+
+#. module: csv_order_import_base
+#: field:csv.import.order.element,note:0
+#: view:sale.order.csv.import.wizard:csv_order_import_base.csv_import_order_company_wizard_form
+#: field:sale.order.csv.import.wizard,note:0
+msgid "Note"
+msgstr "Note"
+
+#. module: csv_order_import_base
+#: view:log.importation:csv_order_import_base.product_product_importation_form_order_page_view
+msgid "Open"
+msgstr "Apri"
+
+#. module: csv_order_import_base
+#: field:log.importation,order_ids:0
+msgid "Order"
+msgstr "Ordine"
+
+#. module: csv_order_import_base
+#: model:ir.ui.menu,name:csv_order_import_base.menu_product_import_order_list
+msgid "Order import list"
+msgstr "Lista importazione ordine"
+
+#. module: csv_order_import_base
+#: view:log.importation:csv_order_import_base.product_product_importation_form_order_page_view
+msgid "Order imported:"
+msgstr "Ordini importati:"
+
+#. module: csv_order_import_base
+#: view:log.importation:csv_order_import_base.product_product_importation_form_order_page_view
+msgid "Order:"
+msgstr "Ordini:"
+
+#. module: csv_order_import_base
+#: model:ir.model,name:csv_order_import_base.model_res_partner
+msgid "Partner"
+msgstr "Partner"
+
+#. module: csv_order_import_base
+#: field:csv.import.order.element,filepath:0
+msgid "Path"
+msgstr "Percorso"
+
+#. module: csv_order_import_base
+#: field:csv.import.order.element.mapping,product_id:0
+msgid "Product"
+msgstr "Prodotto"
+
+#. module: csv_order_import_base
+#: view:sale.order.csv.import.wizard:csv_order_import_base.csv_import_order_company_wizard_form
+msgid "Product CSV import"
+msgstr "CSV Importazione prodotti"
+
+#. module: csv_order_import_base
+#: model:ir.model,name:csv_order_import_base.model_sale_order
+msgid "Sales Order"
+msgstr "Ordine di vendita"
+
+#. module: csv_order_import_base
+#: view:csv.import.order.element:csv_order_import_base.view_csv_import_order_element_form
+#: view:csv.import.order.element:csv_order_import_base.view_csv_import_order_element_tree
+msgid "String"
+msgstr "Stringa"
