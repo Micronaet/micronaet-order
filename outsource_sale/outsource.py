@@ -38,6 +38,43 @@ from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
 
 _logger = logging.getLogger(__name__)
 
+class SaleOrder(orm.Model):
+    """ Model name: Sale order
+    """
+    
+    _inherit = 'sale.order'
+
+    # ----------------------------------------
+    # Function called from master DB (transit)
+    # ----------------------------------------
+    #def erpeek_stock_movement_inventory_data(self, cr, uid, product_ids, 
+    #        debug_f):
+    #    ''' Function called by Erpeek with dict passed by pickle file
+    #    '''
+    #    pickle_file = '/home/administrator/photo/dicts.pickle' # TODO 
+    #    debug_file = open(debug_f, 'a')    
+    #    
+    #    pickle_f = open(pickle_file, 'r')        
+    #    dicts = pickle.load(pickle_f)
+    #    pickle_f.close()
+    #    
+    #    res = self.stock_movement_inventory_data(cr, uid, 
+    #        product_ids, True, debug_file, dicts, context=None)#
+
+    #    pickle_f = open(pickle_file, 'w')
+    #    pickle.dump(dicts, pickle_f)
+    #    pickle_f.close()
+    #    debug_file.close()
+    #    return res
+    
+    def create_order_outsource(self, cr, uid, ids, context=None):
+        ''' Create order in other company
+        '''
+        
+        return True
+        
+    
+
 class SaleOrderLine(orm.Model):
     """ Model name: Sale order line
     """

@@ -6,6 +6,11 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form" />
         <field name="arch" type="xml">
+            <!--sale.order HEADER:-->
+            <xpath expr="//notebook" position="before">
+                <button name="create_order_outsource" string="Create outource order" type="object" />
+            </xpath>
+
             <!--sale.order.line LINE:-->
             <xpath expr="//page/field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
                 <field name="outsource" invisible="1"/>
