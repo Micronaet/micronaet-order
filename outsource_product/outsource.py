@@ -64,7 +64,7 @@ class ResCompany(orm.Model):
         param = self.browse(cr, uid, company_ids, context=context)[0]
         
         sock = xmlrpclib.ServerProxy('http://%s:%s/xmlrpc/common' % (
-            param.outsource_hostname, param.outsource_port)
+            param.outsource_hostname, param.outsource_port))
         
         user_id = sock.login(db, username, password)
         db = param.outsource_db  
@@ -72,7 +72,7 @@ class ResCompany(orm.Model):
         password = param.outsource_password
 
         sock = xmlrpclib.ServerProxy('http://%s:%s/xmlrpc/object' % (
-            param.outsource_hostname, param.outsource_port)
+            param.outsource_hostname, param.outsource_port))
 
         return (db, user_id, password, sock)
     

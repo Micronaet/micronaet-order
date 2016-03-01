@@ -132,9 +132,10 @@ class SaleOrder(orm.Model):
         pickle_f.close()
         return res
 
-    def create_order_outsource(self, cr, uid, ids, context=None):
+    def button_create_order_outsource(self, cr, uid, ids, context=None):
         ''' Create order in other company
         '''
+        import pdb; pdb.set_trace()
         assert len(ids) == 1, 'Call only for once'
         
         order_dict = {}
