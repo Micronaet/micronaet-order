@@ -73,6 +73,8 @@ class SaleOrder(orm.Model):
             @return esit        
         '''
         sol_pool = self.pool.get('sale.order.line')
+        product_pool = self.pool.get('product.product')
+
         # Read dictionary passed:
         order_dict = self.erpeek_stock_order_in(cr, uid, pickle_file)
         
@@ -80,17 +82,21 @@ class SaleOrder(orm.Model):
         #                              HEADER
         # ---------------------------------------------------------------------
         # Create order if not present:
-        name = order_dict['header'].name
-        order_ids = self.search(cr, uid, [], context=context)
+        name = order_dict['header']['name']
+        order_ids = self.search(cr, uid, [
+            ('linked', '=', True),
+            ('client_order_ref', '=', name),
+            ], context=context)
         if order_ids:
             return _('Order jet present! Delete and reimport if not started!')
         
-        partner_id = 0
+        partner_id = 1 # TODO
         data = self.onchange_partner_id(cr, uid, False, partner_id, 
             context=context).get('value', {})        
         data.update({
             'partner_id': partner_id, 
             'linked': True, # as outsource            
+            'client_order_ref': name,
             })
         order_id = self.create(cr, uid, data, context=context)
 
@@ -110,11 +116,12 @@ class SaleOrder(orm.Model):
                 'product_id': product_ids[0], # XXX check more than one?
                 'product_uom_qty': line['product_uom_qty'],
                 'order_id': order_id,
+                'date_deadline': line['date_deadline'],
                 # uom?
                 }, context=context)
 
         try:
-            os.remove(res)
+            os.remove(pickle_file)
         except:
             pass # do nothing
 
@@ -127,17 +134,17 @@ class SaleOrder(orm.Model):
         ''' Function called by Erpeek with dict passed by pickle file
         '''
         pickle_f = tempfile.NamedTemporaryFile(delete=False)
-        pickle.dump(dicts, pickle_f)
-        res = f.name 
+        pickle.dump(data, pickle_f)
+        res = pickle_f.name 
         pickle_f.close()
         return res
 
     def button_create_order_outsource(self, cr, uid, ids, context=None):
         ''' Create order in other company
         '''
-        import pdb; pdb.set_trace()
         assert len(ids) == 1, 'Call only for once'
         
+        company_pool = self.pool.get('res.company')
         order_dict = {}
         for order in self.browse(cr, uid, ids, context=context):
             order_dict['header'] = {
@@ -147,8 +154,8 @@ class SaleOrder(orm.Model):
                 'date_confirm': order.date_confirm,
                 'client_order_ref': order.client_order_ref,
                 'note': _(
-                    'Imported order\n Partner: %s [%s]\nDestination:\n' + \
-                    'Total: %s [Taxed: %s]\nCustomer ref.:'
+                    'Imported order\n Partner: %s [%s]\nDestination: %s\n' + \
+                    'Total: %s [Taxed: %s]\nCustomer ref.: %s'
                     ) % (
                         order.partner_id.name,
                         order.partner_id.sql_customer_code,
@@ -160,24 +167,33 @@ class SaleOrder(orm.Model):
                     )                
                 }
             order_dict['line'] = []
+            i = 0
             for line in order.order_line:
+                i += 1
                 if not line.outsource:
                     continue
-                order_dict['line'].append({
-                    line.product_id.default_code,
-                    line.product_uom_qty,
-                    line.date_deadline,                    
-                    })    
-                    
+                data = {
+                    'default_code': line.product_id.default_code_linked or \
+                        line.product_id.default_code,
+                    'product_uom_qty': line.product_uom_qty,
+                    'date_deadline': line.date_deadline,                 
+                    }
+                order_dict['line'].append(data)
+
+        if not i:
+            raise osv.except_osv(_('Warning:'), _('No outsource order!'))
+            return True
+            
         # Write pickle file:        
         pickle_file = self.erpeek_stock_order_out(
-            cr, uid, order_dict, context=context) 
+            cr, uid, order_dict) 
         
         # Call XML RPC import procedure:
-        (db, user_id, password, sock) = company_pool.get_xmlrpc_socket(
-            cr, uid, context=context)
+        (db, user_id, password, sock) = \
+            company_pool.get_outsource_xmlrpc_socket(cr, uid)
+
         esit = sock.execute(db, user_id, password, 'sale.order', 
-            create_order_outsource, pickle_file)
+            'create_order_outsource', pickle_file)
         if not esit:
             return  self.write(cr, uid, ids, {
                 'outsource': True,

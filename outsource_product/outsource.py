@@ -57,19 +57,19 @@ class ResCompany(orm.Model):
     """    
     _inherit = 'res.company'
     
-    def get_xmlrpc_socket(self, cr, uid, context=None):
+    def get_outsource_xmlrpc_socket(self, cr, uid, context=None):
         ''' Return socket for XMLRPC call
         '''
         company_ids = self.search(cr, uid, [], context=context)
         param = self.browse(cr, uid, company_ids, context=context)[0]
+        db = param.outsource_db  
+        username = param.outsource_username
+        password = param.outsource_password
         
         sock = xmlrpclib.ServerProxy('http://%s:%s/xmlrpc/common' % (
             param.outsource_hostname, param.outsource_port))
         
         user_id = sock.login(db, username, password)
-        db = param.outsource_db  
-        username = param.outsource_username
-        password = param.outsource_password
 
         sock = xmlrpclib.ServerProxy('http://%s:%s/xmlrpc/object' % (
             param.outsource_hostname, param.outsource_port))
