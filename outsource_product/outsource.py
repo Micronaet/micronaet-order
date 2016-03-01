@@ -21,6 +21,7 @@ import os
 import sys
 import logging
 import openerp
+import xmlrpclib
 import openerp.netsvc as netsvc
 import openerp.addons.decimal_precision as dp
 from openerp.osv import fields, osv, expression, orm
@@ -55,6 +56,25 @@ class ResCompany(orm.Model):
     """ Model name: ResCompany
     """    
     _inherit = 'res.company'
+    
+    def get_xmlrpc_socket(self, cr, uid, context=None):
+        ''' Return socket for XMLRPC call
+        '''
+        company_ids = self.search(cr, uid, [], context=context)
+        param = self.browse(cr, uid, company_ids, context=context)[0]
+        
+        sock = xmlrpclib.ServerProxy('http://%s:%s/xmlrpc/common' % (
+            param.outsource_hostname, param.outsource_port)
+        
+        user_id = sock.login(db, username, password)
+        db = param.outsource_db  
+        username = param.outsource_username
+        password = param.outsource_password
+
+        sock = xmlrpclib.ServerProxy('http://%s:%s/xmlrpc/object' % (
+            param.outsource_hostname, param.outsource_port)
+
+        return (db, user_id, password, sock)
     
     _columns = {
         'outsource_management': fields.boolean('XMLRPC Outsource management', 

@@ -99,8 +99,18 @@ class SaleOrder(orm.Model):
         # ---------------------------------------------------------------------
         for line in order_dict['line']:
             # TODO onchange event?
+            product_ids = product_pool.search(cr, uid, [
+                ('default_code', '=', line['default_code'])
+                ], context=context)
+            
+            if not product_ids:
+                return 'Code not found: %s' % line['default_code']
+                        
             sol_pool.create(cr, uid, {
-                
+                'product_id': product_ids[0], # XXX check more than one?
+                'product_uom_qty': line['product_uom_qty'],
+                'order_id': order_id,
+                # uom?
                 }, context=context)
 
         try:
@@ -163,10 +173,17 @@ class SaleOrder(orm.Model):
             cr, uid, order_dict, context=context) 
         
         # Call XML RPC import procedure:
-        #esit = create_order_outsource(cr, uid, pickle_file)
-        # if esit # write outsource
+        (db, user_id, password, sock) = company_pool.get_xmlrpc_socket(
+            cr, uid, context=context)
+        esit = sock.execute(db, user_id, password, 'sale.order', 
+            create_order_outsource, pickle_file)
+        if not esit:
+            return  self.write(cr, uid, ids, {
+                'outsource': True,
+                }, context=context)
         
-        return True
+        # raise error
+        return 
         
     _columns = {
         'outsource': fields.boolean('Outsource order', 
