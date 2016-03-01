@@ -57,11 +57,16 @@ class ResCompany(orm.Model):
     """    
     _inherit = 'res.company'
     
+    def get_outsource_parameters(self, cr, uid, context=None):
+        ''' Read company parameters
+        '''
+        company_ids = self.search(cr, uid, [], context=context)
+        return self.browse(cr, uid, company_ids, context=context)[0]
+
     def get_outsource_xmlrpc_socket(self, cr, uid, context=None):
         ''' Return socket for XMLRPC call
         '''
-        company_ids = self.search(cr, uid, [], context=context)
-        param = self.browse(cr, uid, company_ids, context=context)[0]
+        param = self.get_outsource_parameters(cr, uid, context=context)
         db = param.outsource_db  
         username = param.outsource_username
         password = param.outsource_password

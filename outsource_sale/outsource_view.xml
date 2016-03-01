@@ -8,7 +8,8 @@
         <field name="arch" type="xml">
             <!--sale.order HEADER:-->
             <xpath expr="//notebook" position="before">
-                <button name="button_create_order_outsource" icon="gtk-convert" string="Create outource order" type="object" />
+                <field name="linked" />
+                <button name="button_create_order_outsource" icon="gtk-convert" string="Create outource order" type="object" attrs="{'invisible': [('linked', '=', True)]}"/>
             </xpath>
 
             <!--sale.order.line LINE:-->

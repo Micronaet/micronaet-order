@@ -72,6 +72,7 @@ class SaleOrder(orm.Model):
         ''' XMLRPC procedure for import order in current company 
             @return esit        
         '''
+        company_pool = self.pool.get('res.company')
         sol_pool = self.pool.get('sale.order.line')
         product_pool = self.pool.get('product.product')
 
@@ -90,13 +91,15 @@ class SaleOrder(orm.Model):
         if order_ids:
             return _('Order jet present! Delete and reimport if not started!')
         
-        partner_id = 1 # TODO
+        param = company_pool.get_outsource_parameters(cr, uid, context=context)
+        partner_id = param.outsourced_partner_id.id
         data = self.onchange_partner_id(cr, uid, False, partner_id, 
             context=context).get('value', {})        
         data.update({
             'partner_id': partner_id, 
             'linked': True, # as outsource            
             'client_order_ref': name,
+            'note': order_dict['header']['note'],
             })
         order_id = self.create(cr, uid, data, context=context)
 
@@ -208,7 +211,6 @@ class SaleOrder(orm.Model):
         'linked': fields.boolean('Linked order', 
             help='This order has an order in other company'),
         }
-    
 
 class SaleOrderLine(orm.Model):
     """ Model name: Sale order line
