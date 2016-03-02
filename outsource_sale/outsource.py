@@ -60,6 +60,9 @@ class SaleOrder(orm.Model):
     # -------------------------------------------------------------------------
     #                             REMOTE PROCEDURE: 
     # -------------------------------------------------------------------------
+    def nothing(self, cr, uid, ids, context=None):
+        return True
+        
     def erpeek_stock_order_in(self, cr, uid, pickle_file):
         ''' Read temp file and get data
         '''
@@ -72,6 +75,7 @@ class SaleOrder(orm.Model):
         ''' XMLRPC procedure for import order in current company 
             @return esit, message
         '''
+        context = context or {}
         company_pool = self.pool.get('res.company')
         sol_pool = self.pool.get('sale.order.line')
         product_pool = self.pool.get('product.product')
@@ -116,39 +120,54 @@ class SaleOrder(orm.Model):
                 ], context=context)
             
             if not product_ids:
+                # Remove order:
+                self.unlink(cr, uid, [order_id], context=context)
                 return (
                     False, 
                     'Code not found: %s' % line['default_code'],
                     )
                         
-            data = sol_pool.product_id_change_with_wh(
+            product_id = product_ids[0]
+            product_proxy = product_pool.browse(cr, uid, product_id, 
+                context=context)
+
+            line_data = sol_pool.product_id_change_with_wh(
                 cr, uid, False, 
                 order_proxy.pricelist_id.id, 
-                product_ids[0], 
+                product_id, 
                 line['product_uom_qty'],
-                uom=False, 
+                uom=product_proxy.uom_id.id, # TODO change 
                 qty_uos=0, 
                 uos=False, 
-                name='', 
+                name=product_proxy.description_sale, 
                 partner_id=partner_id, 
-                lang=False, 
+                lang=context.get('lang', 'it_IT'), 
                 update_tax=True, 
                 date_order=order_proxy.date_order, 
                 packaging=False, 
-                fiscal_position=order_proxy.fiscal_position, 
-                flag=False, warehouse_id=False, # TODO
+                fiscal_position=order_proxy.fiscal_position.id, 
+                flag=False, 
+                warehouse_id=order_proxy.warehouse_id.id, # TODO
                 context=context,
                 ).get('value', {})
+                
+            # Problem with tax_id:    
+            tax_id = line_data['tax_id']    
+            if tax_id:
+                line_data['tax_id'] = [(6, 0, tax_id)]
             
-            data.update({
+            line_data.update({
                 'product_id': product_ids[0], # XXX check more than one?
                 'product_uom_qty': line['product_uom_qty'],
                 'order_id': order_id,
                 'date_deadline': line['date_deadline'],
-                # uom?
+                'multi_discount_rates': 
+                    order_proxy.partner_id.discount_rates or '',
+                'discount_value': 
+                    order_proxy.partner_id.discount_value or 0.0,                
                 })
                 
-            sol_pool.create(cr, uid, data, context=context)
+            sol_pool.create(cr, uid, line_data, context=context)
 
         try:
             os.remove(pickle_file)
@@ -189,7 +208,6 @@ class SaleOrder(orm.Model):
         for order in self.browse(cr, uid, ids, context=context):
             note = _(
                 '''
-                <p>Imported order:</p>
                 <p><b>Partner: %s</b> [%s]<br/>
                 Destination: %s<br/>
                 Total: %s [Taxed: %s]<br>
@@ -217,16 +235,34 @@ class SaleOrder(orm.Model):
                 <table>
                     <tr><th>Code</th><th>Q.</th><th>Deadline</th></tr>
                 ''')
+            mask_bold = '''
+                <tr><td><b>%s</b></td><td><b>%s</b></td><td><b>%s</b></td></tr>
+                '''
+            mask_normal = '<tr><td>%s</td><td>%s</td><td>%s</td></tr>'
             for line in order.order_line:
                 i += 1
-                if not line.outsource:
-                    continue
                 
                 # Fields:    
                 default_code = line.product_id.default_code_linked or \
                     line.product_id.default_code
                 product_uom_qty = line.product_uom_qty
                 date_deadline = line.date_deadline              
+
+                
+
+                if line.outsource:
+                    note += mask_bold % (
+                        default_code or '/',
+                        product_uom_qty,
+                        date_deadline or '/',
+                        )
+                else:
+                    note += mask_normal % (
+                        default_code or '/',
+                        product_uom_qty,
+                        date_deadline or '/',
+                        )                    
+                    continue # no writing!!
                     
                 order_dict['line'].append({
                     'default_code': default_code,
@@ -234,11 +270,6 @@ class SaleOrder(orm.Model):
                     'date_deadline': date_deadline,                 
                     })
 
-                note += '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (
-                    default_code or '/',
-                    product_uom_qty,
-                    date_deadline or '/',
-                    )
             note += '</table>'
             order_dict['header']['note'] = note
 

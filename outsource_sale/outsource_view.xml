@@ -9,11 +9,12 @@
             <!--sale.order HEADER:-->
             <xpath expr="//notebook" position="before">
                 <field name="linked" invisible="1"/>
-                <button name="button_create_order_outsource" icon="gtk-convert" string="Create outource order" type="object" attrs="{'invisible': [('linked', '=', True)]}"/>
+                <button name="button_create_order_outsource" icon="gtk-convert" string="Create outource order" type="object" attrs="{'invisible': ['|',('state', 'in', ('draft','cancel','sent')),('linked', '=', True)]}"/>
+                <button name="nothing" icon="gtk-yes" string="Ousourced!" type="object" attrs="{'invisible': ['|',('state', 'in', ('draft','cancel','sent')),('outsource', '=', False)]}"/>
             </xpath>
 
             <xpath expr="//notebook/page[1]" position="after">
-                <page string="Outsource" > <!--attrs="{'invisible': ['|',('outsource','=',False),('outsource_order','=',False)]}"-->
+                <page string="Outsource">
                     <group colspan="4" col="4"> 
                         <separator string="Original order:" colspan="4" attrs="{'invisible': [('outsource_order','=',False)]}"/>
                         <field name="outsource_order" colspan="4" nolabel="1" widget="html" attrs="{'invisible': [('outsource_order','=',False)]}" readonly="1"/>
