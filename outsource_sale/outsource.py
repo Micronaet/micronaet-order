@@ -70,7 +70,7 @@ class SaleOrder(orm.Model):
 
     def create_order_outsource(self, cr, uid, pickle_file, context=None):
         ''' XMLRPC procedure for import order in current company 
-            @return esit        
+            @return esit, message
         '''
         company_pool = self.pool.get('res.company')
         sol_pool = self.pool.get('sale.order.line')
@@ -89,8 +89,10 @@ class SaleOrder(orm.Model):
             ('client_order_ref', '=', name),
             ], context=context)
         if order_ids:
-            return _('Order jet present! Delete and reimport if not started!')
-        import pdb; pdb.set_trace()
+            return (
+                False, 
+                _('Order jet present! Delete and reimport if not started!')
+                )
         param = company_pool.get_outsource_parameters(cr, uid, context=context)
         partner_id = param.outsourced_partner_id.id
         data = self.onchange_partner_id(cr, uid, False, partner_id, 
@@ -99,7 +101,7 @@ class SaleOrder(orm.Model):
             'partner_id': partner_id, 
             'linked': True, # as outsource            
             'client_order_ref': name,
-            'note': order_dict['header']['note'],
+            'outsource_order': order_dict['header']['note'],
             })
         order_id = self.create(cr, uid, data, context=context)
 
@@ -113,9 +115,12 @@ class SaleOrder(orm.Model):
                 ], context=context)
             
             if not product_ids:
-                return 'Code not found: %s' % line['default_code']
+                return (
+                    False, 
+                    'Code not found: %s' % line['default_code'],
+                    )
                         
-            sol_pool.create(cr, uid, {
+            order_id = sol_pool.create(cr, uid, {
                 'product_id': product_ids[0], # XXX check more than one?
                 'product_uom_qty': line['product_uom_qty'],
                 'order_id': order_id,
@@ -128,7 +133,7 @@ class SaleOrder(orm.Model):
         except:
             pass # do nothing
 
-        return False # no error    
+        return (True, order_id) # no error    
         
     # -------------------------------------------------------------------------
     #                             MASTER PROCEDURE: 
@@ -157,16 +162,20 @@ class SaleOrder(orm.Model):
                 'date_confirm': order.date_confirm,
                 'client_order_ref': order.client_order_ref,
                 'note': _(
-                    'Imported order\n Partner: %s [%s]\nDestination: %s\n' + \
-                    'Total: %s [Taxed: %s]\nCustomer ref.: %s'
-                    ) % (
+                    '''
+                    <p>Imported order:</p>
+                    <p><b>Partner: %s</b> [%s]<br/>
+                    Destination: %s<br/>
+                    Total: %s [Taxed: %s]<br>
+                    Customer ref.: %s
+                    ''') % (
                         order.partner_id.name,
                         order.partner_id.sql_customer_code,
                         order.destination_partner_id.name \
                             if order.destination_partner_id else '/', 
                         order.amount_untaxed,
                         order.amount_total,               
-                        order.client_order_ref,             
+                        order.client_order_ref or '/',             
                     )                
                 }
             order_dict['line'] = []
@@ -195,14 +204,14 @@ class SaleOrder(orm.Model):
         (db, user_id, password, sock) = \
             company_pool.get_outsource_xmlrpc_socket(cr, uid)
 
-        esit = sock.execute(db, user_id, password, 'sale.order', 
+        esit, message = sock.execute(db, user_id, password, 'sale.order', 
             'create_order_outsource', pickle_file)
-        if not esit:
+        if esit:
+            # TODO message??
             return  self.write(cr, uid, ids, {
                 'outsource': True,
                 }, context=context)
-        
-        # raise error
+        raise osv.except_osv(_('Error:'), message)
         return 
         
     _columns = {
@@ -210,6 +219,7 @@ class SaleOrder(orm.Model):
             help='This order will be outsourced'),
         'linked': fields.boolean('Linked order', 
             help='This order has an order in other company'),
+        'outsource_order': fields.text('Remote order'),   
         }
 
 class SaleOrderLine(orm.Model):

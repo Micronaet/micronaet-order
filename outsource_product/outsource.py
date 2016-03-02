@@ -84,7 +84,7 @@ class ResCompany(orm.Model):
     _columns = {
         'outsource_management': fields.boolean('XMLRPC Outsource management', 
             help='If is remote company no XMLRPC connection'),
-            
+
         'outsource_db': fields.char('XMLRPC DB name', size=80),
         'outsource_hostname': fields.char('XMLRPC Hostname', size=80),
         'outsource_port': fields.integer('XMLRPC Port'),

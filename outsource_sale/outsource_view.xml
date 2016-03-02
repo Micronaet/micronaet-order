@@ -8,8 +8,17 @@
         <field name="arch" type="xml">
             <!--sale.order HEADER:-->
             <xpath expr="//notebook" position="before">
-                <field name="linked" />
+                <field name="linked" invisible="1"/>
                 <button name="button_create_order_outsource" icon="gtk-convert" string="Create outource order" type="object" attrs="{'invisible': [('linked', '=', True)]}"/>
+            </xpath>
+
+            <xpath expr="//notebook/page[1]" position="after">
+                <page string="Remote" attrs="{'invisible': ['|',('outsource','=',False),('outsource_order','=',False)]}">
+                    <group colspan="4" col="4"> 
+                        <field name="outsource_order" colspan="4" nolabel="1" widget="html"/>
+                        <field name="outsource" invisible="1"/>
+                    </group>
+                </page>
             </xpath>
 
             <!--sale.order.line LINE:-->
