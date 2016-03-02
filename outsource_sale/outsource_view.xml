@@ -19,5 +19,16 @@
             </xpath>
         </field>
     </record>
+
+    <record model="ir.ui.view" id="view_res_company_pick_type_sales_form">
+        <field name="name">res.company.form</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="view_res_company_pick_type_form"/>
+        <field name="arch" type="xml">
+             <field name="outsource_product_mask"  positin="after">
+                 <field name="outsourced_partner_id" attrs="{'invisible':[('outsource_management','=',False)]}"/>
+             </field>
+        </field>
+    </record>    
     </data>
 </openerp>
