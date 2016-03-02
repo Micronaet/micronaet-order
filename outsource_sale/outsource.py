@@ -90,7 +90,7 @@ class SaleOrder(orm.Model):
             ], context=context)
         if order_ids:
             return _('Order jet present! Delete and reimport if not started!')
-        
+        import pdb; pdb.set_trace()
         param = company_pool.get_outsource_parameters(cr, uid, context=context)
         partner_id = param.outsourced_partner_id.id
         data = self.onchange_partner_id(cr, uid, False, partner_id, 
