@@ -104,6 +104,7 @@ class SaleOrder(orm.Model):
             'outsource_order': order_dict['header']['note'],
             })
         order_id = self.create(cr, uid, data, context=context)
+        order_proxy = self.browse(cr, uid, order_id, context=context)
 
         # ---------------------------------------------------------------------
         #                                LINE
@@ -120,20 +121,51 @@ class SaleOrder(orm.Model):
                     'Code not found: %s' % line['default_code'],
                     )
                         
-            order_id = sol_pool.create(cr, uid, {
+            data = sol_pool.product_id_change_with_wh(
+                cr, uid, False, 
+                order_proxy.pricelist_id.id, 
+                product_ids[0], 
+                line['product_uom_qty'],
+                uom=False, 
+                qty_uos=0, 
+                uos=False, 
+                name='', 
+                partner_id=partner_id, 
+                lang=False, 
+                update_tax=True, 
+                date_order=order_proxy.date_order, 
+                packaging=False, 
+                fiscal_position=order_proxy.fiscal_position, 
+                flag=False, warehouse_id=False, # TODO
+                context=context,
+                ).get('value', {})
+            
+            data.update({
                 'product_id': product_ids[0], # XXX check more than one?
                 'product_uom_qty': line['product_uom_qty'],
                 'order_id': order_id,
                 'date_deadline': line['date_deadline'],
                 # uom?
-                }, context=context)
+                })
+                
+            sol_pool.create(cr, uid, data, context=context)
 
         try:
             os.remove(pickle_file)
         except:
             pass # do nothing
 
-        return (True, order_id) # no error    
+        return (
+            True, 
+            _(''' 
+                <p>Oustource order create: <br/>
+                    <b>Number: %s </b><br/>
+                    Date: %s
+                </p>''')  % (
+                    order_proxy.name,
+                    order_proxy.date_order,
+                    )
+            ) # no error    
         
     # -------------------------------------------------------------------------
     #                             MASTER PROCEDURE: 
@@ -155,42 +187,60 @@ class SaleOrder(orm.Model):
         company_pool = self.pool.get('res.company')
         order_dict = {}
         for order in self.browse(cr, uid, ids, context=context):
+            note = _(
+                '''
+                <p>Imported order:</p>
+                <p><b>Partner: %s</b> [%s]<br/>
+                Destination: %s<br/>
+                Total: %s [Taxed: %s]<br>
+                Customer ref.: %s
+                ''') % (
+                    order.partner_id.name,
+                    order.partner_id.sql_customer_code or '/', 
+                    order.destination_partner_id.name \
+                        if order.destination_partner_id else '/', 
+                    order.amount_untaxed,
+                    order.amount_total,               
+                    order.client_order_ref or '/',             
+                )
+
             order_dict['header'] = {
                 'name': order.name,
                 'date_order': order.date_order,
                 'date_deadline': order.date_deadline,
                 'date_confirm': order.date_confirm,
                 'client_order_ref': order.client_order_ref,
-                'note': _(
-                    '''
-                    <p>Imported order:</p>
-                    <p><b>Partner: %s</b> [%s]<br/>
-                    Destination: %s<br/>
-                    Total: %s [Taxed: %s]<br>
-                    Customer ref.: %s
-                    ''') % (
-                        order.partner_id.name,
-                        order.partner_id.sql_customer_code,
-                        order.destination_partner_id.name \
-                            if order.destination_partner_id else '/', 
-                        order.amount_untaxed,
-                        order.amount_total,               
-                        order.client_order_ref or '/',             
-                    )                
                 }
             order_dict['line'] = []
             i = 0
+            note += _('''
+                <table>
+                    <tr><th>Code</th><th>Q.</th><th>Deadline</th></tr>
+                ''')
             for line in order.order_line:
                 i += 1
                 if not line.outsource:
                     continue
-                data = {
-                    'default_code': line.product_id.default_code_linked or \
-                        line.product_id.default_code,
-                    'product_uom_qty': line.product_uom_qty,
-                    'date_deadline': line.date_deadline,                 
-                    }
-                order_dict['line'].append(data)
+                
+                # Fields:    
+                default_code = line.product_id.default_code_linked or \
+                    line.product_id.default_code
+                product_uom_qty = line.product_uom_qty
+                date_deadline = line.date_deadline              
+                    
+                order_dict['line'].append({
+                    'default_code': default_code,
+                    'product_uom_qty': product_uom_qty,
+                    'date_deadline': date_deadline,                 
+                    })
+
+                note += '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (
+                    default_code or '/',
+                    product_uom_qty,
+                    date_deadline or '/',
+                    )
+            note += '</table>'
+            order_dict['header']['note'] = note
 
         if not i:
             raise osv.except_osv(_('Warning:'), _('No outsource order!'))
@@ -210,6 +260,7 @@ class SaleOrder(orm.Model):
             # TODO message??
             return  self.write(cr, uid, ids, {
                 'outsource': True,
+                'outsource_esit': message,
                 }, context=context)
         raise osv.except_osv(_('Error:'), message)
         return 
@@ -220,6 +271,7 @@ class SaleOrder(orm.Model):
         'linked': fields.boolean('Linked order', 
             help='This order has an order in other company'),
         'outsource_order': fields.text('Remote order'),   
+        'outsource_esit': fields.text('Remote order'),   
         }
 
 class SaleOrderLine(orm.Model):

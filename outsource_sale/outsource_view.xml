@@ -13,9 +13,14 @@
             </xpath>
 
             <xpath expr="//notebook/page[1]" position="after">
-                <page string="Remote" attrs="{'invisible': ['|',('outsource','=',False),('outsource_order','=',False)]}">
+                <page string="Outsource" > <!--attrs="{'invisible': ['|',('outsource','=',False),('outsource_order','=',False)]}"-->
                     <group colspan="4" col="4"> 
-                        <field name="outsource_order" colspan="4" nolabel="1" widget="html"/>
+                        <separator string="Original order:" colspan="4" attrs="{'invisible': [('outsource_order','=',False)]}"/>
+                        <field name="outsource_order" colspan="4" nolabel="1" widget="html" attrs="{'invisible': [('outsource_order','=',False)]}" readonly="1"/>
+                        
+                        <separator string="Outsource order esit:" colspan="4" attrs="{'invisible': [('outsource_esit','=',False)]}"/>
+                        <field name="outsource_esit" colspan="4" nolabel="1" widget="html" attrs="{'invisible': [('outsource_esit','=',False)]}" readonly="1"/>
+
                         <field name="outsource" invisible="1"/>
                     </group>
                 </page>
