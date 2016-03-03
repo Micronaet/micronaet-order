@@ -335,7 +335,9 @@ class CsvImportOrderElement(orm.Model):
                     
                 default_code = line[8]
                 #product_uom = line[10] # TODO use product one's
-                product_uom_qty = self._csv_c2_float(line[11])
+                colls = self._csv_c2_float(line[22])
+                q_x_pack = self._csv_c2_float(line[11])
+                product_uom_qty = colls * q_x_pack
                 price_unit = self._csv_c2_float(line[12])
                 vat = line[13] # >>> taxes_ids!!!
                 discount_scale = line[15]

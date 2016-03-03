@@ -105,6 +105,7 @@ class SaleOrder(orm.Model):
             'partner_id': partner_id, 
             'linked': True, # as outsource            
             'client_order_ref': name,
+            'date_deadline': order_dict['header']['date_deadline'],
             'outsource_order': order_dict['header']['note'],
             })
         order_id = self.create(cr, uid, data, context=context)
@@ -232,7 +233,7 @@ class SaleOrder(orm.Model):
             order_dict['line'] = []
             i = 0
             note += _('''
-                <table>
+                <table class="oe_list_content">
                     <tr><th>Code</th><th>Q.</th><th>Deadline</th></tr>
                 ''')
             mask_bold = '''
