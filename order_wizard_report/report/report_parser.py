@@ -199,10 +199,13 @@ class Parser(report_sxw.rml_parse):
             if value_oc == 0.0:
                 continue # line delivered jumped
                 
-            if line.product_uom_maked_sync_qty > line.delivered_qty:
-                value_b = line.product_uom_maked_sync_qty - line.delivered_qty
-            else:
-                value_b = 0
+            try: # for no production company:
+                if line.product_uom_maked_sync_qty > line.delivered_qty:
+                    value_b = line.product_uom_maked_sync_qty - line.delivered_qty
+                else:
+                    value_b = 0
+            except:
+                value_b = 0        
             value_s = value_oc - value_b
 
             if key not in self.extract_cells_ma:
