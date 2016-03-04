@@ -155,10 +155,15 @@ class Parser(report_sxw.rml_parse):
     def extract_order_line(self, data):
         ''' Generate elements extract order report:
         '''
+        data = data or {}
+        data_type = data.get('data_type', 'oc')
+
         self.extract_cells_ma = {}
         self.extract_cells_oc = {}
         self.extract_cells_b = {}
         self.extract_cells_s = {}
+
+        self.extract_total = {}
         
         self.extract_product = [] # row
         self.extract_order = [] # col
@@ -175,7 +180,10 @@ class Parser(report_sxw.rml_parse):
             order_name = order.name # sort field
 
             key = (product.id, order.id)
-            
+
+            if product.id not in self.extract_total:
+                self.extract_total[product.id] = 0.0
+                            
             # -----------------------------------------------------------------
             # Quantity block:
             value_ma = line.product_uom_qty
@@ -199,6 +207,15 @@ class Parser(report_sxw.rml_parse):
                 self.extract_cells_oc[key] += value_oc
                 self.extract_cells_b[key] += value_b
                 self.extract_cells_s[key] += value_s
+            
+            if data_type == 'oc':               
+                self.extract_total[product.id] += value_oc
+            elif data_type == 'ma':
+                self.extract_total[product.id] += value_ma
+            elif data_type == 'b':
+                self.extract_total[product.id] += value_b
+            elif data_type == 's':
+                self.extract_total[product.id] += value_s
             # -----------------------------------------------------------------
 
             if product_code not in extract_product:
@@ -218,27 +235,42 @@ class Parser(report_sxw.rml_parse):
         
         return ''
 
-    def get_extract_database(self, name, key=False):
+    def get_extract_database(self, name, key=False, data=False):
         ''' return 3 elements: product, order, cell DB
             for cell DB return value passed with key (product, order)
         '''
+        data = data or {}
+        data_type = data.get('data_type', 'oc')
+        if name not in ('order', 'product', 'total'): 
+            name = 'key_%s' % data_type # ma, oc, s, b
+        
         if name == 'product':
             return self.extract_product
         elif name == 'order':
             return self.extract_order
+        elif name == 'total':
+            return self.extract_total.get(key, 0)
+
+            
+        elif name == 'key_ma':
+            return self.extract_cells_ma.get(key, '')
+        elif name == 'key_oc':
+            return self.extract_cells_oc.get(key, '')
         elif name == 'key_s':
             return self.extract_cells_s.get(key, '')
         elif name == 'key_b':
             return self.extract_cells_b.get(key, '')
-        elif name == 'key':
+            
+        elif name == 'key_sb': # not used for now
             s = self.extract_cells_s.get(key, '')
             b = self.extract_cells_b.get(key, '')
             if s or b:
                 return 'S: %10s  B: %10s' % (
-                    int(self.extract_cells_s.get(key)),
-                    int(self.extract_cells_b.get(key)),
+                    self.extract_cells_s.get(key),
+                    self.extract_cells_b.get(key),
                     )
             return ''        
+            
         return '?'
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
