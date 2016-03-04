@@ -51,6 +51,9 @@ class Parser(report_sxw.rml_parse):
             'get_date': self.get_date,
             
             'get_filter_description': self.get_filter_description,
+            
+            'extract_order_line': self.extract_order_line,
+            'get_extract_database': self.get_extract_database,
         })
         
     def get_filter_description(self, ):
@@ -148,5 +151,94 @@ class Parser(report_sxw.rml_parse):
             if line.order_id not in order_list:#line.open_amount_total > 0 and 
                 order_list.append(line.order_id)
         return order_list
+
+    def extract_order_line(self, data):
+        ''' Generate elements extract order report:
+        '''
+        self.extract_cells_ma = {}
+        self.extract_cells_oc = {}
+        self.extract_cells_b = {}
+        self.extract_cells_s = {}
+        
+        self.extract_product = [] # row
+        self.extract_order = [] # col
+        
+        extract_product = {}
+        extract_order = {}
+        
+        for line in self.get_object_line(data):                        
+            product = line.product_id
+            product_code = product.default_code or (
+                _('NOT FOUND #: %s') % product.id) # sort field
+            
+            order = line.order_id
+            order_name = order.name # sort field
+
+            key = (product.id, order.id)
+            
+            # -----------------------------------------------------------------
+            # Quantity block:
+            value_ma = line.product_uom_qty
+            value_oc = value_ma - line.delivered_qty
+            if value_oc == 0.0:
+                continue # line delivered jumped
+                
+            if line.product_uom_maked_sync_qty > line.delivered_qty:
+                value_b = line.product_uom_maked_sync_qty - line.delivered_qty
+            else:
+                value_b = 0
+            value_s = value_oc - value_b
+
+            if key not in self.extract_cells_ma:
+                self.extract_cells_ma[key] = value_ma
+                self.extract_cells_oc[key] = value_oc
+                self.extract_cells_b[key] = value_b
+                self.extract_cells_s[key] = value_s
+            else:        
+                self.extract_cells_ma[key] += value_ma 
+                self.extract_cells_oc[key] += value_oc
+                self.extract_cells_b[key] += value_b
+                self.extract_cells_s[key] += value_s
+            # -----------------------------------------------------------------
+
+            if product_code not in extract_product:
+                extract_product[product_code] = product
+
+            if order_name not in extract_order:
+                extract_order[order_name] = order
+                
+        # Sort operation:        
+        for key, value in extract_product.iteritems():
+            self.extract_product.append((key, value))
+        self.extract_product.sort()    
+        
+        for key, value in extract_order.iteritems():
+            self.extract_order.append((key, value))
+        self.extract_order.sort()    
+        
+        return ''
+
+    def get_extract_database(self, name, key=False):
+        ''' return 3 elements: product, order, cell DB
+            for cell DB return value passed with key (product, order)
+        '''
+        if name == 'product':
+            return self.extract_product
+        elif name == 'order':
+            return self.extract_order
+        elif name == 'key_s':
+            return self.extract_cells_s.get(key, '')
+        elif name == 'key_b':
+            return self.extract_cells_b.get(key, '')
+        elif name == 'key':
+            s = self.extract_cells_s.get(key, '')
+            b = self.extract_cells_b.get(key, '')
+            if s or b:
+                return 'S: %10s  B: %10s' % (
+                    int(self.extract_cells_s.get(key)),
+                    int(self.extract_cells_b.get(key)),
+                    )
+            return ''        
+        return '?'
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -59,6 +59,8 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
         
         if wiz_proxy.report_type == 'deadlined':
             report_name = 'mx_order_list_report'
+        elif wiz_proxy.report_type == 'extract':
+            report_name = 'mx_extract_order_report'
         else: # 'line'    
             report_name = 'mx_order_list_line_report'
 
@@ -85,6 +87,7 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
         'report_type': fields.selection([
             ('deadlined', 'Order deadline'),
             ('line', 'Order line deadline'),
+            ('extract', 'Extract order'),
             #('grouped', 'Order grouped by frame'),
             ], 'Report type', required=True),
         'partner_id': fields.many2one('res.partner', 'Partner'),
