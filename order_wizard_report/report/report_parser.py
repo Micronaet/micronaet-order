@@ -97,7 +97,8 @@ class Parser(report_sxw.rml_parse):
             #('pricelist_order', '=', False), # needed? (yet in mx_closed
             ('mx_closed', '=', False), 
             ]
-        self.filter_description = _('Order open, not pricelist order')
+        self.filter_description = _(
+            'Ora: %s, Ordini aperti (non listini)') % datetime.now()
 
         if fiscal_position == 'italy': 
             # TODO not all!!!!!
