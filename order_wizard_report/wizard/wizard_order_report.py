@@ -72,7 +72,7 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
         datas['to_deadline'] = wiz_proxy.to_deadline or False
         #datas['only_remain'] = wiz_proxy.only_remain
         datas['data_type'] = wiz_proxy.data_type
-        
+        datas['report_type'] = wiz_proxy.report_type        
 
         return {
             'type': 'ir.actions.report.xml',

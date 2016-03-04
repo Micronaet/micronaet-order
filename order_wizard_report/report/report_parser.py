@@ -85,6 +85,8 @@ class Parser(report_sxw.rml_parse):
         to_date = data.get('to_date', False)
         from_deadline = data.get('from_deadline', False)
         to_deadline = data.get('to_deadline', False)
+        report_type = data.get('report_type', False)
+        data_type = data.get('data_type', '')
 
         # ---------------------------------------------------------------------
         #                      Sale order filter
@@ -101,13 +103,19 @@ class Parser(report_sxw.rml_parse):
             # TODO not all!!!!!
             domain.append(('partner_id.property_account_position', '=', 1))    
             self.filter_description += _(', Italia')
-        else:
+        elif fiscal_position == 'extra':
             domain.append(('partner_id.property_account_position', '!=', 1))    
             self.filter_description += _(', non Italia')
+        else:    
+            self.filter_description += _(', Tutte le nazioni')
             
         if partner_id:
             domain.append(('partner_id', '=', partner_id))    
             self.filter_description += _(', Partner filter')                
+
+        if report_type == 'extract':
+            self.filter_description += _(
+                ', Dato visualizzato: %s') % data_type.upper()
 
         # -------------------------
         # Start filter description:
@@ -250,7 +258,6 @@ class Parser(report_sxw.rml_parse):
             return self.extract_order
         elif name == 'total':
             return self.extract_total.get(key, 0)
-
             
         elif name == 'key_ma':
             return self.extract_cells_ma.get(key, '')
