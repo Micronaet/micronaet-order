@@ -46,7 +46,16 @@ class SaleOrder(orm.Model):
     #def get_write_close_line(self, line):
     #    ''' Internal procedure for close (overrided for mrp line)
     #    '''
+    def unlock_closed_order(self, cr, uid, ids, context=None):
+        ''' Unlock order 
+        '''
+        assert len(ids) == 1, 'Works only with one order!'
         
+        self.write(cr, uid, ids, {
+            'mx_closed': False,
+            }, context=context)
+            
+        return True
     
     # Scheduled events:
     def scheduled_check_close_order(self, cr, uid, context=None):
