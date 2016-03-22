@@ -138,9 +138,12 @@ class SaleOrder(orm.Model):
             # Force price:
             if fastline.price_unit:
                 data['price_unit'] = fastline.price_unit
+
+            # Force header:
+            data['date_deadline'] = order_proxy.date_deadline
                 
             sol_pool.create(cr, uid, data, context=context)
-            fast_list.append(fastline.id)
+            fastline_ids.append(fastline.id)
             
         # Delete fast line:
         fastline_pool.unlink(cr, uid, fastline_ids, context=context)    
