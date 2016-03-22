@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_sale_order_fastline_form">
+            <field name="name">sale.order.fastline.form</field>
+            <field name="model">sale.order.fastline</field>
+            <field name="arch" type="xml">
+                <form string="Fastline" version="7.0">        
+                    <sheet>
+                        <group col="4" colspan="4">
+                           <field name="order_id" invisible="1"/>
+                           <field name="product_id" />
+                           <field name="product_uom_qty" />
+                           <field name="price_unit" />                           
+                        </group>
+                    </sheet>        
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_sale_order_fastline_tree">
+            <field name="name">sale.order.fastline.tree</field>
+            <field name="model">sale.order.fastline</field>
+            <field name="arch" type="xml">
+                <tree string="Fastline" editable="bottom">        
+                    <field name="order_id" invisible="1"/>
+                    <field name="product_id" />
+                    <field name="product_uom_qty" />
+                    <field name="price_unit" />
+                </tree>
+            </field>
+        </record>
+    
+        <record model="ir.ui.view" id="view_sale_order_fastline_page_form">
+            <field name="name">sale.order.fastline.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/header/field[@name='state']" position="before">
+                    <field name="fast_order" invisible="1" />
+                    <button name="show_fastorder" string="Fast order" type="object" attrs="{'invisible':[('fast_order','=',True)]}"/>
+                </xpath>
+                <xpath expr="//notebook/page[1]" position="before">
+                    <page string="Fast line" attrs="{'invisible':[('fast_order','=',False)]}">
+                        <group colspan="4">
+                            <button name="create_real_line" string="Create real line" type="object" />
+                            <separator string="Fast line:" colspan="4" />
+                            <field name="fastline_ids" colspan="4"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>
+
