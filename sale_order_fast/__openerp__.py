@@ -30,6 +30,8 @@
     'depends': [
         'base',
         'sale',
+        'mx_sale', # DDT data
+        'fido_order_check', # fido data
         ],
     'init_xml': [],
     'demo': [],
