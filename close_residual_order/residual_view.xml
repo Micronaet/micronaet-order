@@ -1,7 +1,19 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-
+        <record model="ir.ui.view" id="view_sale_order_outsource_form_view">
+            <field name="name">sale.order.outsource.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form" />
+            <field name="arch" type="xml">
+                <!--sale.order HEADER:-->
+                <xpath expr="/form/header/field[@name='state']" position="before">
+                    <field name="mx_closed" invisible="1"/>
+                    <button name="force_close_residual_order" icon="gtk-no" string="Close residual!" type="object" 
+                        attrs="{'invisible': ['|',('state', 'in', ('draft','cancel','sent')),('mx_closed', '=', True)]}" confirm="Close residual hide order from list, confirm?"/>
+                </xpath>
+            </field>
+        </record>
     </data>
 </openerp>
 

@@ -37,7 +37,7 @@
     'init_xml': [],
     'demo': [],
     'data': [
-        'security/ir.model.access.csv',    
+        #'security/ir.model.access.csv',    
         'residual_view.xml',
         ],
     'active': False,

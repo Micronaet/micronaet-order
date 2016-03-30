@@ -48,28 +48,36 @@ class SaleOrder(orm.Model):
         ''' Force order and line closed:
         '''
         assert len(ids) == 1, 'Force only one order a time'        
-        order_proxy = self.browse(cr, uid, ids, context=context):
+        
+        sol_pool = self.pool.get('sale.order.line')
+        order_proxy = self.browse(cr, uid, ids, context=context)
 
         # --------------------------------------
         # Read data for log and get information:
         # --------------------------------------
-        import pdb; pdb.set_trace()
         html_log = ''
         line_ids = []
         for line in order_proxy.order_line:
-            if not line.mx_close:
+            if not line.mx_closed:
                 line_ids.append(line.id)
                 html_log += '''
-                    <tr><td>%s</td><td>%s</td></tr>\n''' % (
+                    <tr>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td>%s</td>
+                    </tr>\n''' % (
                         line.product_id.default_code,
-                        line.product_uom_qty - line.product_uom_delivered_qty,
+                        line.product_uom_qty,
+                        line.delivered_qty,
+                        line.product_uom_qty - line.delivered_qty,
                         )
         
         # -----------
         # Force line:
         # -----------
         sol_pool.write(cr, uid, line_ids, {
-            'mx_close': True,
+            'mx_closed': True,
             'forced_close': True,            
             }, context=context)
         
@@ -77,7 +85,7 @@ class SaleOrder(orm.Model):
         # Force header:
         # -------------
         self.write(cr, uid, ids, {
-            'mx_close': True,
+            'mx_closed': True,
             'forced_close': True,            
             }, context=context)
         
@@ -86,14 +94,20 @@ class SaleOrder(orm.Model):
         # --------------------------
         if html_log:
             message = _('''
-                <table>
-                    <tr><td>Prod.</td><td>Q.</td></tr>
+                <p>Forced close of order, open line:</p>
+                <table class='oe_list_content'>
+                    <tr>
+                        <td class='oe_list_field_cell'>Prod.</td>
+                        <td class='oe_list_field_cell'>Order</td>
+                        <td class='oe_list_field_cell'>Delivered</td>
+                        <td class='oe_list_field_cell'>Residual</td>
+                    </tr>
                     %s
                 </table>
                 ''') % html_log
                 
             # Send message
-            # TODO
+            self.message_post(cr, uid, ids, body=message, context=context)
         return True
         
     _columns = {
