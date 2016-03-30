@@ -49,6 +49,7 @@ class SaleOrder(orm.Model):
     def unlock_closed_order(self, cr, uid, ids, context=None):
         ''' Unlock order 
         '''
+        # TODO:
         assert len(ids) == 1, 'Works only with one order!'
         
         self.write(cr, uid, ids, {

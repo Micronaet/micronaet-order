@@ -38,4 +38,77 @@ from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
 
 _logger = logging.getLogger(__name__)
 
+class SaleOrder(orm.Model):
+    """ Model name: SaleOrder
+    """    
+    _inherit = 'sale.order'
+
+    # Button force close:
+    def force_close_residual_order(self, cr, uid, ids, context=None):
+        ''' Force order and line closed:
+        '''
+        assert len(ids) == 1, 'Force only one order a time'        
+        order_proxy = self.browse(cr, uid, ids, context=context):
+
+        # --------------------------------------
+        # Read data for log and get information:
+        # --------------------------------------
+        import pdb; pdb.set_trace()
+        html_log = ''
+        line_ids = []
+        for line in order_proxy.order_line:
+            if not line.mx_close:
+                line_ids.append(line.id)
+                html_log += '''
+                    <tr><td>%s</td><td>%s</td></tr>\n''' % (
+                        line.product_id.default_code,
+                        line.product_uom_qty - line.product_uom_delivered_qty,
+                        )
+        
+        # -----------
+        # Force line:
+        # -----------
+        sol_pool.write(cr, uid, line_ids, {
+            'mx_close': True,
+            'forced_close': True,            
+            }, context=context)
+        
+        # -------------
+        # Force header:
+        # -------------
+        self.write(cr, uid, ids, {
+            'mx_close': True,
+            'forced_close': True,            
+            }, context=context)
+        
+        # --------------------------
+        # Log message for operation:
+        # --------------------------
+        if html_log:
+            message = _('''
+                <table>
+                    <tr><td>Prod.</td><td>Q.</td></tr>
+                    %s
+                </table>
+                ''') % html_log
+                
+            # Send message
+            # TODO
+        return True
+        
+    _columns = {
+        'forced_close': fields.boolean('Forced close', 
+            help='Order force closed'),
+    }
+
+class SaleOrderLine(orm.Model):
+    """ Model name: SaleOrderLine
+    """    
+    _inherit = 'sale.order.line'
+
+    _columns = {
+        'forced_close': fields.boolean('Forced close', 
+            help='Order force closed'),
+    }
+    
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

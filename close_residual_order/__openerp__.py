@@ -32,6 +32,7 @@
         'base',
         'sale',
         'mx_sale',
+        'mx_close_order',
         ],
     'init_xml': [],
     'demo': [],
