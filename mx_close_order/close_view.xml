@@ -11,6 +11,29 @@
                </field>
             </field>
         </record>
+        <record model="ir.ui.view" id="view_sale_order_closed_search">
+            <field name="name">sale.order.search</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <filter name="mx_is_open" filter_domain="[('mx_closed','=',False)]"/>
+                    <filter name="mx_is_close" filter_domain="[('mx_closed','=',True)]"/>
+                </field>
+            </field>
+        </record>
+        
+    <record id="base_accounting_program.action_order_form_no_agent" model="ir.actions.act_window">
+        <field name="name">Offerte e ordini</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,calendar,graph</field>
+        <field name="search_view_id" ref="sale.view_sales_order_filter" />
+        <field name="context">{'search_default_is_quotation':1,'search_default_not_cancel':1,'search_default_mx_is_open':1}</field>
+        <field name="help">Offerte e Ordini senza filtro di commerciale aperti</field>
+    </record>
+
     </data>
 </openerp>
 

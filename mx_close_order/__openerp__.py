@@ -31,6 +31,7 @@
         'base',
         'sale',
         'mx_sale',
+        'base_accounting_program', # override action
         ],
     'init_xml': [],
     'demo': [],
