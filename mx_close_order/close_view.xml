@@ -23,6 +23,7 @@
             </field>
         </record>
         
+    <!--override action-->
     <record id="base_accounting_program.action_order_form_no_agent" model="ir.actions.act_window">
         <field name="name">Offerte e ordini</field>
         <field name="type">ir.actions.act_window</field>
