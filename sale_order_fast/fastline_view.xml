@@ -179,9 +179,13 @@
                             <page string="Informazioni spedizione">
                                 <group string="Informazioni spedizione">
                                     <group>
+                                        <button name="set_goods_default" string="Goods description" type="object" icon="star-on" />
                                         <field name="goods_description_id" widget="selection" nolabel="1"/>
                         
+                                        <button name="set_carriage_default" string="Carriage condition" type="object" icon="star-on" />
                                         <field name="carriage_condition_id" widget="selection" nolabel="1" />
+
+                                        <button name="set_transportation_default" string="Transportation method" type="object" icon="star-on" />
                                         <field name="transportation_method_id" widget="selection" nolabel="1" />
                                         
                                         <field name="parcels" />
