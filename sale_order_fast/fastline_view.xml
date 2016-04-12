@@ -94,7 +94,7 @@
                                     <field name="fastline_ids" colspan="4" context="{'default_date_deadline': date_deadline, 'partner_id': partner_id}"/>
                                     
                                     <!--sale.order.line totals:-->
-                                    <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+                                    <!--<group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
                                         <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
                                         <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
                                         <div class="oe_subtotal_footer_separator oe_inline">
@@ -102,7 +102,7 @@
                                             <button name="button_dummy" states="draft,sent" string="(aggiorna)" type="object" class="oe_edit_only oe_link" modifiers="{'invisible': [['state', 'not in', ['draft', 'sent']]]}"/>
                                         </div>
                                         <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-                                    </group>
+                                    </group>-->
                                     <div class="oe_clear"/>
                                     <field name="note" class="oe_inline" placeholder="Termini e condizioni..." />
                                     <!--sale.order.line totals:-->
@@ -110,10 +110,10 @@
                                 </group>
                             </page>
 
-                            <page string="Order line">
-                                <field name="order_line" context="{'default_date_deadline': date_deadline, 'partner_id': partner_id}" attrs="{'readonly':[('state', 'in', ('cancel'))]}" />
+                            <page string="Order line" invisible="1">
+                                <field name="order_line" context="{'default_date_deadline': date_deadline, 'partner_id': partner_id}" attrs="{'readonly':[('state', 'in', ('cancel'))]}"/>
 
-                                <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+                                <!--<group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
                                     <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
                                     <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
                                     <div class="oe_subtotal_footer_separator oe_inline">
@@ -123,7 +123,7 @@
                                     <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
                                 </group>
                                 <div class="oe_clear"/>
-                                <field name="note" class="oe_inline" placeholder="Termini e condizioni..." />
+                                <field name="note" class="oe_inline" placeholder="Termini e condizioni..." />-->
                             </page>
 
                             <page string="Data ordine">
