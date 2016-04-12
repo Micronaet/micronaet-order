@@ -8,223 +8,225 @@
             <field name="arch" type="xml">
                 <form string="Ordini" version="7.0">                    
                     <header>
-		                <button name="action_quotation_send" string="Invia tramite Email" type="object" states="draft" class="oe_highlight" />
-		                <button name="action_quotation_send" string="Invia tramite Email" type="object" states="sent,progress,manual" />
-		                <button name="print_quotation" string="Stampa" type="object" states="draft" class="oe_highlight" />
-		                <button name="print_quotation" string="Stampa" type="object" states="sent,progress,manual" />
-		                <button name="action_button_confirm" states="draft" string="Conferma Ordine" type="object" />
-		                <button name="action_button_confirm" states="sent" string="Conferma Ordine" class="oe_highlight" type="object" />
-		                <button name="cancel" states="draft,sent" string="Annulla il preventivo" />
-		                <button name="action_cancel" states="manual,progress" string="Annulla Ordine" type="object" />
+                        <button name="action_quotation_send" string="Invia tramite Email" type="object" states="draft" class="oe_highlight" />
+                        <button name="action_quotation_send" string="Invia tramite Email" type="object" states="sent,progress,manual" />
+                        <button name="print_quotation" string="Stampa" type="object" states="draft" class="oe_highlight" />
+                        <button name="print_quotation" string="Stampa" type="object" states="sent,progress,manual" />
+                        <button name="action_button_confirm" states="draft" string="Conferma Ordine" type="object" />
+                        <button name="action_button_confirm" states="sent" string="Conferma Ordine" class="oe_highlight" type="object" />
+                        <button name="cancel" states="draft,sent" string="Annulla il preventivo" />
+                        <button name="action_cancel" states="manual,progress" string="Annulla Ordine" type="object" />
                         <field name="state" widget="statusbar" statusbar_visible="draft,sent,progress,done" readonly="1" statusbar_colors="{'shipping_except':'red','invoice_except':'red','waiting_date':'blue'}"/>
 
-		                <div style="background-color: red;text-align: center;font-weight:bold;color:white;">
-			                <field name="uncovered_alert" nolabel="1" attrs="{'invisible': [('uncovered_payment', '=', False)]}" class="oe_color_red" readonly="1"/>
-		                </div>
-		                <field name="uncovered_payment" invisible="1" />
+                        <div style="background-color: red;text-align: center;font-weight:bold;color:white;">
+                            <field name="uncovered_alert" nolabel="1" attrs="{'invisible': [('uncovered_payment', '=', False)]}" class="oe_color_red" readonly="1"/>
+                        </div>
+                        <field name="uncovered_payment" invisible="1" />
                     </header>
                     <sheet>
-		                <h1>
-			                <field name="uncovered_state" invisible="1" readonly="1" />
+                        <h1>
+                            <field name="uncovered_state" invisible="1" readonly="1" />
 
-			                <label string="Preventivo" attrs="{'invisible': [('state','not in',('draft','sent'))]}" />
-			                <label string="Ordine di vendita" attrs="{'invisible': [('state','in',('draft','sent'))]}" />
-			                <div style="background-color: red;text-align: center;font-weight:bold;color:white;">
-				                <field name="empty" readonly="1" nolabel="1" attrs="{'invisible': [('uncovered_state', '!=', 'red')]}" class="oe_color_red" />
-			                </div>
-			                <div style="background-color: yellow;text-align: center;font-weight:bold;color:white;">
-				                <field name="empty" readonly="1" nolabel="1" attrs="{'invisible': [('uncovered_state', '!=', 'yellow')]}" class="oe_color_red" />
-			                </div>
-			                <div style="background-color: green;text-align: center;font-weight:bold;color:white;">
-				                <field name="empty" readonly="1" nolabel="1" attrs="{'invisible': [('uncovered_state', '!=', 'green')]}" class="oe_color_red" />
-			                </div>
-			                <div style="background-color: black;text-align: center;font-weight:bold;color:white;">
-				                <field name="empty" readonly="1" nolabel="1" attrs="{'invisible': [('uncovered_state', '!=', 'black')]}" class="oe_color_red" />
-			                </div>
-			                <field name="name" class="oe_inline" readonly="1" required="1" />
-			                <field name="accounting_order" invisible="1" />
-		                </h1>
+                            <label string="Preventivo" attrs="{'invisible': [('state','not in',('draft','sent'))]}" />
+                            <label string="Ordine di vendita" attrs="{'invisible': [('state','in',('draft','sent'))]}" />
+                            <div style="background-color: red;text-align: center;font-weight:bold;color:white;">
+                                <field name="empty" readonly="1" nolabel="1" attrs="{'invisible': [('uncovered_state', '!=', 'red')]}" class="oe_color_red" />
+                            </div>
+                            <div style="background-color: yellow;text-align: center;font-weight:bold;color:white;">
+                                <field name="empty" readonly="1" nolabel="1" attrs="{'invisible': [('uncovered_state', '!=', 'yellow')]}" class="oe_color_red" />
+                            </div>
+                            <div style="background-color: green;text-align: center;font-weight:bold;color:white;">
+                                <field name="empty" readonly="1" nolabel="1" attrs="{'invisible': [('uncovered_state', '!=', 'green')]}" class="oe_color_red" />
+                            </div>
+                            <div style="background-color: black;text-align: center;font-weight:bold;color:white;">
+                                <field name="empty" readonly="1" nolabel="1" attrs="{'invisible': [('uncovered_state', '!=', 'black')]}" class="oe_color_red" />
+                            </div>
+                            <field name="name" class="oe_inline" readonly="1" required="1" />
+                            <field name="accounting_order" invisible="1" />
+                        </h1>
 
-		                <group>
-			                <group>
-				                <field name="partner_id" on_change="onchange_partner_id(partner_id, context)" domain="[('customer','=',True),('is_company','=',True),('is_address','=',False)]" context="{'search_default_customer':1, 'show_address': 1}" options="{'always_reload': True}" attrs="{'readonly': [('state','in',('done'))]}" required="1"/>
-				                <group name="destination_parameters" colspan="2" col="2">
-					                <field name="destination_partner_id" domain="[('parent_id','=',partner_id),('is_address','=',True)]" context="{'show_address':True}" />
-					                <field name="invoice_partner_id" domain="[('is_company','=',True),('is_address','=',False)]" context="{'show_address':True}" />
-				                </group>
-				                <field name="partner_invoice_id" context="{'default_type':'invoice'}" invisible="1" />
-				                <field name="partner_shipping_id" on_change="onchange_delivery_id(company_id, partner_id, partner_shipping_id, fiscal_position)" context="{'default_type':'delivery'}" invisible="1" />
+                        <group>
+                            <group>
+                                <field name="partner_id" on_change="onchange_partner_id(partner_id, context)" domain="[('customer','=',True),('is_company','=',True),('is_address','=',False)]" context="{'search_default_customer':1, 'show_address': 1}" options="{'always_reload': True}" attrs="{'readonly': [('state','in',('done'))]}" required="1"/>
+                                <group name="destination_parameters" colspan="2" col="2">
+                                    <field name="destination_partner_id" domain="[('parent_id','=',partner_id),('is_address','=',True)]" context="{'show_address':True}" />
+                                    <field name="invoice_partner_id" domain="[('is_company','=',True),('is_address','=',False)]" context="{'show_address':True}" />
+                                </group>
+                                <field name="partner_invoice_id" context="{'default_type':'invoice'}" invisible="1" />
+                                <field name="partner_shipping_id" on_change="onchange_delivery_id(company_id, partner_id, partner_shipping_id, fiscal_position)" context="{'default_type':'delivery'}" invisible="1" />
 
-				                <!--<field name="client_date_ref" />-->
-				                <field name="client_order_ref" />
+                                <!--<field name="client_date_ref" />-->
+                                <field name="client_order_ref" />
 
-				                <field name="date_deadline" />
-				                <button name="button_force_all_deadline_date" string="Forza tutte le linee" colspan="1" type="object"/>
-			                </group>
+                                <button name="button_force_all_deadline_date" string="Deadline (force all line)" colspan="1" type="object"/>
+                                <field name="date_deadline" nolabel="1"/>
+                            </group>
 
-			                <group>
-				                <field name="date_order" required="1" attrs="{'readonly': [['state', 'not in', ['draft', 'sent']]]}"/>
-				                <newline />
+                            <group>
+                                <field name="date_order" required="1" attrs="{'readonly': [['state', 'not in', ['draft', 'sent']]]}"/>
+                                <newline />
 
-				                <field domain="[('type','=','sale')]" name="pricelist_id" on_change="onchange_pricelist_id(pricelist_id,order_line)" attrs="{'readonly': [('state','in',('done'))]}" required="1" />
-				                <newline />
+                                <field domain="[('type','=','sale')]" name="pricelist_id" on_change="onchange_pricelist_id(pricelist_id,order_line)" attrs="{'readonly': [('state','in',('done'))]}" required="1" />
+                                <newline />
 
-				                <button name="set_return_default" string="Product return" type="object" icon="star-on"/>
-				                <field name="return_id" widget="selection" nolabel="1"/>
+                                <button name="set_return_default" string="Product return" type="object" icon="star-on"/>
+                                <field name="return_id" widget="selection" nolabel="1"/>
 
-				                <button name="set_transportation_default" string="Transportation reason" type="object" icon="star-on" />
-				                <field name="transportation_reason_id" widget="selection" nolabel="1" />
+                                <button name="set_transportation_default" string="Transportation reason" type="object" icon="star-on" />
+                                <field name="transportation_reason_id" widget="selection" nolabel="1" />
 
-				                <button name="set_agent_default" string="Agent" type="object" icon="star-on" />
-    			                <field name="mx_agent_id" nolabel="1"/>
+                                <button name="set_agent_default" string="Agent" type="object" icon="star-on" />
+                                <field name="mx_agent_id" nolabel="1"/>
 
-				                <button name="set_payment_default" string="Payment term" type="object" icon="star-on" />
+                                <button name="set_payment_default" string="Payment term" type="object" icon="star-on" />
                                 <field name="payment_term" options="{'no_create': True}" nolabel="1"/>
-			                </group>
-		                </group>
+                            </group>
+                        </group>
 
-		                <field name="linked" invisible="1" />
-		                <!--<button name="button_create_order_outsource" icon="gtk-convert" string="Create outource order" type="object" attrs="{'invisible': ['|',('state', 'in', ('draft','cancel','sent')),('linked', '=', True)]}" />
-		                <button name="nothing" icon="gtk-yes" string="Ousourced!" type="object" attrs="{'invisible': ['|',('state', 'in', ('draft','cancel','sent')),('outsource', '=', False)]}" />-->
-		                <notebook>		                
-			                <page string="Order line">
-				                <group colspan="4">
-					                <button name="create_real_line" string="Create real line" type="object"/>
-					                <separator string="Fast line:" colspan="4"/>
-					                <field name="fastline_ids" colspan="4" context="{'default_date_deadline': date_deadline, 'partner_id': partner_id}"/>
-					                
-					                <!--sale.order.line totals:-->
-				                    <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
-					                    <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-					                    <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-					                    <div class="oe_subtotal_footer_separator oe_inline">
-						                    <label for="amount_total"/>
-						                    <button name="button_dummy" states="draft,sent" string="(aggiorna)" type="object" class="oe_edit_only oe_link" modifiers="{'invisible': [['state', 'not in', ['draft', 'sent']]]}"/>
-					                    </div>
-					                    <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-				                    </group>
-				                    <div class="oe_clear"/>
-				                    <field name="note" class="oe_inline" placeholder="Termini e condizioni..." />
-					                <!--sale.order.line totals:-->
+                        <field name="linked" invisible="1" />
+                        <!--<button name="button_create_order_outsource" icon="gtk-convert" string="Create outource order" type="object" attrs="{'invisible': ['|',('state', 'in', ('draft','cancel','sent')),('linked', '=', True)]}" />
+                        <button name="nothing" icon="gtk-yes" string="Ousourced!" type="object" attrs="{'invisible': ['|',('state', 'in', ('draft','cancel','sent')),('outsource', '=', False)]}" />-->
+                        <notebook>                        
+                            <page string="Order line">
+                                <group colspan="4">
+                                    <button name="create_real_line" string="Create real line" type="object"/>
+                                    <separator string="Fast line:" colspan="4"/>
+                                    <field name="fastline_ids" colspan="4" context="{'default_date_deadline': date_deadline, 'partner_id': partner_id}"/>
+                                    
+                                    <!--sale.order.line totals:-->
+                                    <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+                                        <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                                        <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                                        <div class="oe_subtotal_footer_separator oe_inline">
+                                            <label for="amount_total"/>
+                                            <button name="button_dummy" states="draft,sent" string="(aggiorna)" type="object" class="oe_edit_only oe_link" modifiers="{'invisible': [['state', 'not in', ['draft', 'sent']]]}"/>
+                                        </div>
+                                        <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                                    </group>
+                                    <div class="oe_clear"/>
+                                    <field name="note" class="oe_inline" placeholder="Termini e condizioni..." />
+                                    <!--sale.order.line totals:-->
 
-				                </group>
-			                </page>
+                                </group>
+                            </page>
 
-			                <page string="Order line">
-				                <field name="order_line" context="{'default_date_deadline': date_deadline, 'partner_id': partner_id}" attrs="{'readonly':[('state', 'in', ('cancel'))]}" />
+                            <page string="Order line">
+                                <field name="order_line" context="{'default_date_deadline': date_deadline, 'partner_id': partner_id}" attrs="{'readonly':[('state', 'in', ('cancel'))]}" />
 
-			                    <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
-				                    <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-				                    <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-				                    <newline/>
-				                    <div class="oe_subtotal_footer_separator oe_inline">
-					                    <label for="amount_total"/>
-					                    <button name="button_dummy" states="draft,sent" string="(aggiorna)" type="object" class="oe_edit_only oe_link" modifiers="{'invisible': [['state', 'not in', ['draft', 'sent']]]}"/>
-				                    </div>
-				                    <newline/>
-				                    <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-			                    </group>
-			                    <div class="oe_clear"/>
-			                    <field name="note" class="oe_inline" placeholder="Termini e condizioni..." />
-			                </page>
+                                <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+                                    <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                                    <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                                    <div class="oe_subtotal_footer_separator oe_inline">
+                                        <label for="amount_total"/>
+                                        <button name="button_dummy" states="draft,sent" string="(aggiorna)" type="object" class="oe_edit_only oe_link" modifiers="{'invisible': [['state', 'not in', ['draft', 'sent']]]}"/>
+                                    </div>
+                                    <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                                </group>
+                                <div class="oe_clear"/>
+                                <field name="note" class="oe_inline" placeholder="Termini e condizioni..." />
+                            </page>
 
-			                <page string="Data ordine">
-				                <group colspan="2" col="5">
-          			                <field name="quotation_model" />
-    				                <field name="date_valid" />
-					                <field name="date_confirm" />
-					                <newline/>
-					                <field name="date_booked_confirmed" />
-					                <field name="date_booked" attrs="{'required': [('date_booked_confirmed','=',True)]}" />
-					                <newline/>
-					                <field name="date_delivery_confirmed" />
-					                <field name="date_delivery" attrs="{'required': [('date_delivery_confirmed','=',True)]}" />
-				                </group>
-			                </page>
+                            <page string="Data ordine">
+                                <group colspan="2" col="5">
+                                      <field name="quotation_model" />
+                                    <newline/>
 
-			                <page string="Altre informazioni">
-				                <group>
-					                <group name="logistics">
-						                <field name="incoterm" widget="selection" />
-						                <field name="picking_policy" required="1" attrs="{'readonly': [['state', 'not in', ['draft', 'sent']]]}"/>
-						                <field name="order_policy" required="1" attrs="{'readonly': [['state', 'not in', ['draft', 'sent']]]}"/>
-					                </group>
-					                <group name="sales_person">
-						                <field name="user_id" groups="base.group_user,base.group_partner_manager,account.group_account_invoice,base.group_sale_salesman_all_leads" />
-						                <field name="categ_ids" widget="many2many_tags" />
-						                <field name="section_id" options="{'no_create': True}" invisible="1" />
-						                <field name="origin" />
-						                <field name="campaign_id" />
-						                <field name="medium_id" />
-						                <field name="source_id" />
-					                </group>
-					                <group name="sale_pay">
-						                <field name="payment_term_id" invisible="1" />
-						                <field name="bank_account_id" domain="[('partner_id', '=', partner_id)]" />
-						                <field name="bank_account_company_id" domain="[('partner_id', '=', company_id)]" />
-						                <field name="bank_id" />
-						                <field name="fiscal_position" options="{'no_create': True}" on_change="onchange_fiscal_position(fiscal_position, order_line, context)" />
-						                <field name="company_id" readonly="1"/>
-				                        <field name="warehouse_id" on_change="onchange_warehouse_id(warehouse_id)" options="{'no_create': True}" required="1"/>
-				                        <field name="currency_id" invisible="1" readonly="1" required="1" />
-					                </group>
-					                <group>
-						                <field name="invoiced" readonly="1" invisible="1"/>
-						                <field name="shipped" readonly="1" invisible="1"/>
-						                <field name="invoice_exists" invisible="1" readonly="1"/>
-					                </group>
-				                </group>
-			                </page>
+                                    <field name="date_valid" />
+                                    <field name="date_confirm" />
+                                    <newline/>
+                                    <field name="date_booked_confirmed" />
+                                    <field name="date_booked" attrs="{'required': [('date_booked_confirmed','=',True)]}" />
+                                    <newline/>
+                                    <field name="date_delivery_confirmed" />
+                                    <field name="date_delivery" attrs="{'required': [('date_delivery_confirmed','=',True)]}" />
+                                </group>
+                            </page>
 
-			                <page string="Informazioni spedizione">
-				                <group string="Informazioni spedizione">
-					                <group>
-						                <field name="goods_description_id" widget="selection" />
-						                <field name="carriage_condition_id" widget="selection" />
-						                <field name="transportation_method_id" widget="selection" />
-						                <field name="parcels" />
-						                <button name="update_parcels_event" string="Auto counter" type="object"/>
-						                <newline/>
-						                <field name="parcels_note" nolabel="1" colspan="2" />
-					                </group>
-					                <group>
-						                <field name="create_ddt" />
-					                </group>
-				                </group>				                
-			                </page>
-			                <page string="Note">
-				                <group colspan="4" col="4">
-					                <field name="text_note_pre_id" on_change="onchange_note(text_note_pre_id,'text_note_pre')" colspan="2" domain="[('object','=','sale.order')]" context="{'default_object':'sale.order'}" />
-					                <field name="text_note_post_id" on_change="onchange_note(text_note_post_id,'text_note_post')" colspan="2" domain="[('object','=','sale.order')]" context="{'default_object':'sale.order'}" />
-					                <separator string="Note (pre sale line)" colspan="2"/>
-					                <separator string="Note (post sale line)" colspan="2"/>
-					                <field name="text_note_pre" colspan="2" nolabel="1" />
-					                <field name="text_note_post" colspan="2" nolabel="1" />
-				                </group>
-			                </page>
-		                </notebook>
+                            <page string="Altre informazioni">
+                                <group>
+                                    <group name="logistics">
+                                        <field name="incoterm" widget="selection" />
+                                        <field name="picking_policy" required="1" attrs="{'readonly': [['state', 'not in', ['draft', 'sent']]]}" invisible="1"/>
+                                        <field name="order_policy" required="1" attrs="{'readonly': [['state', 'not in', ['draft', 'sent']]]}" invisible="1"/>
+                                    </group>
+                                    <group name="sales_person">
+                                        <field name="user_id" groups="base.group_user,base.group_partner_manager,account.group_account_invoice,base.group_sale_salesman_all_leads" />
+                                        <field name="categ_ids" widget="many2many_tags" />
+                                        <field name="section_id" options="{'no_create': True}" invisible="1" />
+                                        <field name="origin" />
+                                        <field name="campaign_id" />
+                                        <field name="medium_id" />
+                                        <field name="source_id" />
+                                    </group>
+                                    <group name="sale_pay">
+                                        <field name="payment_term_id" invisible="1" />
+                                        <field name="bank_account_id" domain="[('partner_id', '=', partner_id)]" />
+                                        <field name="bank_account_company_id" domain="[('partner_id', '=', company_id)]" />
+                                        <field name="bank_id" />
+                                        <field name="fiscal_position" options="{'no_create': True}" on_change="onchange_fiscal_position(fiscal_position, order_line, context)" />
+                                        <field name="company_id" readonly="1"/>
+                                        <field name="warehouse_id" on_change="onchange_warehouse_id(warehouse_id)" options="{'no_create': True}" required="1"/>
+                                        <field name="currency_id" invisible="1" readonly="1" required="1" />
+                                    </group>
+                                    <group>
+                                        <field name="invoiced" readonly="1" invisible="1"/>
+                                        <field name="shipped" readonly="1" invisible="1"/>
+                                        <field name="invoice_exists" invisible="1" readonly="1"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <page string="Informazioni spedizione">
+                                <group string="Informazioni spedizione">
+                                    <group>
+                                        <field name="goods_description_id" widget="selection" nolabel="1"/>
+                        
+                                        <field name="carriage_condition_id" widget="selection" nolabel="1" />
+                                        <field name="transportation_method_id" widget="selection" nolabel="1" />
+                                        
+                                        <field name="parcels" />
+                                        <button name="update_parcels_event" string="Auto counter" type="object"/>
+                                        <newline/>
+                                        <field name="parcels_note" nolabel="1" colspan="2" />
+                                    </group>
+                                    <group invisible="1">
+                                        <field name="create_ddt"/>
+                                    </group>
+                                </group>                                
+                            </page>
+                            <page string="Note">
+                                <group colspan="4" col="4">
+                                    <field name="text_note_pre_id" on_change="onchange_note(text_note_pre_id,'text_note_pre')" colspan="2" domain="[('object','=','sale.order')]" context="{'default_object':'sale.order'}" />
+                                    <field name="text_note_post_id" on_change="onchange_note(text_note_post_id,'text_note_post')" colspan="2" domain="[('object','=','sale.order')]" context="{'default_object':'sale.order'}" />
+                                    <separator string="Note (pre sale line)" colspan="2"/>
+                                    <separator string="Note (post sale line)" colspan="2"/>
+                                    <field name="text_note_pre" colspan="2" nolabel="1" />
+                                    <field name="text_note_post" colspan="2" nolabel="1" />
+                                </group>
+                            </page>
+                        </notebook>
 
                     </sheet>    
                     <!--
-		                <notebook>		                
-			                
-			                <page string="Outsource">
-				                <group colspan="4" col="4">
-					                <separator string="Original order:" colspan="4" attrs="{'invisible': [('outsource_order','=',False)]}" />
-					                <field name="outsource_order" colspan="4" nolabel="1" widget="html" attrs="{'invisible': [('outsource_order','=',False)]}" readonly="1" />
-					                <separator string="Outsource order esit:" colspan="4" attrs="{'invisible': [('outsource_esit','=',False)]}" />
-					                <field name="outsource_esit" colspan="4" nolabel="1" widget="html" attrs="{'invisible': [('outsource_esit','=',False)]}" readonly="1" />
-					                <field name="outsource" invisible="1" />
-				                </group>
-			                </page>
-			                
-			                
-		                </notebook>
-	                </sheet>
-	                <div class="oe_chatter">
-		                <field name="message_follower_ids" widget="mail_followers" />
-		                <field name="message_ids" widget="mail_thread"  options="{'display_log_button': True}"/>
-	                </div>-->
+                        <notebook>                        
+                            
+                            <page string="Outsource">
+                                <group colspan="4" col="4">
+                                    <separator string="Original order:" colspan="4" attrs="{'invisible': [('outsource_order','=',False)]}" />
+                                    <field name="outsource_order" colspan="4" nolabel="1" widget="html" attrs="{'invisible': [('outsource_order','=',False)]}" readonly="1" />
+                                    <separator string="Outsource order esit:" colspan="4" attrs="{'invisible': [('outsource_esit','=',False)]}" />
+                                    <field name="outsource_esit" colspan="4" nolabel="1" widget="html" attrs="{'invisible': [('outsource_esit','=',False)]}" readonly="1" />
+                                    <field name="outsource" invisible="1" />
+                                </group>
+                            </page>
+                            
+                            
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" />
+                        <field name="message_ids" widget="mail_thread"  options="{'display_log_button': True}"/>
+                    </div>-->
                 </form>
             </field>
         </record>
