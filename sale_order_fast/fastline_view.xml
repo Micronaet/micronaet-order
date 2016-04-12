@@ -64,10 +64,21 @@
 
 			                <group>
 				                <field name="date_order" required="1" attrs="{'readonly': [['state', 'not in', ['draft', 'sent']]]}"/>
+				                <newline />
+
 				                <field domain="[('type','=','sale')]" name="pricelist_id" on_change="onchange_pricelist_id(pricelist_id,order_line)" attrs="{'readonly': [('state','in',('done'))]}" required="1" />
-				                <field name="return_id" widget="selection" />
-				                <field name="transportation_reason_id" widget="selection" />
+				                <newline />
+
+				                <button name="set_return_default" string="Product return" type="object" icon="star-on"/>
+				                <field name="return_id" widget="selection" nolabel="1"/>
+
+				                <button name="set_transportation_default" string="Transportation reason" type="object" icon="star-on" />
+				                <field name="transportation_reason_id" widget="selection" nolabel="1" />
+
+				                <button name="set_agent_default" string="Agent" type="object" icon="star-on" />
     			                <field name="mx_agent_id" />
+
+				                <button name="set_payment_default" string="Payment term" type="object" icon="star-on" />
                                 <field name="payment_term" options="{'no_create': True}" />
 			                </group>
 		                </group>
@@ -105,10 +116,12 @@
 			                    <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
 				                    <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
 				                    <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+				                    <newline/>
 				                    <div class="oe_subtotal_footer_separator oe_inline">
 					                    <label for="amount_total"/>
 					                    <button name="button_dummy" states="draft,sent" string="(aggiorna)" type="object" class="oe_edit_only oe_link" modifiers="{'invisible': [['state', 'not in', ['draft', 'sent']]]}"/>
 				                    </div>
+				                    <newline/>
 				                    <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
 			                    </group>
 			                    <div class="oe_clear"/>
