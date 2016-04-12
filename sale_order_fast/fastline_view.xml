@@ -187,14 +187,14 @@
 
                                         <button name="set_transportation_default" string="Transportation method" type="object" icon="star-on" />
                                         <field name="transportation_method_id" widget="selection" nolabel="1" />
-                                        
+                                    </group>
+                                    <group>
                                         <field name="parcels" />
                                         <button name="update_parcels_event" string="Auto counter" type="object"/>
                                         <newline/>
                                         <field name="parcels_note" nolabel="1" colspan="2" />
-                                    </group>
-                                    <group invisible="1">
-                                        <field name="create_ddt"/>
+                                        
+                                        <field name="create_ddt" invisible="1"/>
                                     </group>
                                 </group>                                
                             </page>
