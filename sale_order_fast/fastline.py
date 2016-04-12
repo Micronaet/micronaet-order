@@ -81,6 +81,47 @@ class SaleOrder(orm.Model):
         '''
         return self.write(cr, uid, ids, {'fast_order': True}, context=context)
         
+    # Button default setup:
+    def set_return_default(self, cr, uid, ids, context=None):
+        # return_id
+        return True
+        
+    def set_transportation_default(self, cr, uid, ids, context=None):
+        ''' Set default value also in partner
+        '''
+        assert len(ids) == 1, 'Force only once element a time!'
+        order = self.browse(cr, uid, ids, context=context)[0]
+        return self.pool.get('res.partner').write(
+            cr, uid, order.partner_id.id, {
+                'tranportation_reason_id': 
+                    order.transportation_reason_id.id,
+                }, context=context)            
+    
+    def set_agent_default(self, cr, uid, ids, context=None):
+        # mx_agent_id
+        return True
+    
+    def set_payment_default(self, cr, uid, ids, context=None):
+        # payment_term 
+        return True
+        
+    def set_goods_default(self, cr, uid, ids, context=None):
+        assert len(ids) == 1, 'Force only once element a time!'
+        order = self.browse(cr, uid, ids, context=context)[0]
+        return self.pool.get('res.partner').write(
+            cr, uid, order.partner_id.id, {
+                'goods_description_id': 
+                    order.goods_description_id.id,
+                }, context=context)            
+    
+    def set_carriage_default(self, cr, uid, ids, context=None):
+        # carriage_condition_id
+        return True
+    
+    def set_method_default(self, cr, uid, ids, context=None):
+        # transportation_method_id    
+        return True
+            
     def create_real_line(self, cr, uid, ids, context=None):
         ''' Create real line from fast one's
         '''
@@ -155,7 +196,8 @@ class SaleOrder(orm.Model):
         # TODO retur view for normal order! sale.v
         
         model_pool = self.pool.get('ir.model.data')
-        view_id = model_pool.get_object_reference('sale', 'view_order_form')[1]    
+        view_id = model_pool.get_object_reference(
+            cr, uid, 'sale', 'view_order_form')[1]    
         return {
             'type': 'ir.actions.act_window',
             'name': _('Normal sale view'),
