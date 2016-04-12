@@ -76,10 +76,10 @@
 				                <field name="transportation_reason_id" widget="selection" nolabel="1" />
 
 				                <button name="set_agent_default" string="Agent" type="object" icon="star-on" />
-    			                <field name="mx_agent_id" />
+    			                <field name="mx_agent_id" nolabel="1"/>
 
 				                <button name="set_payment_default" string="Payment term" type="object" icon="star-on" />
-                                <field name="payment_term" options="{'no_create': True}" />
+                                <field name="payment_term" options="{'no_create': True}" nolabel="1"/>
 			                </group>
 		                </group>
 
