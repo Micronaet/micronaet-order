@@ -84,6 +84,7 @@
                         </group>
 
                         <field name="linked" invisible="1" />
+                        <field name="fast_order" invisible="1" />
                         <!--<button name="button_create_order_outsource" icon="gtk-convert" string="Create outource order" type="object" attrs="{'invisible': ['|',('state', 'in', ('draft','cancel','sent')),('linked', '=', True)]}" />
                         <button name="nothing" icon="gtk-yes" string="Ousourced!" type="object" attrs="{'invisible': ['|',('state', 'in', ('draft','cancel','sent')),('outsource', '=', False)]}" />-->
                         <notebook>                        
@@ -106,7 +107,6 @@
                                     <div class="oe_clear" />
                                     <field name="note" class="oe_inline" placeholder="Termini e condizioni..." nolabel="1" colspan="2"/>
                                     <!--sale.order.line totals:-->
-
                                 </group>
                             </page>
 
@@ -208,11 +208,9 @@
                                 </group>
                             </page>
                         </notebook>
-
                     </sheet>    
                     <!--
                         <notebook>                        
-                            
                             <page string="Outsource">
                                 <group colspan="4" col="4">
                                     <separator string="Original order:" colspan="4" attrs="{'invisible': [('outsource_order','=',False)]}" />
@@ -222,8 +220,6 @@
                                     <field name="outsource" invisible="1" />
                                 </group>
                             </page>
-                            
-                            
                         </notebook>
                     </sheet>
                     <div class="oe_chatter">
@@ -278,7 +274,7 @@
             </field>
         </record>
     
-        <record model="ir.ui.view" id="view_sale_order_fastline_page_form">
+        <!--<record model="ir.ui.view" id="view_sale_order_fastline_page_form">
             <field name="name">sale.order.fastline.form</field>
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
@@ -297,7 +293,7 @@
                     </page>
                 </xpath>
             </field>
-        </record>        
+        </record> -->
     </data>
 </openerp>
 

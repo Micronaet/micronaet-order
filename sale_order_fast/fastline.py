@@ -152,7 +152,24 @@ class SaleOrder(orm.Model):
         self.write(cr, uid, ids, {
             'fast_order': False,
             }, context=context)
-        return True
+        # TODO retur view for normal order! sale.v
+        
+        model_pool = self.pool.get('ir.model.data')
+        view_id = model_pool.get_object_reference('sale', 'view_order_form')[1]    
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Normal sale view'),
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'res_id': ids[0],
+            'res_model': 'sale.order',
+            'view_id': view_id, # False
+            'views': [(view_id, 'form'),(False, 'tree')],
+            'domain': [],
+            'context': context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }                
         
     _columns = {
         'fastline_ids': fields.one2many(
