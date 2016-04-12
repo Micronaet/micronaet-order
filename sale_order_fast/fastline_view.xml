@@ -98,6 +98,23 @@
 
 				                </group>
 			                </page>
+
+			                <page string="Order line">
+				                <field name="order_line" context="{'default_date_deadline': date_deadline, 'partner_id': partner_id}" attrs="{'readonly':[('state', 'in', ('cancel'))]}" />
+
+			                    <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+				                    <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+				                    <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+				                    <div class="oe_subtotal_footer_separator oe_inline">
+					                    <label for="amount_total"/>
+					                    <button name="button_dummy" states="draft,sent" string="(aggiorna)" type="object" class="oe_edit_only oe_link" modifiers="{'invisible': [['state', 'not in', ['draft', 'sent']]]}"/>
+				                    </div>
+				                    <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+			                    </group>
+			                    <div class="oe_clear"/>
+			                    <field name="note" class="oe_inline" placeholder="Termini e condizioni..." />
+			                </page>
+
 			                <page string="Data ordine">
 				                <group colspan="2" col="5">
           			                <field name="quotation_model" />
@@ -162,7 +179,6 @@
 					                </group>
 				                </group>				                
 			                </page>
-
 			                <page string="Note">
 				                <group colspan="4" col="4">
 					                <field name="text_note_pre_id" on_change="onchange_note(text_note_pre_id,'text_note_pre')" colspan="2" domain="[('object','=','sale.order')]" context="{'default_object':'sale.order'}" />
@@ -178,23 +194,6 @@
                     </sheet>    
                     <!--
 		                <notebook>		                
-			                <page string="Righe Ordine">
-				                <field name="order_line" context="{'default_date_deadline': date_deadline, 'partner_id': partner_id}" attrs="{'readonly':[('state', 'in', ('cancel'))]}" />
-
-			                    <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
-				                    <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-				                    <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-				                    <div class="oe_subtotal_footer_separator oe_inline">
-					                    <label for="amount_total"/>
-					                    <button name="button_dummy" states="draft,sent" string="(aggiorna)" type="object" class="oe_edit_only oe_link" modifiers="{'invisible': [['state', 'not in', ['draft', 'sent']]]}"/>
-				                    </div>
-				                    <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-			                    </group>
-			                    <div class="oe_clear"/>
-			                    <field name="note" class="oe_inline" placeholder="Termini e condizioni..." />
-			                </page>
-			                
-			                
 			                
 			                <page string="Outsource">
 				                <group colspan="4" col="4">
@@ -216,15 +215,21 @@
                 </form>
             </field>
         </record>
-        <record model="ir.actions.act_window" id="action_fast_sale_order_insert">
-            <field name="name">Untitled</field>
-            <field name="res_model">openerp.model</field>
+        <record model="ir.actions.act_window" id="action_sale_order_form_fast_form">
+            <field name="name">New fast order</field>
+            <field name="res_model">sale.order</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="view_model_name_form"/>
+            <field name="view_mode">form,tree</field>
+            <field name="view_id" ref="view_sale_order_form_fast_form"/>
             <field name="context">{}</field>
             <field name="domain">[]</field>
         </record>
+        <menuitem 
+            parent="sale.menu_sale_order" 
+            id="menu_sale_order_form_fast" 
+            action="action_sale_order_form_fast_form"
+            sequence="0"
+            />        
         
         <record model="ir.ui.view" id="view_sale_order_fastline_form">
             <field name="name">sale.order.fastline.form</field>
