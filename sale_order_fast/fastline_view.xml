@@ -68,8 +68,8 @@
                                 <field domain="[('type','=','sale')]" name="pricelist_id" on_change="onchange_pricelist_id(pricelist_id,order_line)" attrs="{'readonly': [('state','in',('done'))]}" required="1" />
                                 <newline />
 
-                                <button name="set_return_default" string="Product return" type="object" icon="star-on"/>
-                                <field name="return_id" widget="selection" nolabel="1"/>
+                                <!--<button name="set_return_default" string="Product return" type="object" icon="star-on"/>
+                                <field name="return_id" widget="selection" nolabel="1"/>-->
 
                                 <button name="set_transportation_default" string="Transportation reason" type="object" icon="star-on" />
                                 <field name="transportation_reason_id" widget="selection" nolabel="1" />
