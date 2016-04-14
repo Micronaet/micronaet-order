@@ -89,7 +89,7 @@
                         <notebook>                       
                             <page string="Order Lines">
                                 <button name="go_normal_view" string="Standard view" type="object" icon="gtk-file"/>
-                                <field name="order_line" context="{'default_date_deadline':date_deadline,'partner_id':partner_id}">
+                                <field name="order_line" context="{'default_date_deadline':date_deadline,'partner_id':partner_id}" attrs="{'readonly':[('state','in',('cancel'))]}">
                                     <tree string="Sales Order Lines" editable="bottom">
                                         <field name="sequence" invisible="1"/>
                                         <field name="state" invisible="1"/>
