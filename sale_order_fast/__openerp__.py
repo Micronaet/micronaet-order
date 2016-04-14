@@ -32,6 +32,7 @@
         'sale',
         'sale_stock',
         'mx_sale', # DDT data
+        'l10n_it_ddt', # extra partner and doc. data
         'fido_order_check', # fido data
         'mx_discount_scale_order', # for discount operation
         ],

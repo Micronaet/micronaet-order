@@ -81,7 +81,24 @@ class SaleOrder(orm.Model):
         '''
         return self.write(cr, uid, ids, {'fast_order': True}, context=context)
         
+    # Utility:
+    def utility_set_partner_default(self, cr, uid, ids, order_field, 
+            partner_field, context=None):
+        ''' Utility to set partner element
+        '''
+        assert len(ids) == 1, 'Force only once element a time!'
+        
+        _logger.warning('Set default order %s > partner %s' % (
+            order_field, partner_field))
+        order = self.browse(cr, uid, ids, context=context)[0]
+        return self.pool.get('res.partner').write(
+            cr, uid, order.partner_id.id, {
+                partner_field: 
+                    order.__getattribute__(order_field).id,
+                }, context=context)            
+        
     # Button default setup:
+    # TODO change all with utility command:
     def set_return_default(self, cr, uid, ids, context=None):
         # return_id
         return True
@@ -89,38 +106,33 @@ class SaleOrder(orm.Model):
     def set_transportation_default(self, cr, uid, ids, context=None):
         ''' Set default value also in partner
         '''
-        assert len(ids) == 1, 'Force only once element a time!'
-        order = self.browse(cr, uid, ids, context=context)[0]
-        return self.pool.get('res.partner').write(
-            cr, uid, order.partner_id.id, {
-                'tranportation_reason_id': 
-                    order.transportation_reason_id.id,
-                }, context=context)            
+        return self. utility_set_partner_default(
+            cr, uid, ids, 'tranportation_reason_id', 'tranportation_reason_id', 
+            context=context)
     
     def set_agent_default(self, cr, uid, ids, context=None):
-        # mx_agent_id
-        return True
+        return self. utility_set_partner_default(
+            cr, uid, ids, 'mx_agent_id', 'agent_id', context=context)
     
     def set_payment_default(self, cr, uid, ids, context=None):
-        # payment_term 
-        return True
+        return self. utility_set_partner_default(
+            cr, uid, ids, 'payment_term', 'property_payment_term', 
+            context=context)
         
     def set_goods_default(self, cr, uid, ids, context=None):
-        assert len(ids) == 1, 'Force only once element a time!'
-        order = self.browse(cr, uid, ids, context=context)[0]
-        return self.pool.get('res.partner').write(
-            cr, uid, order.partner_id.id, {
-                'goods_description_id': 
-                    order.goods_description_id.id,
-                }, context=context)            
+        return self. utility_set_partner_default(
+            cr, uid, ids, 'goods_description_id', 'goods_description_id', 
+            context=context)
     
     def set_carriage_default(self, cr, uid, ids, context=None):
-        # carriage_condition_id
-        return True
+        return self. utility_set_partner_default(
+            cr, uid, ids, 'carriage_condition_id', 'carriage_condition_id', 
+            context=context)
     
     def set_method_default(self, cr, uid, ids, context=None):
-        # transportation_method_id    
-        return True
+        return self. utility_set_partner_default(
+            cr, uid, ids, 'transportation_method_id', 
+            'transportation_method_id', context=context)
             
     def create_real_line(self, cr, uid, ids, context=None):
         ''' Create real line from fast one's
