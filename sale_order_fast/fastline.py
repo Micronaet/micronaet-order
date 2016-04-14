@@ -216,9 +216,9 @@ class SaleOrder(orm.Model):
     def go_normal_view(self, cr, uid, ids, context=None):
         ''' Open normal view
         '''
-        #model_pool = self.pool.get('ir.model.data')
-        #view_id = model_pool.get_object_reference(
-        #    cr, uid, 'sale', 'view_order_form')[1]    
+        model_pool = self.pool.get('ir.model.data')
+        view_id = model_pool.get_object_reference(
+            cr, uid, 'sale', 'view_order_form')[1]    
         return {
             'type': 'ir.actions.act_window',
             'name': _('Normal sale view'),
@@ -239,7 +239,7 @@ class SaleOrder(orm.Model):
         '''
         model_pool = self.pool.get('ir.model.data')
         view_id = model_pool.get_object_reference(
-            cr, uid, 'sale', 'view_order_form')[1]    
+            cr, uid, 'sale_order_fast', 'view_sale_order_form_fast_form')[1]    
         return {
             'type': 'ir.actions.act_window',
             'name': _('Normal sale view'),
