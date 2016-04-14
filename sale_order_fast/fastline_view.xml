@@ -88,8 +88,8 @@
                         <button name="nothing" icon="gtk-yes" string="Ousourced!" type="object" attrs="{'invisible': ['|',('state', 'in', ('draft','cancel','sent')),('outsource', '=', False)]}" />-->
                         <notebook>                       
                             <page string="Order Lines">
-                                <button name="create_real_line" string="Create real line" type="object"/>
-                                <field name="order_line">
+                                <button name="go_normal_view" string="Standard view" type="object" icon="gtk-file"/>
+                                <field name="order_line" context="{'default_date_deadline':date_deadline,'partner_id':partner_id}">
                                     <tree string="Sales Order Lines" editable="bottom">
                                         <field name="sequence" invisible="1"/>
                                         <field name="state" invisible="1"/>
@@ -98,7 +98,7 @@
                                                groups="base.group_user"
                                                on_change="product_id_change_with_wh(parent.pricelist_id,product_id,product_uom_qty,False,product_uos_qty,False,name,parent.partner_id, False, True, parent.date_order, product_packaging, parent.fiscal_position, False, parent.warehouse_id, context)"/>
 
-                                        <field name="order_deadline" />
+                                        <field name="date_deadline" />
                                         <!--<field name="product_id"
                                             context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
                                             groups="base.group_user"
@@ -111,6 +111,7 @@
                                             name="product_uom_qty" class="oe_inline"
                                             on_change="product_id_change(parent.pricelist_id,product_id,product_uom_qty,product_uom,product_uos_qty,product_uos,name,parent.partner_id, False, False, parent.date_order, False, parent.fiscal_position, True, context)"/>-->
                                         <field name="product_uom" groups="product.group_uom" class="oe_inline oe_no_button"                                        
+                                               invisible="1"
                                                context="{'company_id': parent.company_id}"
                                                on_change="onchange_product_uom(parent.pricelist_id,product_id,product_uom_qty,product_uom,product_uos_qty,product_uos,name,parent.partner_id, False, False, parent.date_order, parent.fiscal_position, context)"/>
                                         <!--<field name="product_uos_qty" class="oe_inline"/>-->
@@ -120,7 +121,7 @@
                                                on_change="product_id_change_with_wh(parent.pricelist_id,product_id,product_uom_qty,product_uom,product_uos_qty,product_uos,name,parent.partner_id, False, False, parent.date_order, product_packaging, parent.fiscal_position, True, parent.warehouse_id, context)"/>
                                         <field name="product_uos" options='{"no_open": True}' class="oe_inline" invisible="1"/>
                                         <field name="price_unit"/>
-                                        <field name="multi_discount_rates" /> <!--TODO on_change_multi_discount-->
+                                        <field name="multi_discount_rates"  on_change='on_change_multi_discount(multi_discount_rates)' context="{'partner_id':parent.partner_id}" />
                                         <field name="discount" invisible="1"/>
                                         <field name="tax_id" widget="many2many_tags" domain="[('parent_id','=',False),('type_tax_use','&lt;&gt;','purchase')]" invisible="1"/>
                                         <field name="th_weight" invisible="1"/>
@@ -253,11 +254,23 @@
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers" />
-                        <field name="message_ids" widget="mail_thread"  options="{'display_log_button': True}"/>
+                        <field name="message_ids" widget="mail_thread" options="{'display_log_button': True}"/>
                     </div>-->
                 </form>
             </field>
         </record>
+
+        <record model="ir.ui.view" id="view_sale_order_switch_button_form">
+            <field name="name">sale.order.switch.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']" position="before">
+                    <button name="go_fast_view" string="Fast view" type="object" icon="gtk-edit"/>
+                </xpath>
+            </field>
+        </record> 
+                
         <record model="ir.actions.act_window" id="action_sale_order_form_fast_form">
             <field name="name">New fast order</field>
             <field name="res_model">sale.order</field>

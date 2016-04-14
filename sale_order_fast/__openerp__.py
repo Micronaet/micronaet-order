@@ -33,6 +33,7 @@
         'sale_stock',
         'mx_sale', # DDT data
         'fido_order_check', # fido data
+        'mx_discount_scale_order', # for discount operation
         ],
     'init_xml': [],
     'demo': [],

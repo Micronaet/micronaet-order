@@ -193,7 +193,7 @@ class SaleOrder(orm.Model):
         self.write(cr, uid, ids, {
             'fast_order': False,
             }, context=context)
-        # TODO retur view for normal order! sale.v"""
+        # TODO retur view for normal order! sale.v
         
         model_pool = self.pool.get('ir.model.data')
         view_id = model_pool.get_object_reference(
@@ -211,8 +211,50 @@ class SaleOrder(orm.Model):
             'context': context,
             'target': 'current', # 'new'
             'nodestroy': False,
+            }"""
+
+    def go_normal_view(self, cr, uid, ids, context=None):
+        ''' Open normal view
+        '''
+        #model_pool = self.pool.get('ir.model.data')
+        #view_id = model_pool.get_object_reference(
+        #    cr, uid, 'sale', 'view_order_form')[1]    
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Normal sale view'),
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'res_id': ids[0],
+            'res_model': 'sale.order',
+            'view_id': view_id, # False
+            'views': [(view_id, 'form'),(False, 'tree')],
+            'domain': [],
+            'context': context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
             }                
-        
+
+    def go_fast_view(self, cr, uid, ids, context=None):
+        ''' Open fast insert view
+        '''
+        model_pool = self.pool.get('ir.model.data')
+        view_id = model_pool.get_object_reference(
+            cr, uid, 'sale', 'view_order_form')[1]    
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Normal sale view'),
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'res_id': ids[0],
+            'res_model': 'sale.order',
+            'view_id': view_id, # False
+            'views': [(view_id, 'form'),(False, 'tree')],
+            'domain': [],
+            'context': context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }                
+            
     _columns = {
         'fastline_ids': fields.one2many(
             'sale.order.fastline', 'order_id', 'Fast line'), 
