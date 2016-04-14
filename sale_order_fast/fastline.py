@@ -101,13 +101,14 @@ class SaleOrder(orm.Model):
     # TODO change all with utility command:
     def set_return_default(self, cr, uid, ids, context=None):
         # return_id
+        # TODO
         return True
         
     def set_transportation_default(self, cr, uid, ids, context=None):
         ''' Set default value also in partner
         '''
         return self. utility_set_partner_default(
-            cr, uid, ids, 'tranportation_reason_id', 'tranportation_reason_id', 
+            cr, uid, ids, 'transportation_reason_id', 'transportation_reason_id', 
             context=context)
     
     def set_agent_default(self, cr, uid, ids, context=None):
