@@ -26,7 +26,6 @@
                     <sheet>
                         <h1>
                             <field name="uncovered_state" invisible="1" readonly="1" />
-
                             <label string="Preventivo" attrs="{'invisible': [('state','not in',('draft','sent'))]}" />
                             <label string="Ordine di vendita" attrs="{'invisible': [('state','in',('draft','sent'))]}" />
                             <div style="background-color: red;text-align: center;font-weight:bold;color:white;">
@@ -270,6 +269,10 @@
                     <field name="product_id" />
                     <field name="product_uom_qty" />
                     <field name="price_unit" />
+
+                    <field name="deadline" />
+                    <field name="discount_scale" />
+                    <field name="discount_scale_multi" />
                 </tree>
             </field>
         </record>
