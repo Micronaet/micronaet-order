@@ -86,44 +86,74 @@
                         <field name="fast_order" invisible="1" />
                         <!--<button name="button_create_order_outsource" icon="gtk-convert" string="Create outource order" type="object" attrs="{'invisible': ['|',('state', 'in', ('draft','cancel','sent')),('linked', '=', True)]}" />
                         <button name="nothing" icon="gtk-yes" string="Ousourced!" type="object" attrs="{'invisible': ['|',('state', 'in', ('draft','cancel','sent')),('outsource', '=', False)]}" />-->
-                        <notebook>                        
-                            <page string="Order line">
-                                <group colspan="4">
-                                    <button name="create_real_line" string="Create real line" type="object"/>
-                                    <separator string="Fast line:" colspan="4"/>
-                                    <field name="fastline_ids" colspan="4" context="{'default_date_deadline': date_deadline, 'partner_id': partner_id}"/>
-                                    
-                                    <!--sale.order.line totals:-->
-                                    <!--<group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
-                                        <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-                                        <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-                                        <div class="oe_subtotal_footer_separator oe_inline">
-                                            <label for="amount_total"/>
-                                            <button name="button_dummy" states="draft,sent" string="(aggiorna)" type="object" class="oe_edit_only oe_link" modifiers="{'invisible': [['state', 'not in', ['draft', 'sent']]]}"/>
-                                        </div>
-                                        <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-                                    </group>-->
-                                    <div class="oe_clear" />
-                                    <field name="note" class="oe_inline" placeholder="Termini e condizioni..." nolabel="1" colspan="2"/>
-                                    <!--sale.order.line totals:-->
-                                </group>
-                            </page>
+                        <notebook>                       
+                            <page string="Order Lines">
+                                <button name="create_real_line" string="Create real line" type="object"/>
+                                <field name="order_line">
+                                    <tree string="Sales Order Lines" editable="bottom">
+                                        <field name="sequence" invisible="1"/>
+                                        <field name="state" invisible="1"/>
+                                        <field name="product_id"
+                                               context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':False, 'company_id': parent.company_id}"
+                                               groups="base.group_user"
+                                               on_change="product_id_change_with_wh(parent.pricelist_id,product_id,product_uom_qty,False,product_uos_qty,False,name,parent.partner_id, False, True, parent.date_order, product_packaging, parent.fiscal_position, False, parent.warehouse_id, context)"/>
 
-                            <page string="Order line" invisible="1">
-                                <field name="order_line" context="{'default_date_deadline': date_deadline, 'partner_id': partner_id}" attrs="{'readonly':[('state', 'in', ('cancel'))]}"/>
-                                <!--<group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
-                                    <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
-                                    <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                                        <field name="order_deadline" />
+                                        <!--<field name="product_id"
+                                            context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
+                                            groups="base.group_user"
+                                            on_change="product_id_change(parent.pricelist_id, product_id, product_uom_qty, False, product_uos_qty, False, name, parent.partner_id, False, True, parent.date_order, False, parent.fiscal_position, False, context)"/>-->
+                                        <field context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
+                                               name="product_uom_qty" 
+                                               on_change="product_id_change_with_wh(parent.pricelist_id,product_id,product_uom_qty,product_uom,product_uos_qty,False,name,parent.partner_id, False, False, parent.date_order, product_packaging, parent.fiscal_position, True, parent.warehouse_id, context)"/>
+                                        <!--<field
+                                            context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}"
+                                            name="product_uom_qty" class="oe_inline"
+                                            on_change="product_id_change(parent.pricelist_id,product_id,product_uom_qty,product_uom,product_uos_qty,product_uos,name,parent.partner_id, False, False, parent.date_order, False, parent.fiscal_position, True, context)"/>-->
+                                        <field name="product_uom" groups="product.group_uom" class="oe_inline oe_no_button"                                        
+                                               context="{'company_id': parent.company_id}"
+                                               on_change="onchange_product_uom(parent.pricelist_id,product_id,product_uom_qty,product_uom,product_uos_qty,product_uos,name,parent.partner_id, False, False, parent.date_order, parent.fiscal_position, context)"/>
+                                        <!--<field name="product_uos_qty" class="oe_inline"/>-->
+                                        <field context="{'partner_id':parent.partner_id, 'quantity':product_uos_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
+                                               name="product_uos_qty" class="oe_inline"
+                                               invisible="1"
+                                               on_change="product_id_change_with_wh(parent.pricelist_id,product_id,product_uom_qty,product_uom,product_uos_qty,product_uos,name,parent.partner_id, False, False, parent.date_order, product_packaging, parent.fiscal_position, True, parent.warehouse_id, context)"/>
+                                        <field name="product_uos" options='{"no_open": True}' class="oe_inline" invisible="1"/>
+                                        <field name="price_unit"/>
+                                        <field name="multi_discount_rates" /> <!--TODO on_change_multi_discount-->
+                                        <field name="discount" invisible="1"/>
+                                        <field name="tax_id" widget="many2many_tags" domain="[('parent_id','=',False),('type_tax_use','&lt;&gt;','purchase')]" invisible="1"/>
+                                        <field name="th_weight" invisible="1"/>
+                                        <field name="address_allotment_id" invisible="1"/>
+                                        <field name="name" invisible="1"/>
+                                        <field name="invoice_lines" invisible="1"/>
+
+                                        <field name="company_id" readonly="True" invisible="1"/>
+                                        <!--<field name="shipped" invisible="1"/>-->
+                                        <!--<field name="invoice_exists" invisible="1"/>-->
+                                        <field name="delay" class="oe_inline" invisible="1"/>
+                                        <field name="product_tmpl_id" invisible="1"/>
+                                        <field name="product_packaging" invisible="1"
+                                               context="{'default_product_tmpl_id': product_tmpl_id, 'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}" on_change="product_packaging_change(parent.pricelist_id, product_id, product_uom_qty, product_uom, parent.partner_id, product_packaging, True, context)" 
+                                               domain="[('product_tmpl_id','=',product_tmpl_id)]" groups="product.group_stock_packaging" />
+                                        <field name="route_id" groups="sale_stock.group_route_so_lines" invisible="1"/>
+
+                                        <field name="price_subtotal"/>
+                                    </tree>
+                                </field>
+                                <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+                                    <field name="amount_untaxed" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                                    <field name="amount_tax" widget='monetary' options="{'currency_field': 'currency_id'}"/>
                                     <div class="oe_subtotal_footer_separator oe_inline">
-                                        <label for="amount_total"/>
-                                        <button name="button_dummy" states="draft,sent" string="(aggiorna)" type="object" class="oe_edit_only oe_link" modifiers="{'invisible': [['state', 'not in', ['draft', 'sent']]]}"/>
+                                        <label for="amount_total" />
+                                        <button name="button_dummy"
+                                            states="draft,sent" string="(update)" type="object" class="oe_edit_only oe_link"/>
                                     </div>
-                                    <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="1"/>
+                                    <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget='monetary' options="{'currency_field': 'currency_id'}"/>
                                 </group>
                                 <div class="oe_clear"/>
-                                <field name="note" class="oe_inline" placeholder="Termini e condizioni..." />-->
+                                <field name="note" class="oe_inline" placeholder="Terms and conditions..."/>
                             </page>
-
                             <page string="Data ordine">
                                 <group colspan="2" col="5">
                                       <field name="quotation_model" />

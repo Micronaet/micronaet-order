@@ -30,6 +30,7 @@
     'depends': [
         'base',
         'sale',
+        'sale_stock',
         'mx_sale', # DDT data
         'fido_order_check', # fido data
         ],
