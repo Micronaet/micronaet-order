@@ -270,9 +270,9 @@
                     <field name="product_uom_qty" />
                     <field name="price_unit" />
 
-                    <field name="deadline" />
+                    <!--<field name="deadline" />
                     <field name="discount_scale" />
-                    <field name="discount_scale_multi" />
+                    <field name="discount_scale_multi" />-->
                 </tree>
             </field>
         </record>

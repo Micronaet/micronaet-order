@@ -126,7 +126,7 @@ class SaleOrder(orm.Model):
         ''' Create real line from fast one's
         '''
         assert len(ids) == 1, 'Only one order a time'
-        sol_pool = self.pool.get('sale.order.line')
+        """sol_pool = self.pool.get('sale.order.line')
         fastline_pool = self.pool.get('sale.order.fastline')
         
         
@@ -193,7 +193,7 @@ class SaleOrder(orm.Model):
         self.write(cr, uid, ids, {
             'fast_order': False,
             }, context=context)
-        # TODO retur view for normal order! sale.v
+        # TODO retur view for normal order! sale.v"""
         
         model_pool = self.pool.get('ir.model.data')
         view_id = model_pool.get_object_reference(
