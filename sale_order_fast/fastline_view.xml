@@ -96,16 +96,19 @@
                                         <field name="product_id"
                                                context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':False, 'company_id': parent.company_id}"
                                                groups="base.group_user"
-                                               on_change="product_id_change_with_wh(parent.pricelist_id,product_id,product_uom_qty,False,product_uos_qty,False,name,parent.partner_id, False, True, parent.date_order, product_packaging, parent.fiscal_position, False, parent.warehouse_id, context)"/>
+                                               on_change="product_id_change_with_wh(parent.pricelist_id,product_id,product_uom_qty,False,product_uos_qty,False,name,parent.partner_id, False, True, parent.date_order, product_packaging, parent.fiscal_position, False, parent.warehouse_id, context)"
+                                               attrs="{'readonly':[('state','in',('cancel'))]}"
+                                               />
 
-                                        <field name="date_deadline" />
+                                        <field name="date_deadline" attrs="{'readonly':[('state','in',('cancel'))]}"/>
                                         <!--<field name="product_id"
                                             context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
                                             groups="base.group_user"
                                             on_change="product_id_change(parent.pricelist_id, product_id, product_uom_qty, False, product_uos_qty, False, name, parent.partner_id, False, True, parent.date_order, False, parent.fiscal_position, False, context)"/>-->
                                         <field context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
                                                name="product_uom_qty" 
-                                               on_change="product_id_change_with_wh(parent.pricelist_id,product_id,product_uom_qty,product_uom,product_uos_qty,False,name,parent.partner_id, False, False, parent.date_order, product_packaging, parent.fiscal_position, True, parent.warehouse_id, context)"/>
+                                               on_change="product_id_change_with_wh(parent.pricelist_id,product_id,product_uom_qty,product_uom,product_uos_qty,False,name,parent.partner_id, False, False, parent.date_order, product_packaging, parent.fiscal_position, True, parent.warehouse_id, context)"
+                                               attrs="{'readonly':[('state','in',('cancel'))]}" />
                                         <!--<field
                                             context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'uom_qty_change':True, 'company_id': parent.company_id}"
                                             name="product_uom_qty" class="oe_inline"
@@ -113,31 +116,37 @@
                                         <field name="product_uom" groups="product.group_uom" class="oe_inline oe_no_button"                                        
                                                invisible="1"
                                                context="{'company_id': parent.company_id}"
-                                               on_change="onchange_product_uom(parent.pricelist_id,product_id,product_uom_qty,product_uom,product_uos_qty,product_uos,name,parent.partner_id, False, False, parent.date_order, parent.fiscal_position, context)"/>
+                                               on_change="onchange_product_uom(parent.pricelist_id,product_id,product_uom_qty,product_uom,product_uos_qty,product_uos,name,parent.partner_id, False, False, parent.date_order, parent.fiscal_position, context)"
+                                               attrs="{'readonly':[('state','in',('cancel'))]}"
+                                               />
                                         <!--<field name="product_uos_qty" class="oe_inline"/>-->
                                         <field context="{'partner_id':parent.partner_id, 'quantity':product_uos_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"
                                                name="product_uos_qty" class="oe_inline"
                                                invisible="1"
-                                               on_change="product_id_change_with_wh(parent.pricelist_id,product_id,product_uom_qty,product_uom,product_uos_qty,product_uos,name,parent.partner_id, False, False, parent.date_order, product_packaging, parent.fiscal_position, True, parent.warehouse_id, context)"/>
-                                        <field name="product_uos" options='{"no_open": True}' class="oe_inline" invisible="1"/>
-                                        <field name="price_unit"/>
-                                        <field name="multi_discount_rates"  on_change='on_change_multi_discount(multi_discount_rates)' context="{'partner_id':parent.partner_id}" />
-                                        <field name="discount" invisible="1"/>
-                                        <field name="tax_id" widget="many2many_tags" domain="[('parent_id','=',False),('type_tax_use','&lt;&gt;','purchase')]" invisible="1"/>
-                                        <field name="th_weight" invisible="1"/>
-                                        <field name="address_allotment_id" invisible="1"/>
-                                        <field name="name" invisible="1"/>
-                                        <field name="invoice_lines" invisible="1"/>
+                                               on_change="product_id_change_with_wh(parent.pricelist_id,product_id,product_uom_qty,product_uom,product_uos_qty,product_uos,name,parent.partner_id, False, False, parent.date_order, product_packaging, parent.fiscal_position, True, parent.warehouse_id, context)"
+                                               attrs="{'readonly':[('state','in',('cancel'))]}"
+                                               />
+                                        <field name="product_uos" options='{"no_open": True}' class="oe_inline" invisible="1" attrs="{'readonly':[('state','in',('cancel'))]}"/>
+                                        <field name="price_unit" attrs="{'readonly':[('state','in',('cancel'))]}"/>
+                                        <field name="multi_discount_rates"  on_change='on_change_multi_discount(multi_discount_rates)' context="{'partner_id':parent.partner_id}" attrs="{'readonly':[('state','in',('cancel'))]}" />
+                                        <field name="discount" invisible="1" attrs="{'readonly':[('state','in',('cancel'))]}"/>
+                                        <field name="tax_id" widget="many2many_tags" domain="[('parent_id','=',False),('type_tax_use','&lt;&gt;','purchase')]" invisible="1" attrs="{'readonly':[('state','in',('cancel'))]}"/>
+                                        <field name="th_weight" invisible="1" attrs="{'readonly':[('state','in',('cancel'))]}"/>
+                                        <field name="address_allotment_id" invisible="1" attrs="{'readonly':[('state','in',('cancel'))]}"/>
+                                        <field name="name" invisible="1" attrs="{'readonly':[('state','in',('cancel'))]}"/>
+                                        <field name="invoice_lines" invisible="1" attrs="{'readonly':[('state','in',('cancel'))]}"/>
 
-                                        <field name="company_id" readonly="True" invisible="1"/>
+                                        <field name="company_id" readonly="True" invisible="1" attrs="{'readonly':[('state','in',('cancel'))]}"/>
                                         <!--<field name="shipped" invisible="1"/>-->
                                         <!--<field name="invoice_exists" invisible="1"/>-->
-                                        <field name="delay" class="oe_inline" invisible="1"/>
-                                        <field name="product_tmpl_id" invisible="1"/>
+                                        <field name="delay" class="oe_inline" invisible="1" attrs="{'readonly':[('state','in',('cancel'))]}"/>
+                                        <field name="product_tmpl_id" invisible="1" attrs="{'readonly':[('state','in',('cancel'))]}"/>
                                         <field name="product_packaging" invisible="1"
                                                context="{'default_product_tmpl_id': product_tmpl_id, 'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}" on_change="product_packaging_change(parent.pricelist_id, product_id, product_uom_qty, product_uom, parent.partner_id, product_packaging, True, context)" 
-                                               domain="[('product_tmpl_id','=',product_tmpl_id)]" groups="product.group_stock_packaging" />
-                                        <field name="route_id" groups="sale_stock.group_route_so_lines" invisible="1"/>
+                                               domain="[('product_tmpl_id','=',product_tmpl_id)]" groups="product.group_stock_packaging" 
+                                               attrs="{'readonly':[('state','in',('cancel'))]}"
+                                               />
+                                        <field name="route_id" groups="sale_stock.group_route_so_lines" invisible="1" attrs="{'readonly':[('state','in',('cancel'))]}"/>
 
                                         <field name="price_subtotal"/>
                                     </tree>
