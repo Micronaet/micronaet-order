@@ -166,6 +166,7 @@ class Parser(report_sxw.rml_parse):
         '''
         data = data or {}
         data_type = data.get('data_type', 'oc')
+        data_sort = data.get('data_sort', 'number') # or deadline
 
         self.extract_cells_ma = {}
         self.extract_cells_oc = {}
@@ -243,8 +244,11 @@ class Parser(report_sxw.rml_parse):
         
         for key, value in extract_order.iteritems():
             self.extract_order.append((key, value))
-        self.extract_order.sort()    
-        
+
+        if data_sort == 'deadline':
+            self.extract_order.sort(key=lambda x: x[1].date_deadline)
+        else: # 'number' default
+            self.extract_order.sort() # as is
         return ''
 
     def get_extract_database(self, name, key=False, data=False):
@@ -280,8 +284,7 @@ class Parser(report_sxw.rml_parse):
                     self.extract_cells_s.get(key),
                     self.extract_cells_b.get(key),
                     )
-            return ''        
-            
+            return ''            
         return '?'
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

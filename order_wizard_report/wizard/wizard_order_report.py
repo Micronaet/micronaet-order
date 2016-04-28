@@ -73,6 +73,7 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
         #datas['only_remain'] = wiz_proxy.only_remain
         datas['data_type'] = wiz_proxy.data_type
         datas['report_type'] = wiz_proxy.report_type        
+        datas['data_sort'] = wiz_proxy.data_sort
 
         return {
             'type': 'ir.actions.report.xml',
@@ -101,6 +102,11 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
         'from_deadline': fields.date('From deadline', help='Date deadline >='),
         'to_deadline': fields.date('To deadline', help='Date deadline <'),
 
+        'data_sort': fields.selection([
+            ('number', 'Order number'),
+            ('deadline', 'Order deadline'),
+            ], 'Data sort', required=True),
+
         'data_type': fields.selection([
             ('ma', 'Original order'),
             ('oc', 'OC'),
@@ -114,6 +120,7 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
         'report_type': lambda *x: 'deadlined',
         'only_remain': lambda *x: True,
         #'to_date': datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT),
+        'data_sort': lambda *x: 'number',
         'data_type': lambda *x: 'oc',
         }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

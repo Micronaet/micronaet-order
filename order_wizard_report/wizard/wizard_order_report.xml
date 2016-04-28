@@ -17,7 +17,7 @@
                             <field name="data_type" attrs="{'invisible':[('report_type','!=','extract')]}" />
 
                             <field name="fiscal_position" />
-                            <field name="partner_id" />
+                            <field name="partner_id" domain="[('customer','=',True),('is_company','=',True)]"/>
                               
                             <separator string="Date filter:" colspan="4" />
                             <field name="from_date" />
@@ -25,6 +25,9 @@
 
                             <field name="from_deadline" />
                             <field name="to_deadline" />
+
+                            <separator string="Date sort:" colspan="4" attrs="{'invisible':[('report_type','!=','extract')]}" />
+                            <field name="data_sort" attrs="{'invisible':[('report_type','!=','extract')]}" />
                         </group>
                     </sheet>
                 </form>
