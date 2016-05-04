@@ -351,12 +351,20 @@
             <field name="domain">[('user_id','=',uid)]</field>
         </record>
         <record model="ir.actions.act_window" id="action_sale_order_form_fast_agent_tree">
-            <field name="name">Order</field>
+            <field name="name">Order to approve</field>
             <field name="res_model">sale.order</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,calendar</field>
             <field name="context">{'form_view_ref':'sale_order_fast.view_sale_order_form_fast_form'}</field>
-            <field name="domain">[('user_id','=',uid)]</field>
+            <field name="domain">[('user_id','=',uid),('state','in',('draft','cancel'))]</field>
+        </record>
+        <record model="ir.actions.act_window" id="action_sale_order_approved_form_fast_agent_tree">
+            <field name="name">Order approved</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="context">{'form_view_ref':'sale_order_fast.view_sale_order_form_fast_form'}</field>
+            <field name="domain">[('user_id','=',uid),('state','not in',('draft','cancel'))]</field>
         </record>
         <!--Sale block-->
         <menuitem 
@@ -376,7 +384,13 @@
             parent="menuitem_agent.menu_sale_agent_order" 
             id="menu_sale_order_tree_agent_fast" 
             action="action_sale_order_form_fast_agent_tree"
-            sequence="10"
+            sequence="20"
+            />        
+        <menuitem 
+            parent="menuitem_agent.menu_sale_agent_order" 
+            id="menu_sale_order_tree_agent_fast" 
+            action="action_sale_order_approved_form_fast_agent_tree"
+            sequence="30"
             />        
         
         <record model="ir.ui.view" id="view_sale_order_fastline_form">
