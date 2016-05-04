@@ -296,6 +296,9 @@
                 <xpath expr="//field[@name='invoice_partner_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
+                <xpath expr="//page[@string='Data ordine']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
                 <xpath expr="//page[@string='Note']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
