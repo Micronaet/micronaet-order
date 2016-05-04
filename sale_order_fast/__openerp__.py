@@ -37,6 +37,7 @@
         'mx_discount_scale_order', # for discount operation
         'menuitem_agent', # for agent menu (TODO move in another module?)
         'web_m2x_options', # for options
+        'xmlrpc_operation_partner',
         ],
     'init_xml': [],
     'demo': [],

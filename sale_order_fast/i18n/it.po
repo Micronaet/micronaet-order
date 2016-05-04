@@ -1,0 +1,276 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* sale_order_fast
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-05-04 10:17+0000\n"
+"PO-Revision-Date: 2016-05-04 12:21+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "(update)"
+msgstr "(aggiorna)"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Agent"
+msgstr "Agent"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Altre informazioni"
+msgstr "Altre informazioni"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Annulla Ordine"
+msgstr "Annulla Ordine"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Annulla il preventivo"
+msgstr "Annulla il preventivo"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Auto counter"
+msgstr "Auto counter"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Carriage condition"
+msgstr "Condizioni trasporto"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Conferma Ordine"
+msgstr "Conferma Ordine"
+
+#. module: sale_order_fast
+#: field:sale.order.fastline,create_uid:0
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: sale_order_fast
+#: field:sale.order.fastline,create_date:0
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Data ordine"
+msgstr "Data ordine"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Deadline (force all line)"
+msgstr "Scadenza (forza su tutte righe)"
+
+#. module: sale_order_fast
+#: model:ir.model,name:sale_order_fast.model_sale_order_fastline
+#: field:sale.order,fastline_ids:0
+msgid "Fast line"
+msgstr "Riga rapida"
+
+#. module: sale_order_fast
+#: field:sale.order,fast_order:0
+msgid "Fast order"
+msgstr "Ordine rapido"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_switch_button_form
+msgid "Fast view"
+msgstr "Vista rapida"
+
+#. module: sale_order_fast
+#: view:sale.order.fastline:sale_order_fast.view_sale_order_fastline_form
+#: view:sale.order.fastline:sale_order_fast.view_sale_order_fastline_tree
+msgid "Fastline"
+msgstr "Riga rapida"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Goods description"
+msgstr "Descrizione beni"
+
+#. module: sale_order_fast
+#: field:sale.order.fastline,id:0
+msgid "ID"
+msgstr "ID"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Informazioni spedizione"
+msgstr "Informazioni spedizione"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Invia tramite Email"
+msgstr "Invia tramite Email"
+
+#. module: sale_order_fast
+#: field:sale.order.fastline,write_uid:0
+msgid "Last Updated by"
+msgstr "Ultimo aggiornamento di "
+
+#. module: sale_order_fast
+#: field:sale.order.fastline,write_date:0
+msgid "Last Updated on"
+msgstr "Ultimo aggiornamento da"
+
+#. module: sale_order_fast
+#: model:res.groups,name:sale_order_fast.group_agent_limited
+msgid "Limited agent view"
+msgstr "Vista limitata per agente"
+
+#. module: sale_order_fast
+#: model:ir.actions.act_window,name:sale_order_fast.action_sale_order_form_fast_form
+#: model:ir.ui.menu,name:sale_order_fast.menu_sale_order_form_fast
+msgid "New fast order"
+msgstr "Nuovo ordine"
+
+#. module: sale_order_fast
+#: model:ir.actions.act_window,name:sale_order_fast.action_sale_order_form_fast_agent_form
+#: model:ir.ui.menu,name:sale_order_fast.menu_sale_order_form_agent_fast
+msgid "New order"
+msgstr "Nuovo ordine"
+
+#. module: sale_order_fast
+#: code:addons/sale_order_fast/fastline.py:237
+#: code:addons/sale_order_fast/fastline.py:258
+#, python-format
+msgid "Normal sale view"
+msgstr "Vista normale"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Note"
+msgstr "Note"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Note (post sale line)"
+msgstr "Note (post riga)"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Note (pre sale line)"
+msgstr "Note (pre riga)"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Order Lines"
+msgstr "Righe Ordine"
+
+#. module: sale_order_fast
+#: field:sale.order.fastline,order_id:0
+msgid "Order Reference"
+msgstr "Riferimento ordine"
+
+#. module: sale_order_fast
+#: model:ir.actions.act_window,name:sale_order_fast.action_sale_order_approved_form_fast_agent_tree
+#: model:ir.ui.menu,name:sale_order_fast.menu_sale_order_approved_tree_agent_fast
+msgid "Order approved"
+msgstr "Ordine approvato"
+
+#. module: sale_order_fast
+#: model:ir.actions.act_window,name:sale_order_fast.action_sale_order_form_fast_agent_tree
+#: model:ir.ui.menu,name:sale_order_fast.menu_sale_order_tree_agent_fast
+msgid "Order to approve"
+msgstr "Ordine da approvare"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Ordine di vendita"
+msgstr "Ordine di vendita"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Ordini"
+msgstr "Ordini"
+
+#. module: sale_order_fast
+#: model:ir.actions.act_window,name:sale_order_fast.action_sale_order_partner
+#: model:ir.ui.menu,name:sale_order_fast.menu_sale_order_partner_fast
+msgid "Partner"
+msgstr "Partner"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Payment term"
+msgstr "Termini di pagamento"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Preventivo"
+msgstr "Preventivo"
+
+#. module: sale_order_fast
+#: field:sale.order.fastline,product_id:0
+msgid "Product"
+msgstr "Prodotto"
+
+#. module: sale_order_fast
+#: field:sale.order.fastline,product_uom_qty:0
+msgid "Quantity"
+msgstr "Quantità"
+
+#. module: sale_order_fast
+#: model:ir.model,name:sale_order_fast.model_sale_order
+msgid "Sales Order"
+msgstr "Ordine di vendita"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Sales Order Lines"
+msgstr "Righe Ordine di Vendita"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Stampa"
+msgstr "Stampa"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Standard view"
+msgstr "Vista standard"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Terms and conditions..."
+msgstr "Termini e condizioni..."
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Transportation method"
+msgstr "Metodo di trasporto"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_form
+msgid "Transportation reason"
+msgstr "Motivo trasporto"
+
+#. module: sale_order_fast
+#: field:sale.order.fastline,price_unit:0
+msgid "Unit Price"
+msgstr "Prezzo unitario"
+
+#. module: sale_order_fast
+#: view:sale.order:sale_order_fast.view_sale_order_form_fast_agent_limited_form
+msgid ""
+"[('user_id','=',uid),('customer','=',True),('is_company','=',True),"
+"('is_address','=',False)]"
+msgstr ""
+"[('user_id','=',uid),('customer','=',True),('is_company','=',True),"
+"('is_address','=',False)]"
