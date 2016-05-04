@@ -293,7 +293,9 @@
                         <field name="uncovered_payment" invisible="1" />
                     </header>
                 </xpath>
-
+                <xpath expr="//field[@name='invoice_partner_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
                 <xpath expr="//page[@string='Note']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
@@ -305,7 +307,8 @@
                 </xpath>    
                 <xpath expr="//field[@name='pricelist_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
-                </xpath>                    
+                </xpath>
+                <button name="go_normal_view" position="replace"/>
 
                 <!--DETAILS:-->
                 <!--attribute name="options">{'create': false, 'create_edit': false}</attribute
