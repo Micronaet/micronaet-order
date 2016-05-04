@@ -366,6 +366,16 @@
             <field name="context">{'form_view_ref':'sale_order_fast.view_sale_order_form_fast_form'}</field>
             <field name="domain">[('user_id','=',uid),('state','not in',('draft','cancel'))]</field>
         </record>
+
+        <record model="ir.actions.act_window" id="action_sale_order_partner">
+            <field name="name">Partner</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'form_view_ref':'xmlrpc_operation_partner.view_insert_res_partner_form'}</field>
+            <field name="domain">[('user_id','=',uid),('customer','=',True),('is_company','=',True)]</field>
+        </record>
+
         <!--Sale block-->
         <menuitem 
             parent="sale.menu_sale_order" 
@@ -373,6 +383,7 @@
             action="action_sale_order_form_fast_form"
             sequence="0"
             />
+
         <!--Agent block-->
         <menuitem 
             parent="menuitem_agent.menu_sale_agent_order" 
@@ -388,9 +399,16 @@
             />        
         <menuitem 
             parent="menuitem_agent.menu_sale_agent_order" 
-            id="menu_sale_order_tree_agent_fast" 
+            id="menu_sale_order_approved_tree_agent_fast" 
             action="action_sale_order_approved_form_fast_agent_tree"
             sequence="30"
+            />        
+            
+        <menuitem 
+            parent="menuitem_agent.menu_sale_agent_anagraphic" 
+            id="menu_sale_order_partner_fast" 
+            action="action_sale_order_partner"
+            sequence="10"
             />        
         
         <record model="ir.ui.view" id="view_sale_order_fastline_form">
