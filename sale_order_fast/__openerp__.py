@@ -35,6 +35,7 @@
         'l10n_it_ddt', # extra partner and doc. data
         'fido_order_check', # fido data
         'mx_discount_scale_order', # for discount operation
+        'menuitem_agent', # for agent menu (TODO move in another module?)
         ],
     'init_xml': [],
     'demo': [],
