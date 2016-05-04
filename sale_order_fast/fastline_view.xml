@@ -276,6 +276,7 @@
             <field name="inherit_id" ref="view_sale_order_form_fast_form"/>
             <field name="groups_id" eval="[(6,0,[ref('sale_order_fast.group_agent_limited')])]" />
             <field name="arch" type="xml">
+                <!--HEADER:-->
                 <xpath expr="//page[@string='Note']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
@@ -288,7 +289,11 @@
                 <xpath expr="//field[@name='pricelist_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>                    
-                
+
+                <!--DETAILS:-->
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="attributes">
+                    <attribute name="options">{'create': False,'update': False}</attribute>
+                </xpath>                
             </field>
         </record>
 
