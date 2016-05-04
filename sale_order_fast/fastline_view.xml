@@ -312,6 +312,15 @@
             <field name="context">{}</field>
             <field name="domain">[]</field>
         </record>
+        <record model="ir.actions.act_window" id="action_sale_order_form_fast_agent_form">
+            <field name="name">New order</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form,tree</field>
+            <field name="view_id" ref="view_sale_order_form_fast_form"/>
+            <field name="context">{}</field>
+            <field name="domain">[('user_id','=',uid)]</field>
+        </record>
         <!--Sale block-->
         <menuitem 
             parent="sale.menu_sale_order" 
@@ -323,7 +332,7 @@
         <menuitem 
             parent="menuitem_agent.menu_sale_agent_order" 
             id="menu_sale_order_form_agent_fast" 
-            action="action_sale_order_form_fast_form"
+            action="action_sale_order_form_fast_agent_form"
             sequence="10"
             />        
         
