@@ -268,6 +268,28 @@
                 </form>
             </field>
         </record>
+        
+        <record model="ir.ui.view" id="view_sale_order_form_fast_agent_limited_form">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="view_sale_order_form_fast_form"/>
+            <field name="groups_id" eval="[(6,0,[ref('sale_order_fast.group_agent_limited')])]" />
+            <field name="arch" type="xml">
+                <xpath expr="//page[@string='Note']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page[@string='Altre informazioni']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="domain">[('user_id','=',uid),('customer','=',True),('is_company','=',True),('is_address','=',False)]</attribute>
+                </xpath>    
+                <xpath expr="//field[@name='pricelist_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>                    
+                
+            </field>
+        </record>
 
         <record model="ir.ui.view" id="view_sale_order_switch_button_form">
             <field name="name">sale.order.switch.form</field>

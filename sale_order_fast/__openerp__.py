@@ -39,6 +39,7 @@
     'init_xml': [],
     'demo': [],
     'data': [
+        'security/agent_groups.xml',
         'security/ir.model.access.csv',    
         'fastline_view.xml',
         ],
