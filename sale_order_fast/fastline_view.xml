@@ -284,6 +284,16 @@
             <field name="groups_id" eval="[(6,0,[ref('sale_order_fast.group_agent_limited')])]" />
             <field name="arch" type="xml">
                 <!--HEADER:-->
+                <xpath expr="//header" position="replace">
+                 <header>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,sent,progress,done" readonly="1" statusbar_colors="{'shipping_except':'red','invoice_except':'red','waiting_date':'blue'}"/>
+                        <div style="background-color: red;text-align: center;font-weight:bold;color:white;">
+                            <field name="uncovered_alert" nolabel="1" attrs="{'invisible': [('uncovered_payment', '=', False)]}" class="oe_color_red" readonly="1"/>
+                        </div>
+                        <field name="uncovered_payment" invisible="1" />
+                    </header>
+                </xpath>
+
                 <xpath expr="//page[@string='Note']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
@@ -335,7 +345,7 @@
             <field name="domain">[('user_id','=',uid)]</field>
         </record>
         <record model="ir.actions.act_window" id="action_sale_order_form_fast_agent_tree">
-            <field name="name">New order</field>
+            <field name="name">Order</field>
             <field name="res_model">sale.order</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,calendar</field>
@@ -358,7 +368,7 @@
             />        
         <menuitem 
             parent="menuitem_agent.menu_sale_agent_order" 
-            id="menu_sale_order_form_agent_fast" 
+            id="menu_sale_order_tree_agent_fast" 
             action="action_sale_order_form_fast_agent_tree"
             sequence="10"
             />        
