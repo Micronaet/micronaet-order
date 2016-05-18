@@ -65,8 +65,17 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
             report_name = 'mx_extract_order_report'
         elif wiz_proxy.report_type == 'discount':
             report_name = 'mx_order_discount_line_report'
-            datas['discount_limit'] = wiz_proxy.discount_limit or ''
-            datas['order_status'] = wiz_proxy.order_status
+
+            # Translate discount as number            
+            discount_limit = wiz_proxy.discount_limit or False
+            if discount_limit:
+                res = self.pool.get(
+                    'sale.order.line').on_change_multi_discount(
+                        cr, uid, 0, discount_limit)['value']
+                datas['discount_limit'] = res.get('discount', 0)
+            else:
+                datas['discount_limit'] = False
+            
         else: # 'line'    
             report_name = 'mx_order_list_line_report'
 
@@ -80,6 +89,7 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
         datas['data_type'] = wiz_proxy.data_type
         datas['report_type'] = wiz_proxy.report_type        
         datas['data_sort'] = wiz_proxy.data_sort
+        datas['order_status'] = wiz_proxy.order_status
 
         return {
             'type': 'ir.actions.report.xml',
@@ -114,7 +124,7 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
             ('all', 'All order'),
             ('open', 'Open order'),
             ('close', 'Close order'),
-            ], 'Order status'),
+            ], 'Order status', required=True),
 
         'data_sort': fields.selection([
             ('number', 'Order number'),

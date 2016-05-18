@@ -30,6 +30,7 @@
     'license': 'AGPL-3',
     'depends': [
         'base',
+        'base_accounting_program',
         'sale',
         'mx_close_order',
         'sale_delivery_partial_data',
