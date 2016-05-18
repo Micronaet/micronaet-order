@@ -87,6 +87,9 @@ class Parser(report_sxw.rml_parse):
         to_deadline = data.get('to_deadline', False)
         report_type = data.get('report_type', False)
         data_type = data.get('data_type', '')
+        # for discount report:
+        discount_limit = data.get('discount_limit', '')
+        order_status = data.get('order_status', '')
 
         # ---------------------------------------------------------------------
         #                      Sale order filter
@@ -97,8 +100,19 @@ class Parser(report_sxw.rml_parse):
             #('pricelist_order', '=', False), # needed? (yet in mx_closed
             ('mx_closed', '=', False), 
             ]
+            
         self.filter_description = _(
             'Ora: %s, Ordini aperti (non listini)') % datetime.now()
+
+        # Add status test  
+        if order_status == 'open':
+            domain.append(('mx_closed', '=', False))
+            self.filter_description += _(', ordini aperti')
+        elif order_status == 'open':
+            domain.append(('mx_closed', '=', True))        
+            self.filter_description += _(', ordini chiusi')
+        else: # all
+            self.filter_description += _(', tutti gli ordini')
 
         if fiscal_position == 'italy': 
             # TODO not all!!!!!

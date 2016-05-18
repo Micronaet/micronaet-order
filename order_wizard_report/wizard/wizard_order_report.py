@@ -57,10 +57,16 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
         datas = {}
         datas['wizard'] = True # started from wizard
         
+        datas['discount_limit'] = ''
+        datas['order_status'] = ''
         if wiz_proxy.report_type == 'deadlined':
             report_name = 'mx_order_list_report'
         elif wiz_proxy.report_type == 'extract':
             report_name = 'mx_extract_order_report'
+        elif wiz_proxy.report_type == 'discount':
+            report_name = 'mx_order_discount_line_report'
+            datas['discount_limit'] = wiz_proxy.discount_limit or ''
+            datas['order_status'] = wiz_proxy.order_status
         else: # 'line'    
             report_name = 'mx_order_list_line_report'
 
@@ -90,17 +96,25 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
         'report_type': fields.selection([
             ('deadlined', 'Order deadline'),
             ('line', 'Order line deadline'),
+            ('discount', 'Discount check'),
             ('extract', 'Extract order'),
             #('grouped', 'Order grouped by frame'),
             ], 'Report type', required=True),
         'partner_id': fields.many2one('res.partner', 'Partner'),
         'only_remain':fields.boolean('Only remain', 
-            help='Show only element to procuce'),
+            help='Show only element to produce'),
         
         'from_date': fields.date('From', help='Date >='),
         'to_date': fields.date('To', help='Date <'),
         'from_deadline': fields.date('From deadline', help='Date deadline >='),
         'to_deadline': fields.date('To deadline', help='Date deadline <'),
+
+        'discount_limit': fields.char('Discount', size=64), 
+        'order_status': fields.selection([
+            ('all', 'All order'),
+            ('open', 'Open order'),
+            ('close', 'Close order'),
+            ], 'Order status'),
 
         'data_sort': fields.selection([
             ('number', 'Order number'),
@@ -122,5 +136,7 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
         #'to_date': datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT),
         'data_sort': lambda *x: 'number',
         'data_type': lambda *x: 'oc',
+        'discount_limit': lambda *x: '50 + 20',
+        'order_status': lambda *x: 'open',
         }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
