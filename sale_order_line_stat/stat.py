@@ -84,6 +84,12 @@ class SaleOrderLine(orm.Model):
                     _get_default_code_from_sol, ['product_id'], 10),
                 }, string='Default code', 
             ),
+
+        'destination_partner_id': fields.related(
+            'invoice_id', 'destination_partner_id', 
+            type='many2one', string='Destination', relation='res.partner',
+            store=False),
+
         'order_date': fields.related(
             'order_id', 'date_order', type='date',
             store={

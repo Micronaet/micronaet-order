@@ -31,6 +31,7 @@
         'base',
         'sale',
         'mx_agent', # for agent filter
+        'order_destination', # for destination header
         ],
     'init_xml': [],
     'demo': [],
