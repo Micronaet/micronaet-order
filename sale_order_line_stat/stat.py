@@ -86,7 +86,7 @@ class SaleOrderLine(orm.Model):
             ),
 
         'destination_partner_id': fields.related(
-            'invoice_id', 'destination_partner_id', 
+            'order_id', 'destination_partner_id', 
             type='many2one', string='Destination', relation='res.partner',
             store=False),
 
