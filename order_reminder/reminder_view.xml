@@ -41,6 +41,40 @@
                 </field>
             </field>
         </record>
+        
+        <record model="ir.ui.view" id="view_sale_order_reminder_tree">
+            <field name="name">sale.order.tree</field>
+            <field name="model">sale.order</field>
+            <field name="priority" eval="40" />
+            <field name="arch" type="xml">
+                <tree string="Remainder order">
+                    <field name="reminder" invisible="1" modifiers="{'tree_invisible': true}"/>
+                    <field name="name" />
+                    <field name="date_order" />
+                    <field name="client_order_ref" />
+                    <field name="partner_id" />
+                    <field name="user_id" />
+                    <field name="amount_total" sum="Total" />
+                    <field name="reminder_note" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_sale_order_reminder">
+            <field name="name">Remind order</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form.calendar</field>
+            <field name="view_id" ref="view_sale_order_reminder_tree"/>
+            <field name="context">{}</field>
+            <field name="domain">[('remainder','=',True)]</field>
+        </record>
+        <menuitem 
+            parent="sale.menu_sale_order" 
+            id="menu_action_sale_order_reminder" 
+            action="action_sale_order_reminder"
+            sequence="90"
+            />        
 
     </data>
 </openerp>
