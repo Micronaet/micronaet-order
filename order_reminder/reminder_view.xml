@@ -9,8 +9,10 @@
                  <xpath expr="/form/sheet/notebook/page" position="after">
                      <page string="CRM">
                          <group colspan="4" col="4">
-                             <field name="reminder" />
+                             <field name="reminder" on_change="onchange_reminder_check(reminder)" />
                              <newline />
+                             <field name="reminder_date" attrs="{'invisible':[('reminder','=',False)]}"/>
+                             <field name="reminder_deadline" attrs="{'invisible':[('reminder','=',False)]}"/>
                              <separator string="Reminder note:" colspan="4" attrs="{'invisible':[('reminder','=',False)]}"/>
                              <field name="reminder_note" colspan="4" attrs="{'invisible':[('reminder','=',False)]}" nolabel="1"/>
                          </group>
@@ -48,14 +50,16 @@
             <field name="priority" eval="40" />
             <field name="arch" type="xml">
                 <tree string="Reminder order">
-                    <field name="reminder" invisible="1" modifiers="{'tree_invisible': true}"/>
+                    <field name="reminder" invisible="1"/>
                     <field name="name" />
                     <field name="date_order" />
                     <field name="client_order_ref" />
                     <field name="partner_id" />
                     <field name="user_id" />
-                    <field name="amount_total" sum="Total" />
+                    <field name="reminder_date" />
+                    <field name="reminder_deadline" />
                     <field name="reminder_note" />
+                    <field name="amount_total" sum="Total" />
                     <field name="state" />
                 </tree>
             </field>
@@ -64,7 +68,7 @@
             <field name="name">Remind order</field>
             <field name="res_model">sale.order</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form.calendar</field>
+            <field name="view_mode">tree,form,calendar</field>
             <field name="view_id" ref="view_sale_order_reminder_tree"/>
             <field name="context">{}</field>
             <field name="domain">[('reminder','=',True)]</field>

@@ -44,9 +44,26 @@ class SaleOrder(orm.Model):
     
     _inherit = 'sale.order'
     
+    # -------------------------------------------------------------------------
+    #                         Onchange function:
+    # -------------------------------------------------------------------------
+    def onchange_reminder_check(self, cr, uid, ids, reminder, context=None):
+        ''' Reminder date  
+        '''
+        res = {}
+        if not reminder:
+            return res
+        
+        res['value'] = {}
+        res['value']['reminder_date'] = datetime.now().strftime(
+            DEFAULT_SERVER_DATETIME_FORMAT)
+        return res
+        
     _columns = {
         'reminder': fields.boolean('Reminder', 
             help='Sale order reminder for particular motive'),
         'reminder_note': fields.text('Reminder note'),    
-        }
+        'reminder_date': fields.datetime('Reminder date'),
+        'reminder_deadline': fields.date('Reminder dealine'),
+        }        
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
