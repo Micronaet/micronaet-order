@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+         <record model="ir.ui.view" id="view_sale_order_reminder_form">
+             <field name="name">sale.order.reminder.form</field>
+             <field name="model">sale.order</field>
+             <field name="inherit_id" ref="sale.view_order_form"/>
+             <field name="arch" type="xml">
+                 <xpath expr="/form/sheet/notebook/page" position="after">
+                     <page string="CRM">
+                         <group colspan="4" col="4">
+                             <field name="reminder" />
+                             <newline />
+                             <separator string="Reminder note:" colspan="4" attrs="{'invisible':[('reminder','=',False)]}"/>
+                             <field name="reminder_note" colspan="4" attrs="{'invisible':[('reminder','=',False)]}" nolabel="1"/>
+                         </group>
+                     </page>
+                 </xpath>
+             </field>
+         </record>
+
+        <record model="ir.ui.view" id="view_sales_order_reminder_search">
+            <field name="name">sale.order.reminder.search</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <filter name="reminder_yes" string="Reminder" domain="[('reminder','=',True)]"/>
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_sale_order_extra_data_tree">
+            <field name="name">sale.order.tree</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="reminder" invisible="1"/>
+                    <!--<field name="reminder_note"/>-->
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>
+
