@@ -31,8 +31,8 @@
             <field name="priority" eval="40"/>
             <field name="arch" type="xml">
                 <tree string="Double line order">
-	                <field name="double_line" invisible="1" />
-	                <button name="dummy" string="Double line" type="object" icon="gtk-copy" attrs="{'invisible':[('double_line','=', False)]}"/>
+	                <!--<field name="double_line" invisible="1" />
+	                <button name="dummy" string="Double line" type="object" icon="gtk-copy" attrs="{'invisible':[('double_line','=', False)]}"/>-->
 	                <!--<field name="mx_closed" string="Closed" />-->
 	                <field name="name" string="Number" />
 	                <field name="date_order" />
