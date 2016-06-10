@@ -48,7 +48,33 @@ class SaleOrder(orm.Model):
         ''' Dummy button event
         '''
         return True
-        
+
+    # ----------------
+    # Function fields:
+    # ----------------
+    def _search_double_line(self, cr, uid, obj, name, args, context=None):
+        ''' Search double
+        '''
+        # TODO filter only open
+        ids = self.search(cr, uid, [
+            ('state', 'not in', ('cancel', 'draft', 'sent')),
+            ('mx_closed', '=', False),
+            # TODO forecast?
+            ], context=context)
+        res = []
+        for order in self.browse(cr, uid, ids, context=context): 
+            lines = {}
+            for line in order.order_line:
+                key = (line.product_id, line.date_deadline)
+                if key in lines:
+                    lines[key] = True # other time
+                else:
+                    lines[key] = False # first time
+                if lines[key]: # >2 time check
+                    res.append(order.id)
+                    break
+        return [('id', 'in', res)]
+
     def _check_double_line(self, cr, uid, ids, fields, args, context=None):
         ''' Check if order has double lines
         '''
@@ -75,7 +101,9 @@ class SaleOrder(orm.Model):
 
     _columns = {
         'double_line': fields.function(
-            _check_double_line, method=True, 
+            _check_double_line, 
+            fnct_search=_search_double_line,
+            method=True, 
             type='boolean', string='Double line', 
             store=False, multi=True),
         'double_line_note': fields.function(
