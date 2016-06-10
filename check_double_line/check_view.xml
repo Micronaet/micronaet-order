@@ -1,7 +1,65 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-
+        <record model="ir.ui.view" id="view_sale_order_form">
+            <field name="name">sale.order.check.double.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <field name="order_line" position="before">
+                    <group colspan="4" col="4" attrs="{'invisible':[('double_line','=',False)]}">
+                        <field name="double_line" />
+                        <field name="double_line_note" />
+                    </group>    
+                </field>
+            </field>
+        </record>        
+        <!--<record model="ir.ui.view" id="view_sale_order_tree">
+            <field name="name">sale.order.check.double.tree</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+            <field name="arch" type="xml">
+                <field name="name" position="before">
+                    <field name="double_line" invisible="1"/>
+                    <button name="dummy" string="Double line" type="object" icon="gtk-copy" attrs="{'invisible':[('double_line','=', False)]}"/>
+                </field>
+            </field>
+        </record>-->
+        <record model="ir.ui.view" id="view_sale_order_check_double_tree">
+            <field name="name">sale.order.check.double.tree</field>
+            <field name="model">sale.order</field>
+            <field name="priority" eval="40"/>
+            <field name="arch" type="xml">
+                <tree string="Double line order">
+	                <field name="double_line" invisible="1" />
+	                <button name="dummy" string="Double line" type="object" icon="gtk-copy" attrs="{'invisible':[('double_line','=', False)]}"/>
+	                <!--<field name="mx_closed" string="Closed" />-->
+	                <field name="name" string="Number" />
+	                <field name="date_order" />
+	                <field name="client_order_ref" />
+	                <!--<field name="date_deadline" />-->
+	                <field name="partner_id" />
+	                <field name="user_id" />
+	                <field name="amount_total" sum="Total (with tax)"/>
+	                <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_check_double_order_tree">
+            <field name="name">Check double order</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_sale_order_check_double_tree"/>
+            <field name="context">{}</field>
+            <field name="domain">[('state', 'in', ('cancel','draft','sent')),('double_line', '=', True)]</field>
+        </record>
+        <menuitem 
+            parent="sale.menu_sale_order" 
+            id="menu_check_double_order_tree" 
+            action="action_check_double_order_tree"
+            sequence="100"
+            />        
     </data>
 </openerp>
 
