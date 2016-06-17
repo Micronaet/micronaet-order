@@ -124,7 +124,8 @@ class Parser(report_sxw.rml_parse):
         from_deadline = data.get('from_deadline', False)
         to_deadline = data.get('to_deadline', False)
         code_from = int(data.get('code_from', 1))
-        code_partial = data.get('code_partial', '')        
+        code_partial = data.get('code_partial', '')
+        # TODO correct for remain >>> mx_closed field from mx_close_order mod.
 
         # ---------------------------------------------------------------------
         #                      Sale order filter
@@ -138,6 +139,7 @@ class Parser(report_sxw.rml_parse):
             # Order for send pricelist:
             ('pricelist_order', '=', False), 
             ]
+        # TODO correct for remain >>> mx_closed field from mx_close_order mod.
 
         # -------------------------
         # Start filter description:
@@ -213,6 +215,7 @@ class Parser(report_sxw.rml_parse):
         self.general_total = [0, 0, 0, 0]
 
         for line in browse_line:
+            # TODO correct for remain >>> mx_closed field from mx_close_order 
             i += 1 
             # -------------------
             # Filter for partial:
