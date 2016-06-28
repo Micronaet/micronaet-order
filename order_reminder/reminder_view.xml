@@ -73,7 +73,7 @@
             <field name="domain">[('reminder','=',True),('mx_closed','=',False)]</field>
             <field name="context">{}</field>
         </record>
-        <!--<field name="context">{'search_default_mx_is_open:1}</field>-->
+        <!--('state', 'not in', ('cancel')) <field name="context">{'search_default_mx_is_open:1}</field>-->
         <menuitem 
             parent="sale.menu_sale_order" 
             id="menu_action_sale_order_reminder" 
