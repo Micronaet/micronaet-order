@@ -70,9 +70,9 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,calendar</field>
             <field name="view_id" ref="view_sale_order_reminder_tree"/>
-            <field name="context">{'search_default_mx_is_open:1}</field>
-            <field name="domain">[('reminder','=',True)]</field>
+            <field name="domain">[('reminder','=',True),('mx_closed','=',False)]</field>
         </record>
+        <!--<field name="context">{'search_default_mx_is_open:1}</field>-->
         <menuitem 
             parent="sale.menu_sale_order" 
             id="menu_action_sale_order_reminder" 
