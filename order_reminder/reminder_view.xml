@@ -71,6 +71,7 @@
             <field name="view_mode">tree,form,calendar</field>
             <field name="view_id" ref="view_sale_order_reminder_tree"/>
             <field name="domain">[('reminder','=',True),('mx_closed','=',False)]</field>
+            <field name="context">{}</field>
         </record>
         <!--<field name="context">{'search_default_mx_is_open:1}</field>-->
         <menuitem 
