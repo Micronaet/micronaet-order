@@ -40,6 +40,7 @@
     'data': [
         #'security/ir.model.access.csv',    
         'residual_view.xml',
+        'report/closing_report.xml',
         ],
     'active': False,
     'installable': True,
