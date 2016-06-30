@@ -81,11 +81,14 @@ class Parser(report_sxw.rml_parse):
             for line in order.order_line:
                 if line.mx_closed:
                     continue
-                remain = line.product_uom_qty - line.product_uom_delivered_qty
+                remain = line.product_uom_qty - line.delivered_qty
+                #line.product_uom_delivered_qty
                 if remain <= 0.0:
                     continue
                 residual += remain * line.price_subtotal / line.product_uom_qty
                 lines.append(line)
+                
+            # Test if order need to be print:    
             if residual <= order.amount_untaxed * (
                     residual_remain_perc / 100.0):     
                 res.append((order, lines, residual))
