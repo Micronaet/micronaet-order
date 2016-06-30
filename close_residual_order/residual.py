@@ -113,7 +113,7 @@ class SaleOrder(orm.Model):
     _columns = {
         'forced_close': fields.boolean('Forced close', 
             help='Order force closed'),
-    }
+        }
 
 class SaleOrderLine(orm.Model):
     """ Model name: SaleOrderLine

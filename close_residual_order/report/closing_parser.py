@@ -63,12 +63,33 @@ class Parser(report_sxw.rml_parse):
         # -----------------------------
         # Read order not closed:
         order_pool = self.pool.get('sale.order')
-        order_ids = order_pool.search(cr, uid, [
-            ('mx_closed', '=', False)
+        domain = [
+            ('state', 'not in', ('cancel', 'sent', 'draft')),
+            ('mx_closed', '=', False),
             ('amount_untaxed', '<=', amount_untaxed),
-            ], context=context)
+            # TODO forecast order?
+            ]
+        # for forecast order (used in production module)    
+        if 'forecasted_production_id' in order_pool._columns.keys():
+            domain.append(('forecasted_production_id', '=', False))
             
+        res = []
+        order_ids = order_pool.search(cr, uid, domain, context=context)
+        for order in order_pool.browse(cr, uid, order_ids, context=context):
+            residual = 0.0
+            lines = []
+            for line in order.order_line:
+                if line.mx_closed:
+                    continue
+                remain = line.product_uom_qty - line.product_uom_delivered_qty
+                if remain <= 0.0:
+                    continue
+                residual += remain * line.price_subtotal / line.product_uom_qty
+                lines.append(line)
+            if residual <= order.amount_untaxed * (
+                    residual_remain_perc / 100.0):     
+                res.append((order, lines, residual))
+                
         # Check residual information:
-        return order_pool.browse(cr, uid, order_ids, context=context)
-
+        return res
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
