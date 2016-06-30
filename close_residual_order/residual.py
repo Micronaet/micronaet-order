@@ -137,6 +137,11 @@ class ResCompany(orm.Model):
             help='Max value for total order with residual alert'), 
         'residual_remain_perc': fields.float(
             'Residual remain perc', digits=(16, 2), 
-            help='Residual % remain for alert message'), 
+            help='Residual % remain for alert message, es. < 10% to delivery'), 
         }
+        
+    _defaults = {
+        'residual_order_value': lambda *x: 1000.0,
+        'residual_order_perc': lambda *x: 10.0,
+        }    
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
