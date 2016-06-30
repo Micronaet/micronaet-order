@@ -24,6 +24,7 @@
     'description': '''
         Close residual order
         Keep a history of element removed for statistics    
+        Manage also an alert procedure for highligh order with residual value
         ''',
     'author': 'Micronaet S.r.l. - Nicola Riolini',
     'website': 'http://www.micronaet.it',

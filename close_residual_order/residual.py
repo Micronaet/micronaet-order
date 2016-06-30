@@ -124,5 +124,18 @@ class SaleOrderLine(orm.Model):
         'forced_close': fields.boolean('Forced close', 
             help='Order force closed'),
     }
-    
+
+class ResCompany(orm.Model):
+    """ Model name: Res Company
+    """    
+    _inherit = 'res.company'
+
+    _columns = {
+        'residual_order_value': fields.float(
+            'Residual order value', digits=(16, 2), 
+            help='Max value for total order with residual alert'), 
+        'residual_remain_perc': fields.float(
+            'Residual remain perc', digits=(16, 2), 
+            help='Residual % remain for alert message'), 
+        }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
