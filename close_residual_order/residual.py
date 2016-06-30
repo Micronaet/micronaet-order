@@ -131,6 +131,7 @@ class ResCompany(orm.Model):
     _inherit = 'res.company'
 
     _columns = {
+        'residual_management_alert':fields.boolean('Residual management'),
         'residual_order_value': fields.float(
             'Residual order value', digits=(16, 2), 
             help='Max value for total order with residual alert'), 
