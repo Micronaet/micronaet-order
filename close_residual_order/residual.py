@@ -142,6 +142,6 @@ class ResCompany(orm.Model):
         
     _defaults = {
         'residual_order_value': lambda *x: 1000.0,
-        'residual_order_perc': lambda *x: 10.0,
+        'residual_remain_perc': lambda *x: 10.0,
         }    
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

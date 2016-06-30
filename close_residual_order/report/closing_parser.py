@@ -51,8 +51,8 @@ class Parser(report_sxw.rml_parse):
             cr, uid, company_ids, context=context)[0]
             
         amount_untaxed = company_proxy.residual_order_value
-        residual_order_perc = company_proxy.residual_order_perc     
-        if not (amount_untaxed and residual_order_perc):
+        residual_remain_perc = company_proxy.residual_remain_perc     
+        if not (amount_untaxed and residual_remain_perc):
             raise osv.except_osv(
                 _('Parameter error'), 
                 _('Setup parameters in company form!'),
