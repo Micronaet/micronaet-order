@@ -84,7 +84,7 @@ class Parser(report_sxw.rml_parse):
         ''' Calculate filter depend on 
         '''
         return _(
-            'Order total <= %s, remain rate: %s!') % self.get_company_filter()
+            'Tot. <=%s, rim. <=%s') % self.get_company_filter()
         
         (amount_untaxed, residual_remain_perc) = self.get_company_filter()
     
@@ -139,7 +139,7 @@ class Parser(report_sxw.rml_parse):
                 lines.append(line)
                 
             # Test if order need to be print:    
-            if residual <= order.amount_untaxed * (
+            if residual and residual <= order.amount_untaxed * (
                     residual_remain_perc / 100.0):     
                 res.append((order, lines, residual))
                 
