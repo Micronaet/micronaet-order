@@ -21,9 +21,31 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
+
+
+import os
+import sys
+import logging
+import openerp
+import openerp.netsvc as netsvc
+import openerp.addons.decimal_precision as dp
 from openerp.report import report_sxw
 from openerp.report.report_sxw import rml_parse
+from openerp.osv import fields, osv, expression, orm
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+from openerp import SUPERUSER_ID
+from openerp import tools
 from openerp.tools.translate import _
+from openerp.tools.float_utils import float_round as round
+from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT, 
+    DEFAULT_SERVER_DATETIME_FORMAT, 
+    DATETIME_FORMATS_MAP, 
+    float_compare)
+
+_logger = logging.getLogger(__name__)
+
+
 
 class Parser(report_sxw.rml_parse):
     counters = {}
@@ -33,7 +55,38 @@ class Parser(report_sxw.rml_parse):
         super(Parser, self).__init__(cr, uid, name, context)
         self.localcontext.update({
             'get_objects': self.get_objects,
+            'get_filter': self.get_filter,
         })
+
+    # --------
+    # Utility:
+    # --------
+    def get_company_filter(self, ):
+        ''' Read company and return parameter
+        '''
+        context = {}
+        cr = self.cr
+        uid = self.uid
+
+        # ------------------------
+        # Read company parameters:
+        # ------------------------
+        company_pool = self.pool.get('res.company')
+        company_ids = company_pool.search(cr, uid, [], context=context)
+        company_proxy = company_pool.browse(
+            cr, uid, company_ids, context=context)[0]
+        return (
+            company_proxy.residual_order_value,
+            company_proxy.residual_remain_perc,
+            )
+
+    def get_filter(self, ):    
+        ''' Calculate filter depend on 
+        '''
+        return _(
+            'Order total <= %s, remain rate: %s!') % self.get_company_filter()
+        
+        (amount_untaxed, residual_remain_perc) = self.get_company_filter()
     
     def get_objects(self, ):    
         ''' Check company parameter and return order with residual
@@ -42,21 +95,18 @@ class Parser(report_sxw.rml_parse):
         cr = self.cr
         uid = self.uid
         
-        # ------------------------
-        # Read company parameters:
-        # ------------------------
-        company_pool = self.pool.get('res.company')
-        company_ids = company_pool.search(cr, uid, [], context=context)
-        company_proxy = company_pool.browse(
-            cr, uid, company_ids, context=context)[0]
-            
-        amount_untaxed = company_proxy.residual_order_value
-        residual_remain_perc = company_proxy.residual_remain_perc     
-        if not (amount_untaxed and residual_remain_perc):
+        (amount_untaxed, residual_remain_perc) = self.get_company_filter()
+        if not(amount_untaxed and residual_remain_perc):
             raise osv.except_osv(
                 _('Parameter error'), 
-                _('Setup parameters in company form!'),
+                _('Setup parameters in company form!'),                
                 )
+        _logger.warning(
+           'Company parameter, order total <= %s, remain rate: %s%s!' % (
+               amount_untaxed,
+               residual_remain_perc,
+               '%',
+               ))
         
         # -----------------------------
         # Read order residual to close:
