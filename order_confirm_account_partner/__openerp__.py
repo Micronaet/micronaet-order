@@ -31,7 +31,7 @@
     'depends': [
         'base',
         'sale',
-        'xmlrpc_partner',        
+        'xmlrpc_operation_partner',        
         ],
     'init_xml': [],
     'demo': [],

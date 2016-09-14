@@ -38,4 +38,40 @@ from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
 
 _logger = logging.getLogger(__name__)
 
+class SaleOrder(orm.Model):
+    """ Model name: SaleOrder
+    """    
+    _inherit = 'sale.order'
+    
+    # -------------------------------------------------------------------------
+    #                 Override confirm workflow action:
+    # -------------------------------------------------------------------------
+    def action_button_confirm(self, cr, uid, ids, context=None):
+        ''' Override button for check partner accounting status
+        '''        
+        order_proxy = self.browse(cr, uid, ids, context=context)[0]
+        if order_proxy.partner_id.sql_customer_code:
+            return super(SaleOrder, self).action_button_confirm(
+                cr, uid, ids, context=context)        
+        
+        model_pool = self.pool.get('ir.model.data')
+        view_id = model_pool.get_object_reference(cr, uid, 
+            'xmlrpc_operation_partner', 
+            'view_insert_res_partner_form')[1]
+    
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Customer mandatory'),
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_id': order_proxy.partner_id.id,
+            'res_model': 'res.partner',
+            'view_id': view_id, 
+            'views': [(view_id, 'form')],
+            'domain': [],
+            'context': context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }        
+    
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
