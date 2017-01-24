@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+       <!-- module.wizard -->
+       <record id="sale_order_speech_product_wizard_view" model="ir.ui.view">
+            <field name="name">Generate product</field>
+            <field name="model">sale.order.speech.product.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Wizard" version="7.0">
+                   <header>
+                       <button string="Cancel" special="cancel" />
+                       <button name="action_done" string="Done" type="object" icon="gtk-jump-to" class="oe_highlight" />
+                   </header>                   
+                   <group colspan="4" col="4">
+                        <field name="structure_id" />
+                        <field name="block_parent_id" context="{'only_code': True}" domain="[('block_id', '=', 1)]" 
+                            on_change="onchange_blocks_information(structure_id,block_parent_id, block_fabric_id, block_frame_id, block_color_id,block_partic_id, context)"/>
+                        <field name="block_fabric_id" domain="[('block_id', '=', 2)]" 
+                            on_change="onchange_blocks_information(structure_id,block_parent_id, block_fabric_id, block_frame_id, block_color_id,block_partic_id, context)"/>
+                        <field name="block_frame_id" domain="[('block_id', '=', 3)]"
+                            on_change="onchange_blocks_information(structure_id,block_parent_id, block_fabric_id, block_frame_id, block_color_id,block_partic_id, context)"/>
+                        <field name="block_color_id" domain="[('block_id', '=', 4),('rely_value_id', '=', block_fabric_id)]"
+                            on_change="onchange_blocks_information(structure_id,block_parent_id, block_fabric_id, block_frame_id, block_color_id,block_partic_id, context)"/>
+                        <field name="block_partic_id" domain="[('block_id', '=', 5)]"
+                            on_change="onchange_blocks_information(structure_id,block_parent_id, block_fabric_id, block_frame_id, block_color_id,block_partic_id, context)"/>
+                        <field name="code" readonly="1"/>
+                        <field name="quantity" />
+                        <field name="product_id" readonly="1"/>
+                   </group>
+                </form>
+            </field>
+      </record>
+
+      <record model="ir.actions.act_window" id="action_sale_order_speech_product_wizard">
+          <field name="name">Generate code</field>
+          <field name="res_model">sale.order.speech.product.wizard</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">form</field>
+          <field name="target">new</field>
+          <field name="view_id" ref="sale_order_speech_product_wizard_view"/>
+      </record>      
+
+       <record model="ir.ui.view" id="view_sale_order_form_fast_wizard_form">
+            <field name="name">sale.order.form.fast</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_order_fast.view_sale_order_form_fast_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="before">
+                    <button name="%(action_sale_order_speech_product_wizard)d" string="Product generation" type="action" icon="gtk-execute"/>
+                </xpath>
+            </field>
+       </record>         
+    </data>
+</openerp>

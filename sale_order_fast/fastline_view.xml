@@ -171,7 +171,7 @@
                                 <div class="oe_clear"/>
                                 <field name="note" class="oe_inline" placeholder="Terms and conditions..."/>
                             </page>
-                            <page string="Data ordine">
+                            <page string="Data ordine" invisible="context.get('open_minimal', False)">
                                 <group colspan="2" col="5">
                                       <field name="quotation_model" />
                                     <newline/>
@@ -187,7 +187,7 @@
                                 </group>
                             </page>
 
-                            <page string="Altre informazioni">
+                            <page string="Altre informazioni" invisible="context.get('open_minimal', False)">
                                 <group>
                                     <group name="logistics">
                                         <field name="incoterm" widget="selection" />
@@ -221,7 +221,7 @@
                                 </group>
                             </page>
 
-                            <page string="Informazioni spedizione">
+                            <page string="Informazioni spedizione" invisible="context.get('open_minimal', False)">
                                 <group string="Informazioni spedizione">
                                     <group>
                                         <button name="set_goods_default" string="Goods description" type="object" icon="star-on" />
@@ -243,14 +243,19 @@
                                     </group>
                                 </group>                                
                             </page>
-                            <page string="Note">
-                                <group colspan="4" col="4">
+                            <page string="Note" invisible="context.get('open_minimal', False)">
+                                <group colspan="4" col="6">
                                     <field name="text_note_pre_id" on_change="onchange_note(text_note_pre_id,'text_note_pre')" colspan="2" domain="[('object','=','sale.order')]" context="{'default_object':'sale.order'}" />
                                     <field name="text_note_post_id" on_change="onchange_note(text_note_post_id,'text_note_post')" colspan="2" domain="[('object','=','sale.order')]" context="{'default_object':'sale.order'}" />
+                                    <newline/>
+                                    
                                     <separator string="Note (pre sale line)" colspan="2"/>
                                     <separator string="Note (post sale line)" colspan="2"/>
+                                    <separator string="Note for delivery" colspan="2" />
+
                                     <field name="text_note_pre" colspan="2" nolabel="1" />
                                     <field name="text_note_post" colspan="2" nolabel="1" />
+                                    <field name="text_delivery_note" colspan="2" nolabel="1"/>
                                 </group>
                             </page>
                         </notebook>
