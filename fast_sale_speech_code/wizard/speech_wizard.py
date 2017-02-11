@@ -117,31 +117,36 @@ class SaleOorderSpeechProductWizard(orm.TransientModel):
         product_pool = self.pool.get('product.product')
 
         if block_parent_id:
-            value_proxy = value_pool.browse(cr, uid, block_parent_id, context=context)
+            value_proxy = value_pool.browse(
+                cr, uid, block_parent_id, context=context)
             block_parent = value_proxy.code
         else:
             block_parent = '***'    
 
         if block_fabric_id:
-            value_proxy = value_pool.browse(cr, uid, block_fabric_id, context=context)
+            value_proxy = value_pool.browse(
+                cr, uid, block_fabric_id, context=context)
             block_fabric = '%-3s' % value_proxy.code
         else:
             block_fabric = '***'    
             
         if block_frame_id:
-            value_proxy = value_pool.browse(cr, uid, block_frame_id, context=context)
+            value_proxy = value_pool.browse(
+                cr, uid, block_frame_id, context=context)
             block_frame = '%-2s' % value_proxy.code
         else:
             block_frame = '**'    
 
         if block_color_id:
-            value_proxy = value_pool.browse(cr, uid, block_color_id, context=context)
+            value_proxy = value_pool.browse(
+                cr, uid, block_color_id, context=context)
             block_color = '%-4s' % value_proxy.code
         else:
             block_color = '****'    
 
         if block_partic_id:
-            value_proxy = value_pool.browse(cr, uid, block_color_id, context=context)
+            value_proxy = value_pool.browse(
+                cr, uid, block_color_id, context=context)
             block_partic = '%1s' % value_proxy.code
         else:
             block_partic = '' # XXX not present = nothing    
@@ -211,5 +216,3 @@ class SaleOorderSpeechProductWizard(orm.TransientModel):
         }    
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
-
-
