@@ -102,7 +102,7 @@ class StructureBlockValue(orm.Model):
                 res.append((record.id, record.name))
         return res
 
-class SaleOorderSpeechProductWizard(orm.TransientModel):
+class SaleOrderSpeechProductWizard(orm.TransientModel):
     ''' Wizard for generate code
     '''
     _name = 'sale.order.speech.product.wizard'
