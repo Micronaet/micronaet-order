@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <!--<record model="ir.ui.view" id="view_partner_form_address_default">
+                <field name="name">res.partner.address.default</field>
+                <field name="model">res.partner</field>
+                <field name="inherit_id" ref="res_partner_addresses.view_partner_form_address"/>
+                <field name="arch" type="xml">
+                    <field name="parent_id" position="replace">
+                        <field name="parent_id"
+                                placeholder="Company"
+                                domain="[('is_company', '=', True)]" context="{'default_is_company': True}"
+                                attrs="{'invisible': ['&amp;',('is_company','=', True),('is_address','=',False)], 'required': [('is_address','=',True)]}"
+                                on_change="onchange_address(use_parent_address, parent_id)"/>
+                    </field>
+                    <xpath expr="//label[@for='type']" position="replace">
+                        <label for="type" attrs="{'invisible': [('is_address','=', False)]}"/>
+                    </xpath>
+                    <xpath expr="//div[@name='div_type']" position="replace">
+                        <div attrs="{'invisible': [('is_address','=', False)]}" name="div_type">
+                            <field class="oe_inline" name="type"/>
+                            <label for="use_parent_address" class="oe_edit_only"/>
+                            <field name="use_parent_address" class="oe_edit_only oe_inline"
+                                        on_change="onchange_address(use_parent_address, parent_id)"/>
+                        </div>
+                    </xpath>
+                    <xpath expr="//page[@string='Contacts']" position="after">
+                        <page string="Addresses" attrs="{'invisible': [('is_company','=',False)]}">
+                                <field name="address_ids" context="{'default_parent_id': active_id, 'default_is_address':1, 'default_name': name}" mode="tree">
+                                    <tree string="Addresses" version="7.0">
+                                        <field name="name" string="Contact Person"/>
+                                        <field name="type"/>
+                                        <field name="street"/>
+                                        <field name="street2"/>
+                                        <field name="zip"/>
+                                        <field name="city"/>
+                                        <field name="state_id"/>
+                                        <field name="country_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                    </xpath>
+                </field>
+            </record>-->
+        
+        <record model="ir.ui.view" id="view_partner_tree_address_list_default">
+            <field name="name">res.partner.address.default.list.tree</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+                <field name="display_name" position="after">
+                    <field name="auto_address" invisible="1"/>
+                    <field name="is_address" invisible="1"/>
+                    <button name="no_auto_address_field" string="No default for partner" type="object" icon="star-off" attrs="{'invisible': ['|',('is_company', '=', False),('is_address','=',True)]}"/>
+                    <button name="set_auto_address_field" string="Set as default" type="object" icon="star-on" attrs="{'invisible': ['|',('is_address','=',False),('auto_address','=',True)]}"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>
+
+
