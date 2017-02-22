@@ -101,8 +101,19 @@ class SaleOrder(orm.Model):
         res = super(SaleOrder, self).onchange_partner_id(
             cr, uid, ids, part, context=context)
 
+        partner_pool = self.pool.get('res.partner')
+        address_id = False
+        if part:
+            address_ids = partner_pool.search(cr, uid, [
+                ('parent_id', '=', part),
+                ('is_address', '=', True),
+                ('auto_address', '=', True),
+                ], context=context)
+            if address_ids:
+                address_id = address_ids[0]    
+        
         # Reset value if not present    
-        res['value']['destination_partner_id'] = False
+        res['value']['destination_partner_id'] = address_id
         res['value']['invoice_partner_id'] = False
         return res
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

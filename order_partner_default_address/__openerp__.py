@@ -31,6 +31,7 @@
         'base',
         'sale',
         'partner_addresses',
+        'order_destination', # set false this module
         ],
     'init_xml': [],
     'demo': [],
