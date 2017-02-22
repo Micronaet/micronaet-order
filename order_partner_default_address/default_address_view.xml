@@ -60,6 +60,20 @@
             </field>
         </record>
 
+        <record model="ir.ui.view" id="view_partner_form_address_list_default">
+            <field name="name">res.partner.address.default.list.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="street" position="before">
+                    <field name="auto_address" invisible="1"/>
+                    <!--<field name="is_address" invisible="1"/>-->
+                    <button name="no_auto_address_field" string="No default for partner" type="object" icon="star-off" attrs="{'invisible': ['|',('is_company', '=', False),('is_address','=',True)]}"/>
+                    <button name="set_auto_address_field" string="Set as default" type="object" icon="star-on" attrs="{'invisible': ['|',('is_address','=',False),('auto_address','=',True)]}"/>
+                </field>
+            </field>
+        </record>
+
         <record model="ir.ui.view" id="view_partner_filter_auto_filter_address">
             <field name="name">res.partner.address.filter</field>
             <field name="model">res.partner</field>
