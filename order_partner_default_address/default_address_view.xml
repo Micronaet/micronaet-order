@@ -48,6 +48,9 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_tree"/>
             <field name="arch" type="xml">
+                <xpath expr="/tree" position="attributes">
+                    <attribute name="colors">blue:auto_address==True</attribute>
+                </xpath>
                 <field name="display_name" position="after">
                     <field name="auto_address" invisible="1"/>
                     <field name="is_address" invisible="1"/>
@@ -56,6 +59,18 @@
                 </field>
             </field>
         </record>
+
+        <record model="ir.ui.view" id="view_partner_filter_auto_filter_address">
+            <field name="name">res.partner.address.filter</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='type_company']" position="after">
+                    <filter string="Auto-address" name="auto_address" domain="[('auto_address','=',True)]"/>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </openerp>
 
