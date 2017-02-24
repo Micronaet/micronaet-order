@@ -40,6 +40,16 @@ from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
 
 _logger = logging.getLogger(__name__)
 
+class SaleOrderLine(orm.Model):
+    """ Model name: StructureBlockValue
+    """
+    
+    _inherit = 'sale.order.line'
+    
+    _columns = {
+        'to_confirm_code': fields.boolean('Confirm code'),
+        }
+
 class StructureBlockValue(orm.Model):
     """ Model name: StructureBlockValue
     """
@@ -48,7 +58,8 @@ class StructureBlockValue(orm.Model):
     
     def name_search(self, cr, uid, name, args=None, operator='ilike', 
             context=None, limit=80):
-        """ Return a list of tupples contains id, name, as internally its calls {def name_get}
+        """ Return a list of tupples contains id, name, as internally its calls 
+            {def name_get}
             result format : {[(id, name), (id, name), ...]}
             
             @param cr: cursor to database
@@ -116,6 +127,9 @@ class SaleOrderSpeechProductWizard(orm.TransientModel):
         value_pool = self.pool.get('structure.block.value')
         product_pool = self.pool.get('product.product')
 
+        if not structure_id:
+            return res
+            
         if block_parent_id:
             value_proxy = value_pool.browse(
                 cr, uid, block_parent_id, context=context)
@@ -128,16 +142,18 @@ class SaleOrderSpeechProductWizard(orm.TransientModel):
                 cr, uid, block_fabric_id, context=context)
             block_fabric = '%-3s' % value_proxy.code
         else:
-            block_fabric = '***'    
+            block_fabric = '   '    
             
         if block_frame_id:
             value_proxy = value_pool.browse(
                 cr, uid, block_frame_id, context=context)
             block_frame = '%-2s' % value_proxy.code
+            
         else:
-            block_frame = '**'    
+            block_frame = '  '    
 
         if block_color_id:
+            # TODO check in color is in range or fabric here
             value_proxy = value_pool.browse(
                 cr, uid, block_color_id, context=context)
             block_color = '%-4s' % value_proxy.code
@@ -146,13 +162,11 @@ class SaleOrderSpeechProductWizard(orm.TransientModel):
 
         if block_partic_id:
             value_proxy = value_pool.browse(
-                cr, uid, block_color_id, context=context)
+                cr, uid, block_partic_id, context=context)
             block_partic = '%1s' % value_proxy.code
         else:
             block_partic = '' # XXX not present = nothing    
             
-        #if structure_id and block_parent_id and block_fabric_id and \
-        #        block_frame_id and block_color_id:
         code = '%s%s%s%s%s' % (
             block_parent,
             block_fabric,
@@ -164,12 +178,28 @@ class SaleOrderSpeechProductWizard(orm.TransientModel):
 
         if '*' not in code:
             product_ids = product_pool.search(cr, uid, [
-                ('default_code', '=', code)], context=context)
+                ('default_code', '=', code)], context=context)                
             if product_ids:
-                res['value']['product_id'] = product_ids[0]
-                    
+                product_proxy = product_pool.browse(
+                    cr, uid, product_ids, context=context)[0]
+                res['value']['product_id'] = product_proxy.id
+                res['value']['lst_price'] = product_proxy.lst_price
+                
         return res    
             
+
+    # --------------------
+    # Wizard button event:
+    # --------------------
+    def get_to_confirm_product(self, cr, uid, default_code, context=None):
+        ''' Create or retur ID of to assign product
+        '''
+        product_pool = self.pool.get('product.product')        
+        return product_pool.create(cr, uid, {
+            'name': 'DA CONFERMARE %s' % default_code,
+            'default_code': default_code,
+            # TODO uom,
+            }, context=context)
     # --------------------
     # Wizard button event:
     # --------------------
@@ -178,8 +208,58 @@ class SaleOrderSpeechProductWizard(orm.TransientModel):
         '''
         if context is None: 
             context = {}        
+       
+        # Pool used:
+        line_pool = self.pool.get('sale.order.line') 
+        order_pool = self.pool.get('sale.order') 
+        product_pool = self.pool.get('product.product')
         
-        wizard_browse = self.browse(cr, uid, ids, context=context)[0]
+        # Read parameters:
+        wiz_proxy = self.browse(cr, uid, ids, context=context)[0]
+        default_code = wiz_proxy.code
+        lst_price = wiz_proxy.lst_price
+        product_uom_qty = wiz_proxy.quantity
+        product = wiz_proxy.product_id
+        if not product:
+            product_id = self.get_to_confirm_product(
+                cr, uid, default_code, context=context)
+            to_confirm_code = True    
+            product = product_pool.browse(
+                cr, uid, product_id, context=context)
+            name = default_code
+        else:    
+            name = product.name
+            to_confirm_code = False
+                    
+        # Get order header:                    
+        order_id = context.get('active_id')
+        parent = order_pool.browse(cr, uid, order_id, context=context)
+        
+        data = line_pool.product_id_change_with_wh(cr, uid, False,
+            parent.pricelist_id.id,
+            product.id,
+            product_uom_qty, # product_uom_qty
+            False,
+            product_uom_qty, #product_uos_qty
+            False,
+            product.name,
+            parent.partner_id.id, 
+            False, 
+            True, 
+            parent.date_order, 
+            False,# TODO product_packaging, 
+            parent.fiscal_position.id, 
+            False, 
+            parent.warehouse_id.id, 
+            context=context,
+            ).get('value', {})
+        
+        data.update({
+            'order_id': order_id,
+            'product_id': product.id,
+            'to_confirm_code': to_confirm_code,
+            })
+        line_pool.create(cr, uid, data, context=context)    
         
         return {
             'type': 'ir.actions.act_window_close'
@@ -190,6 +270,8 @@ class SaleOrderSpeechProductWizard(orm.TransientModel):
             'product.product', 'Product', 
             help='Product selected in sale order line'),
         'quantity': fields.float('Q.ty', digits=(16, 2), required=True),
+        'lst_price': fields.float('Price', digits=(16, 2), required=True),
+        'discount_scale': fields.char('DIscount scale', size=64),
         'structure_id': fields.many2one(
             'structure.structure', 'Structure', required=True),
         'block_parent_id': fields.many2one(
@@ -197,22 +279,16 @@ class SaleOrderSpeechProductWizard(orm.TransientModel):
         'block_fabric_id': fields.many2one(
             'structure.block.value', 'Fabric', required=True),
         'block_frame_id': fields.many2one(
-            'structure.block.value', 'Frame', required=True),
+            'structure.block.value', 'Frame'),
         'block_color_id': fields.many2one(
             'structure.block.value', 'Color', required=True),
         'block_partic_id': fields.many2one(
             'structure.block.value', 'Partic'),
         'code': fields.char('Code', size=13),    
-            
-        #'note': fields.text(
-        #    'Annotation',
-        #    help='Annotation about production opened with selected product'),
         }
         
     _defaults = {
         'quantity': lambda *x: 1.0,
-    #    'product_id': lambda s, cr, uid, c: s.default_product_id(cr, uid, context=c),
-    #    'note': lambda s, cr, uid, c: s.default_note(cr, uid, context=c),
         }    
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
