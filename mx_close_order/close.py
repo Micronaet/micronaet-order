@@ -62,12 +62,17 @@ class SaleOrder(orm.Model):
     def scheduled_check_close_order(self, cr, uid, context=None):
         ''' Check closed order (completely delivered)
         '''
-        # ------------------------------
-        # Close all pricelist confirmed:
-        # ------------------------------
+        logfile = '/home/administrator/photo/log/order/close.log'
         sol_pool = self.pool.get('sale.order.line')
-        _logger.info('Start setup order as closed')
-        # Pricelist order are set to closed:        
+        
+        log = []
+
+        # ---------------------------------------------------------------------
+        # Close all pricelist confirmed:
+        # ---------------------------------------------------------------------
+        log.append('Start setup order as closed')
+        _logger.info(log[-1])
+        
         order_ids = self.search(cr, uid, [
             ('state', 'not in', ('cancel', 'sent', 'draft')),
             ('mx_closed', '=', False),
@@ -78,46 +83,42 @@ class SaleOrder(orm.Model):
                 'mx_closed': True,
                 #'all_produced': True,
                 }, context=context) 
-        _logger.info('Update order not closed but pricelist (# %s)' % len(
+        log.append('Update order not closed but pricelist (# %s)' % len(
             order_ids))
+        _logger.info(log[-1])
 
-        # -----------------------------------------------
-        # Force produced line and closed in closed order: 
-        # -----------------------------------------------
+        # ---------------------------------------------------------------------
+        # Close order line of order closed:
+        # ---------------------------------------------------------------------
         #TODO temp?!?
-        order_ids = self.search(cr, uid, [
-            ('state', 'not in', ('cancel', 'sent', 'draft')),
-            ('mx_closed', '=', True),
-            ], context=context)            
-        _logger.info('Order closed: %s' % len(
-            order_ids))
         line_ids = sol_pool.search(cr, uid, [
-            ('order_id', 'in', order_ids),
+            ('order_id.state', 'not in', ('cancel', 'sent', 'draft')),
+            ('order_id.mx_closed', '=', True),        
+            ('mx_closed', '=', False),        
             ], context=context)
         if line_ids:
             sol_pool.write(cr, uid, line_ids, {
                 'mx_closed': True,
                 #'all_produced': True,
                 }, context=context) 
-        _logger.info('Close lines: %s' % len(
-            line_ids))
+        log.append('Close lines of closed order: %s' % len(line_ids))
+        _logger.info(log[-1])
 
         # --------------------------
         # TODO check Forecast order:
         # --------------------------
         
-        # -------------------------
-        # Check line in order open:        
-        # -------------------------
+        # ---------------------------------------------------------------------
+        # Check line in order open (qty VS delivered):
+        # ---------------------------------------------------------------------
         order_ids = self.search(cr, uid, [
             ('state', 'not in', ('cancel', 'sent', 'draft')),
             ('mx_closed', '=', False),
-            #('pricelist_order', '=', False), # not necessary
             ], context=context)            
-        _logger.info('Check open order: %s' % len(
-            order_ids))
-           
-        close_ids = []    
+        log.append('Check open order: %s' % len(order_ids))
+        _logger.info(log[-1])
+                   
+        close_ids = [] 
         for order in self.browse(cr, uid, order_ids, context=context):
             to_close = True
             for line in order.order_line:
@@ -126,12 +127,32 @@ class SaleOrder(orm.Model):
                     break
             if to_close:
                close_ids.append(order.id)
+
         if close_ids:
+            # Close order header:
             self.write(cr, uid, close_ids, {
-                'mx_closed': True
+                'mx_closed': True,
                 }, context=context)
-            _logger.info('Closed now: %s' % len(
-                close_ids))
+            log.append('Closed all delivered order: %s' % len(close_ids))
+            _logger.info(log[-1])
+            
+            # Close order line:
+            line_ids = sol_pool.search(cr, uid, [
+                ('order_id', 'in', close_ids),
+                ('mx_closed', '=', False),
+                ], context=context)
+            if line_ids:
+                sol_pool.write(cr, uid, line_ids, {
+                    'mx_closed': True,
+                    }, context=context) 
+                log.append(
+                    'Closed all order line delivered: %s' % len(line_ids))
+                _logger.info(log[-1])
+        
+        # Log event:  
+        log_f = open(logfile, 'a')
+        log_f.write('\n'.join(log))
+        log_f.close()
         return True        
     
     _columns = {
