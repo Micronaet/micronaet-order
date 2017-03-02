@@ -43,6 +43,8 @@ class SaleOrder(orm.Model):
     """
     _inherit = 'sale.order'
 
+    _logfile = '/home/administrator/photo/log/order/close.log'
+    
     #def get_write_close_line(self, line):
     #    ''' Internal procedure for close (overrided for mrp line)
     #    '''
@@ -62,7 +64,7 @@ class SaleOrder(orm.Model):
     def scheduled_check_close_order(self, cr, uid, context=None):
         ''' Check closed order (completely delivered)
         '''
-        logfile = '/home/administrator/photo/log/order/close.log'
+        logfile = self._logfile
         sol_pool = self.pool.get('sale.order.line')
         
         log = []
@@ -125,6 +127,7 @@ class SaleOrder(orm.Model):
                 if line.product_uom_qty - line.delivered_qty > 0.0:
                     to_close = False
                     break
+                # TODO order line remain not closed?
             if to_close:
                close_ids.append(order.id)
 
