@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="group_close_residual_report" model="res.groups">
+            <field name="name">Close residual minimal order report</field>
+        </record>
+    </data>
+</openerp>

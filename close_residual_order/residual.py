@@ -57,6 +57,7 @@ class SaleOrder(orm.Model):
             company_proxy.residual_order_value,
             company_proxy.residual_remain_perc,
             )
+            
     def get_order_with_residual_part(self, cr, uid, context=None):
         ''' Check company parameter and return order with residual
         '''
@@ -112,8 +113,66 @@ class SaleOrder(orm.Model):
                 
         # Check residual information:
         return res
-        
+    
+    def send_order_minimal_residual_scheduler(self, cr, uid, context=None):
+        ''' Generate PDF with data and send mail
+        '''
+        #report_name = 'stock_status_explode_report'
+    
+        # ---------------------------------------------------------------------
+        # Call report:            
+        # ---------------------------------------------------------------------
+        # Procedure for problema in setup language in ODT report
+        #datas = {}
+        #mrp_ids = self.search(cr, uid, [], context=context)
+        #if mrp_ids:
+        #    mrp_id = mrp_ids[0]
+        #else:
+        #    mrp_id = False
+                
+        #try:
+        #    result, extension = openerp.report.render_report(
+        #        cr, uid, [mrp_id], report_name, datas, context)
+        #except:
+        #    _logger.error('Error generation TX report [%s]' % (
+        #        sys.exc_info(),))
+        #    return False
+            
+        # -----------------------------------------------------------------
+        # Send report:
+        # -----------------------------------------------------------------
+        import pdb; pdb.set_trace()
+        order_proxy = self.get_order_with_residual_part( 
+            cr, uid, context=context)
+            
+        # Send mail with attachment:
+        group_pool = self.pool.get('res.groups')
+        model_pool = self.pool.get('ir.model.data')
+        thread_pool = self.pool.get('mail.thread')
+        group_id = model_pool.get_object_reference(
+            cr, uid, 'close_residual_order', 'group_close_residual_report')[1]    
+        partner_ids = []
+        for user in group_pool.browse(
+                cr, uid, group_id, context=context).users:
+            partner_ids.append(user.partner_id.id)
+            
+        thread_pool = self.pool.get('mail.thread')
+        for order in order_proxy:
+            thread_pool.message_post(cr, uid, False, 
+                type='email', 
+                body='Ordine residuo', 
+                subject='Ordine con residuo minimo: %s' % (
+                    order.name,
+                    ),
+                partner_ids=[(6, 0, partner_ids)],
+                #attachments=[('Completo.odt', result)], 
+                context=context,
+                )
+        return True    
+                
+    # -------------------------------------------------------------------------
     # Button force close:
+    # -------------------------------------------------------------------------
     def force_close_residual_order(self, cr, uid, ids, context=None):
         ''' Force order and line closed:
         '''

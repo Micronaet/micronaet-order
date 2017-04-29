@@ -38,9 +38,11 @@
     'init_xml': [],
     'demo': [],
     'data': [
+        'security/residual_groups.xml',
         #'security/ir.model.access.csv',    
         'residual_view.xml',
         'report/closing_report.xml',
+        'scheduler.xml',
         ],
     'active': False,
     'installable': True,
