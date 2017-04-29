@@ -45,104 +45,34 @@ from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
 
 _logger = logging.getLogger(__name__)
 
-
-
+      
 class Parser(report_sxw.rml_parse):
     counters = {}
     
-    def __init__(self, cr, uid, name, context):
-        
+    def __init__(self, cr, uid, name, context):        
         super(Parser, self).__init__(cr, uid, name, context)
         self.localcontext.update({
             'get_objects': self.get_objects,
             'get_filter': self.get_filter,
         })
 
-    # --------
-    # Utility:
-    # --------
-    def get_company_filter(self, ):
-        ''' Read company and return parameter
-        '''
-        context = {}
-        cr = self.cr
-        uid = self.uid
-
-        # ------------------------
-        # Read company parameters:
-        # ------------------------
-        company_pool = self.pool.get('res.company')
-        company_ids = company_pool.search(cr, uid, [], context=context)
-        company_proxy = company_pool.browse(
-            cr, uid, company_ids, context=context)[0]
-        return (
-            company_proxy.residual_order_value,
-            company_proxy.residual_remain_perc,
-            )
-
     def get_filter(self, ):    
         ''' Calculate filter depend on 
         '''
-        return _(
-            'Tot. <=%s, rim. <=%s') % self.get_company_filter()
-        
-        (amount_untaxed, residual_remain_perc) = self.get_company_filter()
-    
-    def get_objects(self, ):    
-        ''' Check company parameter and return order with residual
-        '''
-        context = {}
         cr = self.cr
         uid = self.uid
+        context = {}
+        sale_pool = self.pool.get('sale.order')
         
-        (amount_untaxed, residual_remain_perc) = self.get_company_filter()
-        if not(amount_untaxed and residual_remain_perc):
-            raise osv.except_osv(
-                _('Parameter error'), 
-                _('Setup parameters in company form!'),                
-                )
-        _logger.warning(
-           'Company parameter, order total <= %s, remain rate: %s%s!' % (
-               amount_untaxed,
-               residual_remain_perc,
-               '%',
-               ))
-        
-        # -----------------------------
-        # Read order residual to close:
-        # -----------------------------
-        # Read order not closed:
-        order_pool = self.pool.get('sale.order')
-        domain = [
-            ('state', 'not in', ('cancel', 'sent', 'draft')),
-            ('mx_closed', '=', False),
-            ('amount_untaxed', '<=', amount_untaxed),
-            # TODO forecast order?
-            ]
-        # for forecast order (used in production module)    
-        if 'forecasted_production_id' in order_pool._columns.keys():
-            domain.append(('forecasted_production_id', '=', False))
-            
-        res = []
-        order_ids = order_pool.search(cr, uid, domain, context=context)
-        for order in order_pool.browse(cr, uid, order_ids, context=context):
-            residual = 0.0
-            lines = []
-            for line in order.order_line:
-                if line.mx_closed:
-                    continue
-                remain = line.product_uom_qty - line.delivered_qty
-                #line.product_uom_delivered_qty
-                if remain <= 0.0:
-                    continue
-                residual += remain * line.price_subtotal / line.product_uom_qty
-                lines.append(line)
-                
-            # Test if order need to be print:    
-            if residual and residual <= order.amount_untaxed * (
-                    residual_remain_perc / 100.0):     
-                res.append((order, lines, residual))
-                
-        # Check residual information:
-        return res
+        return _('Tot. <=%s, rim. <=%s') % \
+            sale_pool.get_company_order_residual_filter(
+                cr, uid, context=context)        
+        #(amount_untaxed, residual_remain_perc) = \
+        #    self.get_company_order_residual_filter(cr, uid, context=context)
+    
+    def get_objects(self, ):  
+        ''' Return order with residual
+        '''
+        sale_pool = self.pool.get('sale.order')
+        return sale_pool.get_order_with_residual_part(self.cr, self.uid)  
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

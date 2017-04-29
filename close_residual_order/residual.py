@@ -43,6 +43,76 @@ class SaleOrder(orm.Model):
     """    
     _inherit = 'sale.order'
 
+    # -------------------------------------------------------------------------
+    # Utility:
+    # -------------------------------------------------------------------------
+    def get_company_order_residual_filter(self, cr, uid, context=None):
+        ''' Read company and return parameter
+        '''
+        company_pool = self.pool.get('res.company')
+        company_ids = company_pool.search(cr, uid, [], context=context)
+        company_proxy = company_pool.browse(
+            cr, uid, company_ids, context=context)[0]
+        return (
+            company_proxy.residual_order_value,
+            company_proxy.residual_remain_perc,
+            )
+    def get_order_with_residual_part(self, cr, uid, context=None):
+        ''' Check company parameter and return order with residual
+        '''
+        
+        (amount_untaxed, residual_remain_perc) = \
+            self.get_company_order_residual_filter(
+                cr, uid, context=context)
+        if not(amount_untaxed and residual_remain_perc):
+            raise osv.except_osv(
+                _('Parameter error'), 
+                _('Setup parameters in company form!'),                
+                )
+        _logger.warning(
+           'Company parameter, order total <= %s, remain rate: %s%s!' % (
+               amount_untaxed,
+               residual_remain_perc,
+               '%',
+               ))
+        
+        # -----------------------------
+        # Read order residual to close:
+        # -----------------------------
+        # Read order not closed:
+        domain = [
+            ('state', 'not in', ('cancel', 'sent', 'draft')),
+            ('mx_closed', '=', False),
+            ('amount_untaxed', '<=', amount_untaxed),
+            # TODO forecast order?
+            ]
+        # for forecast order (used in production module)    
+        if 'forecasted_production_id' in self._columns:
+            domain.append(('forecasted_production_id', '=', False))
+            
+        res = []
+        order_ids = self.search(cr, uid, domain, context=context)
+        for order in self.browse(cr, uid, order_ids, context=context):
+            residual = 0.0
+            lines = []
+            for line in order.order_line:
+                if line.mx_closed:
+                    continue
+                remain = line.product_uom_qty - line.delivered_qty
+                #line.product_uom_delivered_qty
+                if remain <= 0.0:
+                    continue
+                residual += remain * line.price_subtotal / line.product_uom_qty
+                lines.append(line)
+                
+            # Test if order need to be print:    
+            if residual and residual <= order.amount_untaxed * (
+                    residual_remain_perc / 100.0):     
+                res.append((order, lines, residual))
+                
+        # Check residual information:
+        return res
+        
     # Button force close:
     def force_close_residual_order(self, cr, uid, ids, context=None):
         ''' Force order and line closed:
@@ -123,7 +193,7 @@ class SaleOrderLine(orm.Model):
     _columns = {
         'forced_close': fields.boolean('Forced close', 
             help='Order force closed'),
-    }
+        }
 
 class ResCompany(orm.Model):
     """ Model name: Res Company
