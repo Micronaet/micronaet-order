@@ -183,7 +183,7 @@ class SaleOrder(orm.Model):
                 order.amount_untaxed,
                 )
             for line in lines:
-                body += 'Cod.: %s residuo: %s' % (
+                body += 'Cod.: %s residuo: %s\n' % (
                     line.product_id.default_code or '???',
                     line.product_uom_qty - line.delivered_qty,
                     )
@@ -201,7 +201,6 @@ class SaleOrder(orm.Model):
                 )
             residual_notified_ids.append(order.id)    
 
-        import pdb; pdb.set_trace()
         # Mark as notified (no more mail):            
         if residual_notified_ids:
             self.write(cr, uid, residual_notified_ids, {
