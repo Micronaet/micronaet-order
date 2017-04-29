@@ -117,6 +117,13 @@ class SaleOrder(orm.Model):
     def send_order_minimal_residual_scheduler(self, cr, uid, context=None):
         ''' Generate PDF with data and send mail
         '''    
+        # Company information
+        company_pool = self.pool.get('res.company')
+        company_ids = company_pool.search(cr, uid, [], context=context)
+        company_proxy = company_pool.browse(
+            cr, uid, company_ids, context=context)[0]
+        company_name = company_proxy.partner_id.name
+        
         # Get residual list:
         res = self.get_order_with_residual_part( 
             cr, uid, context=context)
@@ -138,10 +145,11 @@ class SaleOrder(orm.Model):
             'context': context,
             }
 
-        #report_name = 'custom_mx_profora_invoice_pdf_report'
-        report_name = 'custom_mx_profora_invoice_report'
-        extension = 'odt' # pdf
-            
+        report_name = 'custom_mx_profora_invoice_pdf_report'
+        #report_name = 'custom_mx_profora_invoice_report'
+        extension = 'pdf' # odt
+        subject_mask = '%s: ordine %%s ha residuo minimo' % company_name
+                    
         # Get list of recipients:
         group_id = model_pool.get_object_reference(
             cr, uid, 'close_residual_order', 'group_close_residual_report')[1]    
@@ -178,12 +186,12 @@ class SaleOrder(orm.Model):
                 attachments = []    
                 #continue # next report
 
-            body = 'Rimanente: %s su totale: %s\n' % (
+            body = 'Rimanente: %s su totale: %s<br/>\n' % (
                 remain,
                 order.amount_untaxed,
                 )
             for line in lines:
-                body += 'Cod.: %s residuo: %s\n' % (
+                body += 'Cod.: %s residuo: %s<br/>\n' % (
                     line.product_id.default_code or '???',
                     line.product_uom_qty - line.delivered_qty,
                     )
@@ -194,7 +202,7 @@ class SaleOrder(orm.Model):
             thread_pool.message_post(cr, uid, False, 
                 type='email', 
                 body=body, 
-                subject='Ordine con residuo minimo: %s' % order.name,
+                subject=subject_mask % order.name,
                 partner_ids=[(6, 0, partner_ids)],
                 attachments=attachments,#[('Completo.odt', result)], 
                 context=context,
