@@ -116,39 +116,33 @@ class SaleOrder(orm.Model):
     
     def send_order_minimal_residual_scheduler(self, cr, uid, context=None):
         ''' Generate PDF with data and send mail
-        '''
-        #report_name = 'stock_status_explode_report'
-    
-        # ---------------------------------------------------------------------
-        # Call report:            
-        # ---------------------------------------------------------------------
-        # Procedure for problema in setup language in ODT report
-        #datas = {}
-        #mrp_ids = self.search(cr, uid, [], context=context)
-        #if mrp_ids:
-        #    mrp_id = mrp_ids[0]
-        #else:
-        #    mrp_id = False
-                
-        #try:
-        #    result, extension = openerp.report.render_report(
-        #        cr, uid, [mrp_id], report_name, datas, context)
-        #except:
-        #    _logger.error('Error generation TX report [%s]' % (
-        #        sys.exc_info(),))
-        #    return False
-            
-        # -----------------------------------------------------------------
-        # Send report:
-        # -----------------------------------------------------------------
-        import pdb; pdb.set_trace()
-        order_proxy = self.get_order_with_residual_part( 
+        '''    
+        # Get residual list:
+        res = self.get_order_with_residual_part( 
             cr, uid, context=context)
-            
-        # Send mail with attachment:
+
+        # ---------------------------------------------------------------------
+        # Report parameters:
+        # ---------------------------------------------------------------------
+        # Pool used:
         group_pool = self.pool.get('res.groups')
         model_pool = self.pool.get('ir.model.data')
         thread_pool = self.pool.get('mail.thread')
+
+        # Parameters:
+        datas = {
+            # Report setup:
+            'model': 'sale.order',
+            'active_id': False,
+            'active_ids': [],
+            'context': context,
+            }
+
+        #report_name = 'custom_mx_profora_invoice_pdf_report'
+        report_name = 'custom_mx_profora_invoice_report'
+        extension = 'odt' # pdf
+            
+        # Get list of recipients:
         group_id = model_pool.get_object_reference(
             cr, uid, 'close_residual_order', 'group_close_residual_report')[1]    
         partner_ids = []
@@ -156,18 +150,66 @@ class SaleOrder(orm.Model):
                 cr, uid, group_id, context=context).users:
             partner_ids.append(user.partner_id.id)
             
-        thread_pool = self.pool.get('mail.thread')
-        for order in order_proxy:
+        residual_notified_ids = []
+        for order, lines, remain in res:
+            if order.residual_notified:
+                _logger.warning('Order yet notified: %s' % order.name)
+                continue
+            # Check if order is yet notified
+            # -----------------------------------------------------------------
+            # Generate the report
+            # -----------------------------------------------------------------
+            # datas update:
+            datas['active_id'] = order.id
+            datas['active_ids'] = [order.id]
+            
+            try:
+                result, extension = openerp.report.render_report(
+                    cr, uid, [order.id], report_name, datas, context)
+                attachments = [(
+                    'Order_%s.%s' % (order.name, extension),
+                    result,
+                    )]
+            except:
+                _logger.error('Error generation residual order %s [%s]' % (
+                    order.name,
+                    sys.exc_info(),
+                    ))
+                attachments = []    
+                #continue # next report
+
+            body = 'Rimanente: %s su totale: %s\n' % (
+                remain,
+                order.amount_untaxed,
+                )
+            for line in lines:
+                body += 'Cod.: %s residuo: %s' % (
+                    line.product_id.default_code or '???',
+                    line.product_uom_qty - line.delivered_qty,
+                    )
+
+            # -----------------------------------------------------------------
+            # Send report:
+            # -----------------------------------------------------------------
             thread_pool.message_post(cr, uid, False, 
                 type='email', 
-                body='Ordine residuo', 
-                subject='Ordine con residuo minimo: %s' % (
-                    order.name,
-                    ),
+                body=body, 
+                subject='Ordine con residuo minimo: %s' % order.name,
                 partner_ids=[(6, 0, partner_ids)],
-                #attachments=[('Completo.odt', result)], 
+                attachments=attachments,#[('Completo.odt', result)], 
                 context=context,
                 )
+            residual_notified_ids.append(order.id)    
+
+        import pdb; pdb.set_trace()
+        # Mark as notified (no more mail):            
+        if residual_notified_ids:
+            self.write(cr, uid, residual_notified_ids, {
+                'residual_notified': True,
+                }, context=context)  
+            _logger.info('Marked as notified all order mailed: %s' % (
+                residual_notified_ids, 
+                ))
         return True    
                 
     # -------------------------------------------------------------------------
@@ -242,6 +284,7 @@ class SaleOrder(orm.Model):
     _columns = {
         'forced_close': fields.boolean('Forced close', 
             help='Order force closed'),
+        'residual_notified': fields.boolean('Residual notified by mail'),
         }
 
 class SaleOrderLine(orm.Model):
