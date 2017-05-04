@@ -148,7 +148,7 @@ class SaleOrder(orm.Model):
         report_name = 'custom_mx_profora_invoice_pdf_report'
         #report_name = 'custom_mx_profora_invoice_report'
         extension = 'pdf' # odt
-        subject_mask = '%s: ordine %%s ha residuo minimo' % company_name
+        subject_mask = '%s: ordine %%s %%s ha residuo minimo' % company_name
                     
         # Get list of recipients:
         group_id = model_pool.get_object_reference(
@@ -202,7 +202,10 @@ class SaleOrder(orm.Model):
             thread_pool.message_post(cr, uid, False, 
                 type='email', 
                 body=body, 
-                subject=subject_mask % order.name,
+                subject=subject_mask % (                    
+                    order.name,
+                    order.partner_id.name,
+                    ),
                 partner_ids=[(6, 0, partner_ids)],
                 attachments=attachments,#[('Completo.odt', result)], 
                 context=context,
