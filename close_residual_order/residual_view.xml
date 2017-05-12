@@ -24,7 +24,8 @@
                     <page string="Order residual">
                         <group col="4" colspan="4">
                             <field name="residual_management_alert" />
-                            <newline/>
+                            <field name="residual_sender_id" />
+
                             <field name="residual_order_value" attrs="{'invisible':[('residual_management_alert','=',False)]}"/>   
                             <field name="residual_remain_perc" attrs="{'invisible':[('residual_management_alert','=',False)]}" />   
                         </group>

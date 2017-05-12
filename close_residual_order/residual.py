@@ -123,6 +123,7 @@ class SaleOrder(orm.Model):
         company_proxy = company_pool.browse(
             cr, uid, company_ids, context=context)[0]
         company_name = company_proxy.partner_id.name
+        sender_uid = company_proxy.residual_sender_id.id or uid
         
         # Get residual list:
         res = self.get_order_with_residual_part( 
@@ -199,7 +200,7 @@ class SaleOrder(orm.Model):
             # -----------------------------------------------------------------
             # Send report:
             # -----------------------------------------------------------------
-            thread_pool.message_post(cr, uid, False, 
+            thread_pool.message_post(cr, sender_uid, False, 
                 type='email', 
                 body=body, 
                 subject=subject_mask % (                    
@@ -314,6 +315,7 @@ class ResCompany(orm.Model):
 
     _columns = {
         'residual_management_alert':fields.boolean('Residual management'),
+        'residual_sender_id': fields.many2one('res.users', 'Sender user'),
         'residual_order_value': fields.float(
             'Residual order value', digits=(16, 2), 
             help='Max value for total order with residual alert'), 
