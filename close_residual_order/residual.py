@@ -165,6 +165,7 @@ class SaleOrder(orm.Model):
             if order.residual_notified:
                 _logger.warning('Order yet notified: %s' % order.name)
                 continue
+
             if order.amount_untaxed <= 1.0: # No pay order
                 order_comment = 'ORDINE OMAGGIO'
             else: 
