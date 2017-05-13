@@ -200,6 +200,7 @@ class SaleOrder(orm.Model):
             # -----------------------------------------------------------------
             # Send report:
             # -----------------------------------------------------------------
+            import pdb; pdb.set_trace()
             thread_pool.message_post(cr, sender_uid, False, 
                 type='email', 
                 body=body, 
