@@ -149,7 +149,7 @@ class SaleOrder(orm.Model):
         report_name = 'custom_mx_profora_invoice_pdf_report'
         #report_name = 'custom_mx_profora_invoice_report'
         extension = 'pdf' # odt
-        subject_mask = '%s: ordine %%s %%s ha residuo minimo' % company_name
+        subject_mask = '%s: %%s %%s %%s ha residuo minimo' % company_name
                     
         # Get list of recipients:
         group_id = model_pool.get_object_reference(
@@ -160,10 +160,16 @@ class SaleOrder(orm.Model):
             partner_ids.append(user.partner_id.id)
             
         residual_notified_ids = []
+
         for order, lines, remain in res:
             if order.residual_notified:
                 _logger.warning('Order yet notified: %s' % order.name)
                 continue
+            if order.amount_untaxed <= 1.0: # No pay order
+                order_comment = 'ORDINE OMAGGIO'
+            else: 
+                order_comment = 'ordine'
+                
             # Check if order is yet notified
             # -----------------------------------------------------------------
             # Generate the report
@@ -203,7 +209,8 @@ class SaleOrder(orm.Model):
             thread_pool.message_post(cr, sender_uid, False, 
                 type='email', 
                 body=body, 
-                subject=subject_mask % (                    
+                subject=subject_mask % ( 
+                    order_comment,                   
                     order.name,
                     order.partner_id.name,
                     ),
