@@ -198,7 +198,9 @@ class SaleOrderSpeechProductWizard(orm.TransientModel):
         return product_pool.create(cr, uid, {
             'name': 'DA CONFERMARE %s' % default_code,
             'default_code': default_code,
-            # TODO uom,
+            # TODO parametrize:
+            'uom_id': 1,
+            'uos_id': 1,
             }, context=context)
     # --------------------
     # Wizard button event:
@@ -220,6 +222,7 @@ class SaleOrderSpeechProductWizard(orm.TransientModel):
         lst_price = wiz_proxy.lst_price
         product_uom_qty = wiz_proxy.quantity
         product = wiz_proxy.product_id
+        discount_scale = wiz_proxy.discount_scale
         if not product:
             product_id = self.get_to_confirm_product(
                 cr, uid, default_code, context=context)
@@ -253,14 +256,19 @@ class SaleOrderSpeechProductWizard(orm.TransientModel):
             parent.warehouse_id.id, 
             context=context,
             ).get('value', {})
-        
+
+        # TODO update discount?
         data.update({
             'order_id': order_id,
             'product_id': product.id,
             'to_confirm_code': to_confirm_code,
+            'product_uom': product.uom_id.id,
+            'product_uom_qty': product_uom_qty,
+            'product_uos_qty': product_uom_qty,
+            'multi_discount_rates': discount_scale,
+            'price_unit': lst_price, # TODO check if correct (force this?)
             })
-        line_pool.create(cr, uid, data, context=context)    
-        
+        line_pool.create(cr, uid, data, context=context)        
         return {
             'type': 'ir.actions.act_window_close'
             }
@@ -271,7 +279,7 @@ class SaleOrderSpeechProductWizard(orm.TransientModel):
             help='Product selected in sale order line'),
         'quantity': fields.float('Q.ty', digits=(16, 2), required=True),
         'lst_price': fields.float('Price', digits=(16, 2), required=True),
-        'discount_scale': fields.char('DIscount scale', size=64),
+        'discount_scale': fields.char('Discount scale', size=64),
         'structure_id': fields.many2one(
             'structure.structure', 'Structure', required=True),
         'block_parent_id': fields.many2one(
