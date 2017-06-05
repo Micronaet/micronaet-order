@@ -31,6 +31,7 @@
         'base',
         'sale_order_fast',
         'product_speech_code',
+        #'base_optional_quick_create',
         ],
     'init_xml': [],
     'demo': [],
