@@ -11,7 +11,7 @@
                        <button string="Cancel" special="cancel" />
                    </header>                   
                    <group colspan="4" col="4">
-                        <field name="structure_id" attrs="{'invisible': [('structure_id','!=',False)]}" widget="selection"/>
+                        <field name="structure_id" widget="selection"/> <!--attrs="{'invisible': [('structure_id','!=',False)]}"-->
                         <field name="block_parent_id" context="{'only_code': True}" domain="[('block_id', '=', 1)]" options="{'limit': 130, 'create': false, 'create_edit': false}"
                             on_change="onchange_blocks_information(structure_id,block_parent_id, block_fabric_id, block_frame_id, block_color_id,block_partic_id, context)"/>
                         <field name="block_fabric_id" domain="[('block_id', '=', 2)]" widget="selection"
