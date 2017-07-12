@@ -37,7 +37,7 @@
     'demo': [],
     'data': [
         'extra_view.xml',
-        #'scheduler.xml',
+        'scheduler.xml',
         ],
     'active': False,
     'installable': True,

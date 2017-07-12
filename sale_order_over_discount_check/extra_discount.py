@@ -48,7 +48,7 @@ class SaleOrder(orm.Model):
     # -------------------------------------------------------------------------
     # Scheduler:
     # -------------------------------------------------------------------------
-    def check_extra_discount_sale_order(self,, cr, uid, context=None):
+    def check_extra_discount_sale_order(self, cr, uid, context=None):
         ''' Check if order line pass discount assigned to partner
         '''
         # ---------------------------------------------------------------------
@@ -70,6 +70,8 @@ class SaleOrder(orm.Model):
         # ---------------------------------------------------------------------
         # Start prepare XLS file:
         # ---------------------------------------------------------------------
+        num_format = '#,##0'
+
         filename = '/tmp/check_discount_rate.xlsx'        
         _logger.info('Start create file %s' % filename)
         WB = xlsxwriter.Workbook(filename)
@@ -133,7 +135,7 @@ class SaleOrder(orm.Model):
         # Search data order line:
         # ---------------------------------------------------------------------
         line_pool = self.pool.get('sale.order.line')
-        line_ids = self.search(cr, uid, [
+        line_ids = line_pool.search(cr, uid, [
             ('order_id.state', 'not in', ('draft', 'cancel', 'sent')),
             ('order_id.mx_closed', '=', False),
             ('order_id.pricelist_order', '=', False),
@@ -144,6 +146,7 @@ class SaleOrder(orm.Model):
         
         # Write header:
         header = [
+            ('Ordine', xls_format_db['text']),
             ('Partner', xls_format_db['text']),
             ('Sconto', xls_format_db['number']),
             ('Sconto vendita', xls_format_db['number']),
@@ -153,11 +156,11 @@ class SaleOrder(orm.Model):
         write_xls_mrp_line(WS, 0, header)
         over_ids = []
         row = 0
-        for line in self.browse(
+        for line in line_pool.browse(
                 cr, uid, line_ids, context=context):
             partner_discount_rate = line.order_id.partner_id.discount_value
             total = line.product_uom_qty * line.price_unit 
-            real_total = price_subtotal
+            real_total = line.price_subtotal
             sale_discount = total - real_total
             partner_discount = total * partner_discount_rate
             extra = sale_discount <= partner_discount 
@@ -166,6 +169,7 @@ class SaleOrder(orm.Model):
             row += 1
             over_ids.append(line.id)
             data = [
+                (line.order_id.name, xls_format_db['text']),
                 (line.order_id.partner_id.name, xls_format_db['text']),
                 (partner_discount_rate, xls_format_db['number']),
                 (sale_discount, xls_format_db['number']),
@@ -173,6 +177,7 @@ class SaleOrder(orm.Model):
                 (extra, xls_format_db['number']),
                 ]    
             write_xls_mrp_line(WS, row, data)            
+        WB.close()
         return True
         
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
