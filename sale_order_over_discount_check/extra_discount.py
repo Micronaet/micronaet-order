@@ -249,10 +249,10 @@ class SaleOrder(orm.Model):
             cr, uid, 
             'sale_order_over_discount_check', 
             'group_over_discount_mail')[1]    
-        partner_email = []
+        partner_ids = []
         for user in group_pool.browse(
                 cr, uid, group_id, context=context).users:
-            partner_email.append(user.partner_id.id)
+            partner_ids.append(user.partner_id.id)
 
         thread_pool = self.pool.get('mail.thread')
         thread_pool.message_post(cr, uid, False, 
