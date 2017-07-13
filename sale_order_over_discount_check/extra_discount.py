@@ -185,7 +185,7 @@ class SaleOrder(orm.Model):
             ('% Sc.', xls_format_db['header']),
             ('Netto vendita', xls_format_db['header']),
             ('- Netto partner', xls_format_db['header']),
-            ('Extra', xls_format_db['header']),
+            ('Delta', xls_format_db['header']),
             ]    
         write_xls_mrp_line(WS, 0, header)
         over_ids = []
