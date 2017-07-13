@@ -198,7 +198,7 @@ class SaleOrder(orm.Model):
             net_partner = round(
                 total * (100.0 - partner_discount_rate) / 100.0, 3)            
             net_sale = round(line.price_subtotal, 3)
-            delta = round(net_sale - net_partner, 3)
+            delta = round(net_partner - net_sale, 3)
             
             if delta <= error_range: # sale < partner
                 continue
