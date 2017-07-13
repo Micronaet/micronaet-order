@@ -82,7 +82,7 @@ class SaleOrder(orm.Model):
         WS.set_column('A:A', 15)
         WS.set_column('B:B', 30)
         WS.set_column('C:C', 20)
-        WS.set_column('D:G', 8)
+        WS.set_column('D:G', 10)
 
         xls_format_db = {
             'header': WB.add_format({
@@ -183,8 +183,8 @@ class SaleOrder(orm.Model):
             ('Partner', xls_format_db['header']),
             ('Prodotto', xls_format_db['header']),
             ('% Sc.', xls_format_db['header']),
-            ('Netto vendita', xls_format_db['header']),
-            ('- Netto partner', xls_format_db['header']),
+            ('Netto vend.', xls_format_db['header']),
+            ('Netto part.', xls_format_db['header']),
             ('Delta', xls_format_db['header']),
             ]    
         write_xls_mrp_line(WS, 0, header)
