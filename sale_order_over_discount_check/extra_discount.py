@@ -82,6 +82,7 @@ class SaleOrder(orm.Model):
         WS.set_column('A:A', 15)
         WS.set_column('B:B', 30)
         WS.set_column('C:C', 20)
+        WS.set_column('D:G', 7)
 
         xls_format_db = {
             'header': WB.add_format({
@@ -206,16 +207,16 @@ class SaleOrder(orm.Model):
                 
             row += 1
             over_ids.append(line.id)
-            if extra_discount < 200:
-                format_heat = xls_format_db['head4']
-            elif extra_discount < 50:
-                format_heat = xls_format_db['head3']
-            elif extra_discount < 20:
-                format_heat = xls_format_db['head2']
-            elif extra_discount < 10:
-                format_heat = xls_format_db['head1']
+            if extra_discount > 200:
+                format_heat = xls_format_db['heat1']
+            elif extra_discount > 50:
+                format_heat = xls_format_db['heat2']
+            elif extra_discount > 20:
+                format_heat = xls_format_db['heat3']
+            elif extra_discount > 10:
+                format_heat = xls_format_db['heat4']
             else:    
-                format_heat = xls_format_db['head5']
+                format_heat = xls_format_db['heat5']
                 
             data = [
                 (line.order_id.name, xls_format_db['text']),
