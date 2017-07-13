@@ -82,7 +82,7 @@ class SaleOrder(orm.Model):
         WS.set_column('A:A', 15)
         WS.set_column('B:B', 30)
         WS.set_column('C:C', 20)
-        WS.set_column('D:G', 7)
+        WS.set_column('D:G', 8)
 
         xls_format_db = {
             'header': WB.add_format({
@@ -184,8 +184,8 @@ class SaleOrder(orm.Model):
             ('Prodotto', xls_format_db['header']),
             ('% Sc.', xls_format_db['header']),
             ('Netto vendita', xls_format_db['header']),
-            ('Netto partner', xls_format_db['header']),
-            ('Extra', xls_format_db['header']),
+            ('- Netto partner', xls_format_db['header']),
+            ('= Extra', xls_format_db['header']),
             ]    
         write_xls_mrp_line(WS, 0, header)
         over_ids = []
@@ -195,9 +195,9 @@ class SaleOrder(orm.Model):
             partner_discount_rate = line.order_id.partner_id.discount_value
             
             total = line.product_uom_qty * line.price_unit 
-            net_sale = round(line.price_subtotal, 3)
             net_partner = round(
-                total * (100.0 - partner_discount_rate) / 100.0, 3)
+                total * (100.0 - partner_discount_rate) / 100.0, 3)            
+            net_sale = round(line.price_subtotal, 3)
             delta = round(net_sale - net_partner, 3)
             
             if delta <= error_range: # sale < partner
@@ -207,11 +207,11 @@ class SaleOrder(orm.Model):
             over_ids.append(line.id)
             if delta >= 200:
                 format_heat = xls_format_db['heat1']
-            elif extra_discount >= 50:
+            elif delta >= 50:
                 format_heat = xls_format_db['heat2']
-            elif extra_discount >= 20:
+            elif delta >= 20:
                 format_heat = xls_format_db['heat3']
-            elif extra_discount >= 10:
+            elif delta >= 10:
                 format_heat = xls_format_db['heat4']
             else:
                 format_heat = xls_format_db['heat5']
