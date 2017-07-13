@@ -229,6 +229,42 @@ class SaleOrder(orm.Model):
                 ]    
             write_xls_mrp_line(WS, row, data)            
         WB.close()
+
+        # ---------------------------------------------------------------------
+        # Send mail to group:
+        # ---------------------------------------------------------------------
+        xlsx_raw = open(filename, 'rb').read()
+        #b64 = xlsx_raw.encode('base64')
+        attachments = [('Extra_sconti.xlsx', xlsx_raw)]
+        
+        _logger.info('Sending status via mail: %s' % filename)
+
+        # Send mail with attachment:
+        group_pool = self.pool.get('res.groups')
+        model_pool = self.pool.get('ir.model.data')
+        thread_pool = self.pool.get('mail.thread')
+        server_pool = self.pool.get('ir.mail_server')
+        
+        group_id = model_pool.get_object_reference(
+            cr, uid, 
+            'sale_order_over_discount_check', 
+            'group_over_discount_mail')[1]    
+        partner_email = []
+        for user in group_pool.browse(
+                cr, uid, group_id, context=context).users:
+            partner_email.append(user.partner_id.id)
+
+        thread_pool = self.pool.get('mail.thread')
+        thread_pool.message_post(cr, uid, False, 
+            type='email', 
+            body=_('Notifica extra sconti ordini attivi'), 
+            subject='Invio automatico stato extra sconto : %s' % (
+                datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT),
+                ),
+            partner_ids=[(6, 0, partner_ids)],
+            attachments=attachments, 
+            context=context,
+            )        
         return True
         
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

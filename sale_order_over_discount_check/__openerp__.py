@@ -28,6 +28,7 @@
     'website': 'http://www.micronaet.it',
     'license': 'AGPL-3',
     'depends': [
+        'security/group.xml',
         'base',
         'sale',
         'mx_close_order',
