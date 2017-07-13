@@ -70,7 +70,8 @@ class SaleOrder(orm.Model):
         # ---------------------------------------------------------------------
         # Start prepare XLS file:
         # ---------------------------------------------------------------------
-        num_format = '#,##0'
+        error_range = 0.01
+        num_format = '0.#0'
 
         filename = '/tmp/check_discount_rate.xlsx'        
         _logger.info('Start create file %s' % filename)
@@ -78,7 +79,9 @@ class SaleOrder(orm.Model):
         WS = WB.add_worksheet('Sconti')
 
         # Format columns width:
-        WS.set_column('A:A', 30)
+        WS.set_column('A:A', 15)
+        WS.set_column('B:B', 30)
+        WS.set_column('C:C', 20)
 
         xls_format_db = {
             'header': WB.add_format({
@@ -109,23 +112,47 @@ class SaleOrder(orm.Model):
             # -------------------------------------------------------------
             # With text color:
             # -------------------------------------------------------------
-            'bg_red': WB.add_format({
-                'bold': True, 
+            'heat1': WB.add_format({
                 'font_color': 'black',
-                'bg_color': '#ff420e',
+                'bg_color': '#ec4e4e',
                 'font_name': 'Courier 10 pitch',
                 'font_size': 9,
-                'align': 'left',
+                'align': 'right',
                 'border': 1,
                 'num_format': num_format,
                 }),
-            'bg_green': WB.add_format({
-                'bold': True, 
+            'heat2': WB.add_format({
                 'font_color': 'black',
-                'bg_color': '#99cc66',
+                'bg_color': '#f69999',
                 'font_name': 'Courier 10 pitch',
                 'font_size': 9,
-                'align': 'left',
+                'align': 'right',
+                'border': 1,
+                'num_format': num_format,
+                }),
+            'heat3': WB.add_format({
+                'font_color': 'black',
+                'bg_color': '#f1bcbc',
+                'font_name': 'Courier 10 pitch',
+                'font_size': 9,
+                'align': 'right',
+                'border': 1,
+                'num_format': num_format,
+                }),
+            'heat4': WB.add_format({
+                'font_color': 'black',
+                'bg_color': '#f3dfdf',
+                'font_name': 'Courier 10 pitch',
+                'font_size': 9,
+                'align': 'right',
+                'border': 1,
+                'num_format': num_format,
+                }),
+            'heat5': WB.add_format({
+                'font_color': 'black',
+                'font_name': 'Courier 10 pitch',
+                'font_size': 9,
+                'align': 'right',
                 'border': 1,
                 'num_format': num_format,
                 }),
@@ -135,23 +162,29 @@ class SaleOrder(orm.Model):
         # Search data order line:
         # ---------------------------------------------------------------------
         line_pool = self.pool.get('sale.order.line')
-        line_ids = line_pool.search(cr, uid, [
+        
+        # Generate domain:
+        domain = [
             ('order_id.state', 'not in', ('draft', 'cancel', 'sent')),
             ('order_id.mx_closed', '=', False),
-            ('order_id.pricelist_order', '=', False),
             ('mx_closed', '=', False),
-            ], context=None)
+            ]
+        if 'pricelist_order' in self._columns:
+            domain.append(('order_id.pricelist_order', '=', False))
+        if 'forecasted_production_id' in self._columns:
+            domain.append(('order_id.forecasted_production_id', '=', False))
+        _logger.info('Domain: %s' % (domain, ))    
+        line_ids = line_pool.search(cr, uid, domain, context=None)
             
-        error_range = 0.01
-        
         # Write header:
         header = [
-            ('Ordine', xls_format_db['text']),
-            ('Partner', xls_format_db['text']),
-            ('Sconto', xls_format_db['number']),
-            ('Sconto vendita', xls_format_db['number']),
-            ('Sconto partner', xls_format_db['number']),
-            ('Extra', xls_format_db['number']),
+            ('Ordine', xls_format_db['header']),
+            ('Partner', xls_format_db['header']),
+            ('Prodotto', xls_format_db['header']),
+            ('% Sc.', xls_format_db['header']),
+            ('Sc. vendita', xls_format_db['header']),
+            ('Sc. partner', xls_format_db['header']),
+            ('Extra', xls_format_db['header']),
             ]    
         write_xls_mrp_line(WS, 0, header)
         over_ids = []
@@ -159,22 +192,39 @@ class SaleOrder(orm.Model):
         for line in line_pool.browse(
                 cr, uid, line_ids, context=context):
             partner_discount_rate = line.order_id.partner_id.discount_value
-            total = line.product_uom_qty * line.price_unit 
-            real_total = line.price_subtotal
-            sale_discount = total - real_total
-            partner_discount = total * partner_discount_rate
-            extra = sale_discount <= partner_discount 
-            if extra > error_range:
+            
+            real_total = line.product_uom_qty * line.price_unit 
+            subtotal = line.price_subtotal
+            
+            sale_discount = round(real_total - subtotal, 3)
+            partner_discount = round(
+                real_total * partner_discount_rate / 100.0, 3)
+            extra_discount = round(sale_discount - partner_discount, 3)
+            
+            if extra_discount <= error_range: # sale < partner
                 continue
+                
             row += 1
             over_ids.append(line.id)
+            if extra_discount < 200:
+                format_heat = xls_format_db['head4']
+            elif extra_discount < 50:
+                format_heat = xls_format_db['head3']
+            elif extra_discount < 20:
+                format_heat = xls_format_db['head2']
+            elif extra_discount < 10:
+                format_heat = xls_format_db['head1']
+            else:    
+                format_heat = xls_format_db['head5']
+                
             data = [
                 (line.order_id.name, xls_format_db['text']),
                 (line.order_id.partner_id.name, xls_format_db['text']),
+                (line.product_id.default_code or '', xls_format_db['text']),
                 (partner_discount_rate, xls_format_db['number']),
                 (sale_discount, xls_format_db['number']),
                 (partner_discount, xls_format_db['number']),
-                (extra, xls_format_db['number']),
+                (extra_discount, format_heat),
                 ]    
             write_xls_mrp_line(WS, row, data)            
         WB.close()
