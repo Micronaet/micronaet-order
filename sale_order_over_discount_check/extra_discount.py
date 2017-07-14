@@ -72,6 +72,7 @@ class SaleOrder(orm.Model):
         # ---------------------------------------------------------------------
         error_range = 0.01
         num_format = '0.#0'
+        #num_format_0 = '0.#0'
 
         filename = '/tmp/check_discount_rate.xlsx'        
         _logger.info('Start create file %s' % filename)
@@ -222,7 +223,7 @@ class SaleOrder(orm.Model):
                 (line.order_id.partner_id.name, xls_format_db['text']),
                 (line.product_id.default_code or '', xls_format_db['text']),
                 (partner_discount_rate, xls_format_db['number']),
-                (line.product_uom_qty or '', xls_format_db['text']),
+                (line.product_uom_qty or '', xls_format_db['number']),
                 (net_sale, xls_format_db['number']),
                 (net_partner, xls_format_db['number']),
                 (delta, format_heat),
