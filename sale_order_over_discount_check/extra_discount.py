@@ -187,6 +187,7 @@ class SaleOrder(orm.Model):
             ('Q.', xls_format_db['header']),
             ('Netto vend.', xls_format_db['header']),
             ('Netto part.', xls_format_db['header']),
+            ('% Delta', xls_format_db['header']),
             ('Delta', xls_format_db['header']),
             ]    
         write_xls_mrp_line(WS, 0, header)
@@ -201,6 +202,11 @@ class SaleOrder(orm.Model):
                 total * (100.0 - partner_discount_rate) / 100.0, 3)            
             net_sale = round(line.price_subtotal, 3)
             delta = round(net_partner - net_sale, 3)
+            if total:
+                delta_rate = 100.0 * (
+                    (total - net_sale) / total) - partner_discount_rate
+            else:
+                delta_rata = 'ERR'    
             
             if delta <= error_range: # sale < partner
                 continue
@@ -226,6 +232,7 @@ class SaleOrder(orm.Model):
                 (line.product_uom_qty or '', xls_format_db['number']),
                 (net_sale, xls_format_db['number']),
                 (net_partner, xls_format_db['number']),
+                (delta_rate, xls_format_db['number']),
                 (delta, format_heat),
                 ]    
             write_xls_mrp_line(WS, row, data)            
