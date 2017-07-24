@@ -22,6 +22,7 @@ import sys
 import logging
 import openerp
 import xlsxwriter
+import pickle
 import openerp.netsvc as netsvc
 import openerp.addons.decimal_precision as dp
 from openerp.osv import fields, osv, expression, orm
@@ -45,6 +46,8 @@ class SaleOrder(orm.Model):
     
     _inherit = 'sale.order'
     
+    _pickle_order_line = '~/pickle_order_line_discount_check.dmp'
+    
     # -------------------------------------------------------------------------
     # Scheduler:
     # -------------------------------------------------------------------------
@@ -54,6 +57,27 @@ class SaleOrder(orm.Model):
         # ---------------------------------------------------------------------
         # Utility:
         # ---------------------------------------------------------------------
+        def get_yet_used():
+            ''' Read store file
+            '''       
+            filename = os.path.expanduser(self._pickle_order_line)
+            try:
+                f = open(filename, 'rb')
+                res = pickle.load(f)                
+                f.close()
+                return res
+            except:
+                return []    
+            
+        def set_yet_used(yet_used):
+            ''' Save store file
+            '''            
+            filename = os.path.expanduser(self._pickle_order_line)
+            f = open(filename, 'wb')
+            pickle.dump(yet_used, f)
+            f.close()
+            return True
+            
         def write_xls_mrp_line(WS, row, line):
             ''' Write line in excel file
             '''
@@ -78,12 +102,17 @@ class SaleOrder(orm.Model):
         _logger.info('Start create file %s' % filename)
         WB = xlsxwriter.Workbook(filename)
         WS = WB.add_worksheet('Sconti')
+        WS1 = WB.add_worksheet('Segnalati in precedenza')
 
         # Format columns width:
         WS.set_column('A:A', 15)
         WS.set_column('B:B', 30)
         WS.set_column('C:C', 20)
         WS.set_column('D:G', 10)
+        WS1.set_column('A:A', 15)
+        WS1.set_column('B:B', 30)
+        WS1.set_column('C:C', 20)
+        WS1.set_column('D:G', 10)
 
         xls_format_db = {
             'header': WB.add_format({
@@ -177,7 +206,7 @@ class SaleOrder(orm.Model):
             domain.append(('order_id.forecasted_production_id', '=', False))
         _logger.info('Domain: %s' % (domain, ))    
         line_ids = line_pool.search(cr, uid, domain, context=None)
-            
+
         # Write header:
         header = [
             ('Ordine', xls_format_db['header']),
@@ -189,10 +218,15 @@ class SaleOrder(orm.Model):
             ('Netto part.', xls_format_db['header']),
             ('% Delta', xls_format_db['header']),
             ('Delta', xls_format_db['header']),
-            ]    
+            ]   
         write_xls_mrp_line(WS, 0, header)
+        write_xls_mrp_line(WS1, 0, header)
+        
+        yet_used = get_yet_used() or []
+        _logger.info('Pickle previous list: %s' % len(yet_used))
         over_ids = []
-        row = 0
+        row = 0        
+        row1 = 0        
         for line in line_pool.browse(
                 cr, uid, line_ids, context=context):
             partner_discount_rate = line.order_id.partner_id.discount_value
@@ -210,8 +244,16 @@ class SaleOrder(orm.Model):
             
             if delta <= error_range: # sale < partner
                 continue
+            
+            if line.id in yet_used:
+                WS_use = WS1
+                row1 += 1
+                position = row1
+            else:    
+                WS_use = WS
+                row += 1
+                position = row
                 
-            row += 1
             over_ids.append(line.id)
             if delta >= 200:
                 format_heat = xls_format_db['heat1']
@@ -235,7 +277,11 @@ class SaleOrder(orm.Model):
                 (delta_rate, xls_format_db['number']),
                 (delta, format_heat),
                 ]    
-            write_xls_mrp_line(WS, row, data)            
+            write_xls_mrp_line(WS_use, position, data)            
+
+        # Write pickle for current selection:
+        set_yet_used(over_ids)
+        _logger.info('Save pickle list: %s' % len(over_ids))
         WB.close()
 
         # ---------------------------------------------------------------------
