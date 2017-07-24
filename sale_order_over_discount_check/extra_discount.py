@@ -308,17 +308,21 @@ class SaleOrder(orm.Model):
                 cr, uid, group_id, context=context).users:
             partner_ids.append(user.partner_id.id)
 
-        thread_pool = self.pool.get('mail.thread')
-        thread_pool.message_post(cr, uid, False, 
-            type='email', 
-            body=_('Notifica extra sconti ordini attivi'), 
-            subject='Invio automatico stato extra sconto : %s' % (
-                datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT),
-                ),
-            partner_ids=[(6, 0, partner_ids)],
-            attachments=attachments, 
-            context=context,
-            )        
+        if row: # there's record in first sheet:
+            thread_pool = self.pool.get('mail.thread')
+            thread_pool.message_post(cr, uid, False, 
+                type='email', 
+                body=_('Notifica extra sconti ordini attivi'), 
+                subject='Invio automatico stato extra sconto : %s' % (
+                    datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT),
+                    ),
+                partner_ids=[(6, 0, partner_ids)],
+                attachments=attachments, 
+                context=context,
+                )
+            _logger.info('Mail: there are records in sheet 1')
+        else:
+            _logger.info('No mail: empty sheet 1')                
         return True
         
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
