@@ -37,7 +37,7 @@
     'demo': [],
     'data': [
         'security/group.xml',
-        'extra_view.xml',
+        'prepared_view.xml',
         'scheduler.xml',
         ],
     'active': False,

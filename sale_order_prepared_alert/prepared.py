@@ -237,7 +237,7 @@ class SaleOrder(orm.Model):
             for line in order.order_line:
                 total_OC += line.product_uom_qty
                 total_B += line.product_uom_maked_sync_qty
-                total_D += line.product_delivered_qty
+                total_D += line.delivered_qty
             
             # Total analysis:
             if total_B > total_D:
@@ -247,8 +247,18 @@ class SaleOrder(orm.Model):
             order_remain_rate = total_remain / total_OC
             if order_remain_rate > remain_rate:
                 continue # order not in delivery rate area
+            
+            if order.id in yet_used:
+                WS_use = WS1
+                row1 += 1
+                position = row1
+            else:
+                WS_use = WS
+                row += 1
+                position = row
                 
-            over_ids.append(line.id)
+            over_ids.append(order.id) # Save at the end of procedure
+            
             if order_remain_rate <= 0.02:
                 format_heat = xls_format_db['heat1']
             elif order_remain_rate <= 0.05:
@@ -274,7 +284,7 @@ class SaleOrder(orm.Model):
                 (total_OC, xls_format_db['number']),
                 (total_B, xls_format_db['number']),
                 (total_D, xls_format_db['number']),
-                (order_remain_rate, format_heat),
+                (order_remain_rate * 100.0, format_heat),
                 ]    
             write_xls_mrp_line(WS_use, position, data)            
 
