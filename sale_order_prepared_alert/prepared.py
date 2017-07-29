@@ -108,13 +108,11 @@ class SaleOrder(orm.Model):
 
         # Format columns width:
         WS.set_column('A:A', 15)
-        WS.set_column('B:B', 30)
-        WS.set_column('C:C', 20)
-        WS.set_column('D:G', 10)
+        WS.set_column('B:B', 50)
+        WS.set_column('C:F', 10)
         WS1.set_column('A:A', 15)
-        WS1.set_column('B:B', 30)
-        WS1.set_column('C:C', 20)
-        WS1.set_column('D:G', 10)
+        WS1.set_column('B:B', 50)
+        WS1.set_column('C:F', 10)
 
         xls_format_db = {
             'header': WB.add_format({
@@ -263,9 +261,9 @@ class SaleOrder(orm.Model):
                 format_heat = xls_format_db['heat1']
             elif order_remain_rate <= 0.05:
                 format_heat = xls_format_db['heat2']
-            elif order_remain_rate >= 0.10:
+            elif order_remain_rate <= 0.10:
                 format_heat = xls_format_db['heat3']
-            elif order_remain_rate >= 0.15:
+            elif order_remain_rate <= 0.15:
                 format_heat = xls_format_db['heat4']
             else: # 0.20
                 format_heat = xls_format_db['heat5']
