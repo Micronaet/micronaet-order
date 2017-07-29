@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+   <data>
+        <record id="group_prepared_team_mail" model="res.groups">
+            <field name="name">Check near prepared order mailing</field>
+        </record>
+   </data>
+</openerp>
