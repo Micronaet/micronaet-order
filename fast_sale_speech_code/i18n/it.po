@@ -1,0 +1,143 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* fast_sale_speech_code
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-27 16:25+0000\n"
+"PO-Revision-Date: 2017-08-05 22:13+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: fast_sale_speech_code
+#: model:ir.model,name:fast_sale_speech_code.model_structure_block_value
+msgid "Block value"
+msgstr "Valore blocco"
+
+#. module: fast_sale_speech_code
+#: view:sale.order.speech.product.wizard:fast_sale_speech_code.sale_order_speech_product_wizard_view
+msgid "Cancel"
+msgstr "Annulla"
+
+#. module: fast_sale_speech_code
+#: field:sale.order.speech.product.wizard,code:0
+msgid "Code"
+msgstr "Codice"
+
+#. module: fast_sale_speech_code
+#: field:sale.order.speech.product.wizard,block_color_id:0
+msgid "Color"
+msgstr "Colore"
+
+#. module: fast_sale_speech_code
+#: field:sale.order.line,to_confirm_code:0
+msgid "Confirm code"
+msgstr "Conferma codice"
+
+#. module: fast_sale_speech_code
+#: field:sale.order.speech.product.wizard,create_uid:0
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: fast_sale_speech_code
+#: field:sale.order.speech.product.wizard,create_date:0
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: fast_sale_speech_code
+#: field:sale.order.speech.product.wizard,discount_scale:0
+msgid "Discount scale"
+msgstr "Scala sconto"
+
+#. module: fast_sale_speech_code
+#: view:sale.order.speech.product.wizard:fast_sale_speech_code.sale_order_speech_product_wizard_view
+msgid "Done"
+msgstr "Fatto"
+
+#. module: fast_sale_speech_code
+#: field:sale.order.speech.product.wizard,block_fabric_id:0
+msgid "Fabric"
+msgstr "Tessuto"
+
+#. module: fast_sale_speech_code
+#: field:sale.order.speech.product.wizard,block_frame_id:0
+msgid "Frame"
+msgstr "Telaio"
+
+#. module: fast_sale_speech_code
+#: model:ir.actions.act_window,name:fast_sale_speech_code.action_sale_order_speech_product_wizard
+msgid "Generate code"
+msgstr "Genera codice"
+
+#. module: fast_sale_speech_code
+#: field:sale.order.speech.product.wizard,id:0
+msgid "ID"
+msgstr "ID"
+
+#. module: fast_sale_speech_code
+#: field:sale.order.speech.product.wizard,write_uid:0
+msgid "Last Updated by"
+msgstr "Aggiornato da"
+
+#. module: fast_sale_speech_code
+#: field:sale.order.speech.product.wizard,write_date:0
+msgid "Last Updated on"
+msgstr "Aggiornato il"
+
+#. module: fast_sale_speech_code
+#: field:sale.order.speech.product.wizard,block_parent_id:0
+msgid "Parent"
+msgstr "Padre"
+
+#. module: fast_sale_speech_code
+#: field:sale.order.speech.product.wizard,block_partic_id:0
+msgid "Partic"
+msgstr "Particolatità"
+
+#. module: fast_sale_speech_code
+#: field:sale.order.speech.product.wizard,lst_price:0
+msgid "Price"
+msgstr "Prezzo"
+
+#. module: fast_sale_speech_code
+#: field:sale.order.speech.product.wizard,product_id:0
+msgid "Product"
+msgstr "Prodotto"
+
+#. module: fast_sale_speech_code
+#: view:sale.order:fast_sale_speech_code.view_sale_order_form_fast_wizard_form
+msgid "Product generation"
+msgstr "Generazione prodotto"
+
+#. module: fast_sale_speech_code
+#: help:sale.order.speech.product.wizard,product_id:0
+msgid "Product selected in sale order line"
+msgstr "Prodotti selezionato nelle righe ordine"
+
+#. module: fast_sale_speech_code
+#: field:sale.order.speech.product.wizard,quantity:0
+msgid "Q.ty"
+msgstr "Q.tà"
+
+#. module: fast_sale_speech_code
+#: model:ir.model,name:fast_sale_speech_code.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Linea d'ordine di vendita"
+
+#. module: fast_sale_speech_code
+#: field:sale.order.speech.product.wizard,structure_id:0
+msgid "Structure"
+msgstr "Struttura"
+
+#. module: fast_sale_speech_code
+#: view:sale.order.speech.product.wizard:fast_sale_speech_code.sale_order_speech_product_wizard_view
+msgid "Wizard"
+msgstr "Wizard"

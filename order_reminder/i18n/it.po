@@ -1,0 +1,75 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* order_reminder
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-27 16:28+0000\n"
+"PO-Revision-Date: 2017-08-06 20:50+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: order_reminder
+#: view:sale.order:order_reminder.view_sale_order_reminder_form
+msgid "CRM"
+msgstr "CRM"
+
+#. module: order_reminder
+#: model:ir.actions.act_window,name:order_reminder.action_sale_order_reminder
+#: model:ir.ui.menu,name:order_reminder.menu_action_sale_order_reminder
+msgid "Remind order"
+msgstr "Promemoria ordine"
+
+#. module: order_reminder
+#: view:sale.order:order_reminder.view_sales_order_reminder_search
+#: field:sale.order,reminder:0
+msgid "Reminder"
+msgstr "Promemoria"
+
+#. module: order_reminder
+#: field:sale.order,reminder_date:0
+msgid "Reminder date"
+msgstr "Data promemoria"
+
+#. module: order_reminder
+#: field:sale.order,reminder_deadline:0
+msgid "Reminder dealine"
+msgstr "Scadenza promemoria"
+
+#. module: order_reminder
+#: field:sale.order,reminder_note:0
+msgid "Reminder note"
+msgstr "Nota promemoria"
+
+#. module: order_reminder
+#: view:sale.order:order_reminder.view_sale_order_reminder_form
+msgid "Reminder note:"
+msgstr "Nota promemoria:"
+
+#. module: order_reminder
+#: view:sale.order:order_reminder.view_sale_order_reminder_tree
+msgid "Reminder order"
+msgstr "Promemoria ordine"
+
+#. module: order_reminder
+#: help:sale.order,reminder:0
+msgid "Sale order reminder for particular motive"
+msgstr "Ordine con promemoria per motivo particolare"
+
+#. module: order_reminder
+#: model:ir.model,name:order_reminder.model_sale_order
+msgid "Sales Order"
+msgstr "Ordine di vendita"
+
+#. module: order_reminder
+#: view:sale.order:order_reminder.view_sale_order_reminder_tree
+msgid "Total"
+msgstr "Totale"

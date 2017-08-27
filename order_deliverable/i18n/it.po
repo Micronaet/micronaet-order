@@ -1,0 +1,33 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* order_deliverable
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-27 16:28+0000\n"
+"PO-Revision-Date: 2017-08-06 20:47+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: order_deliverable
+#: model:ir.model,name:order_deliverable.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Linea d'ordine di vendita"
+
+#. module: order_deliverable
+#: field:sale.order.line,mx_lord_qty:0
+msgid "Total lord"
+msgstr "Totale lordo"
+
+#. module: order_deliverable
+#: field:sale.order.line,mx_net_qty:0
+msgid "Total net"
+msgstr "Totale netto"

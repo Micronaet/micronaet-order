@@ -1,0 +1,100 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* outsource_product
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-27 16:28+0000\n"
+"PO-Revision-Date: 2017-08-06 20:55+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: outsource_product
+#: field:product.product,default_code_linked:0
+msgid "Code linked"
+msgstr "Codice collegato"
+
+#. module: outsource_product
+#: model:ir.model,name:outsource_product.model_res_company
+msgid "Companies"
+msgstr "Aziende"
+
+#. module: outsource_product
+#: help:res.company,outsource_management:0
+msgid "If is remote company no XMLRPC connection"
+msgstr "Se è azienda remota nessuna connessione XMLRPC"
+
+#. module: outsource_product
+#: field:res.company,outsource_product_mask:0
+msgid "Mask"
+msgstr "Maschera"
+
+#. module: outsource_product
+#: help:res.company,outsource_product_mask:0
+msgid "Mask for product in other DB"
+msgstr "Maschera per prodotto in altro database"
+
+#. module: outsource_product
+#: view:product.product:outsource_product.view_outsource_product_search
+#: field:product.product,outsource:0
+#: view:res.company:outsource_product.view_res_company_pick_type_form
+msgid "Outsource"
+msgstr "Esterno"
+
+#. module: outsource_product
+#: view:product.product:outsource_product.view_product_product_outsource_tree
+msgid "Outsource product"
+msgstr "Prodotto esterno"
+
+#. module: outsource_product
+#: model:ir.model,name:outsource_product.model_product_product
+msgid "Product"
+msgstr "Prodotto"
+
+#. module: outsource_product
+#: help:product.product,outsource:0
+msgid "Product made or buyed from other company"
+msgstr "Prodotto fatto o comprato dall'altra azienda"
+
+#. module: outsource_product
+#: field:res.company,outsource_db:0
+msgid "XMLRPC DB name"
+msgstr "XMLRPC Nome DB"
+
+#. module: outsource_product
+#: field:res.company,outsource_hostname:0
+msgid "XMLRPC Hostname"
+msgstr "XMLRPC Hostname"
+
+#. module: outsource_product
+#: field:res.company,outsource_management:0
+msgid "XMLRPC Outsource management"
+msgstr "XMLRPC Gestione fonte esterna"
+
+#. module: outsource_product
+#: field:res.company,outsource_password:0
+msgid "XMLRPC Password"
+msgstr "XMLRPC Password"
+
+#. module: outsource_product
+#: field:res.company,outsource_port:0
+msgid "XMLRPC Port"
+msgstr "XMLRPC Porta"
+
+#. module: outsource_product
+#: field:res.company,outsource_username:0
+msgid "XMLRPC Username"
+msgstr "XMLRPC Utente"
+
+#. module: outsource_product
+#: view:res.company:outsource_product.view_res_company_pick_type_form
+msgid "XMLRPC parameters:"
+msgstr "XMLRPC parametri:"

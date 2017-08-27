@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-15 11:48+0000\n"
-"PO-Revision-Date: 2016-02-15 12:53+0100\n"
+"POT-Creation-Date: 2017-07-27 16:28+0000\n"
+"PO-Revision-Date: 2017-08-06 20:53+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,38 +18,112 @@ msgstr ""
 "X-Generator: Poedit 1.6.10\n"
 
 #. module: order_wizard_report
-#: code:addons/order_wizard_report/report/report_parser.py:104
+#: code:addons/order_wizard_report/report/report_parser.py:134
 #, python-format
-msgid ", date < %s"
-msgstr ", data < %s"
+msgid ", Dato visualizzato: %s"
+msgstr ", Dato visualizzato: %s"
 
 #. module: order_wizard_report
-#: code:addons/order_wizard_report/report/report_parser.py:101
+#: code:addons/order_wizard_report/report/report_parser.py:122
+#, python-format
+msgid ", Italia"
+msgstr ", Italia"
+
+#. module: order_wizard_report
+#: code:addons/order_wizard_report/report/report_parser.py:131
+#, python-format
+msgid ", Partner filter"
+msgstr ", Filtro partner"
+
+#. module: order_wizard_report
+#: code:addons/order_wizard_report/report/report_parser.py:107
+#, python-format
+msgid ", Sconto >= %s"
+msgstr ", Sconto >= %s"
+
+#. module: order_wizard_report
+#: code:addons/order_wizard_report/report/report_parser.py:127
+#, python-format
+msgid ", Tutte le nazioni"
+msgstr ", Tutte le nazioni"
+
+#. module: order_wizard_report
+#: code:addons/order_wizard_report/report/report_parser.py:145
+#, python-format
+msgid ", date <= %s"
+msgstr ", data <= %s"
+
+#. module: order_wizard_report
+#: code:addons/order_wizard_report/report/report_parser.py:142
 #, python-format
 msgid ", date >= %s"
 msgstr ", data >= %s"
 
 #. module: order_wizard_report
-#: code:addons/order_wizard_report/report/report_parser.py:119
+#: code:addons/order_wizard_report/report/report_parser.py:160
 #, python-format
-msgid ", deadline < %s"
-msgstr ", scadenza < %s"
+msgid ", deadline <= %s"
+msgstr ", scadenza <= %s"
 
 #. module: order_wizard_report
-#: code:addons/order_wizard_report/report/report_parser.py:116
+#: code:addons/order_wizard_report/report/report_parser.py:157
 #, python-format
 msgid ", deadline >= %s"
 msgstr ", scadenza >= %s"
 
 #. module: order_wizard_report
+#: code:addons/order_wizard_report/report/report_parser.py:125
+#, python-format
+msgid ", non Italia"
+msgstr ", non Italia"
+
+#. module: order_wizard_report
+#: code:addons/order_wizard_report/report/report_parser.py:112
+#, python-format
+msgid ", ordini aperti"
+msgstr ", ordini aperti"
+
+#. module: order_wizard_report
+#: code:addons/order_wizard_report/report/report_parser.py:115
+#, python-format
+msgid ", ordini chiusi"
+msgstr ", ordini chiusi"
+
+#. module: order_wizard_report
+#: code:addons/order_wizard_report/report/report_parser.py:117
+#, python-format
+msgid ", tutti gli ordini"
+msgstr ", tutti gli ordini"
+
+#. module: order_wizard_report
+#: selection:sale.order.general.report.wizard,fiscal_position:0
+msgid "All"
+msgstr "Tutti"
+
+#. module: order_wizard_report
+#: selection:sale.order.general.report.wizard,order_status:0
+msgid "All order"
+msgstr "Tutti gli ordini"
+
+#. module: order_wizard_report
 #: view:sale.order.general.report.wizard:order_wizard_report.sale_order_general_report_wizard_view
 msgid "Analytic report"
-msgstr "Report analitico"
+msgstr "Stampa analitica"
+
+#. module: order_wizard_report
+#: selection:sale.order.general.report.wizard,data_type:0
+msgid "B(locked)"
+msgstr "B(loccati)"
 
 #. module: order_wizard_report
 #: view:sale.order.general.report.wizard:order_wizard_report.sale_order_general_report_wizard_view
 msgid "Cancel"
 msgstr "Annulla"
+
+#. module: order_wizard_report
+#: selection:sale.order.general.report.wizard,order_status:0
+msgid "Close order"
+msgstr "Ordine chiuso"
 
 #. module: order_wizard_report
 #: field:sale.order.general.report.wizard,create_uid:0
@@ -60,6 +134,16 @@ msgstr "Creato da"
 #: field:sale.order.general.report.wizard,create_date:0
 msgid "Created on"
 msgstr "Creato il "
+
+#. module: order_wizard_report
+#: field:sale.order.general.report.wizard,data_sort:0
+msgid "Data sort"
+msgstr "Ordinamento dati"
+
+#. module: order_wizard_report
+#: field:sale.order.general.report.wizard,data_type:0
+msgid "Data type"
+msgstr "Tipo dati"
 
 #. module: order_wizard_report
 #: help:sale.order.general.report.wizard,to_date:0
@@ -87,6 +171,46 @@ msgid "Date filter:"
 msgstr "Filtro dati:"
 
 #. module: order_wizard_report
+#: view:sale.order.general.report.wizard:order_wizard_report.sale_order_general_report_wizard_view
+msgid "Date sort:"
+msgstr "Ordinamento dati:"
+
+#. module: order_wizard_report
+#: field:sale.order.general.report.wizard,discount_limit:0
+msgid "Discount"
+msgstr "Sconto"
+
+#. module: order_wizard_report
+#: selection:sale.order.general.report.wizard,report_type:0
+msgid "Discount check"
+msgstr "Controllo sconto"
+
+#. module: order_wizard_report
+#: view:sale.order.general.report.wizard:order_wizard_report.sale_order_general_report_wizard_view
+msgid "Discount limit >=:"
+msgstr "Limite sconto >=:"
+
+#. module: order_wizard_report
+#: model:ir.actions.report.xml,name:order_wizard_report.aeroo_mx_discount_order_list_line_report_id
+msgid "Discount line report"
+msgstr "Stampa righe sconti"
+
+#. module: order_wizard_report
+#: selection:sale.order.general.report.wizard,report_type:0
+msgid "Extract order"
+msgstr "Estrai ordine"
+
+#. module: order_wizard_report
+#: model:ir.actions.report.xml,name:order_wizard_report.aeroo_mx_extract_order_report_id
+msgid "Extract order report"
+msgstr "Report estrai ordini"
+
+#. module: order_wizard_report
+#: field:sale.order.general.report.wizard,fiscal_position:0
+msgid "Fiscal position"
+msgstr "Posizione fiscale"
+
+#. module: order_wizard_report
 #: field:sale.order.general.report.wizard,from_date:0
 msgid "From"
 msgstr "Da"
@@ -99,12 +223,17 @@ msgstr "Da scadenza"
 #. module: order_wizard_report
 #: model:ir.actions.act_window,name:order_wizard_report.action_sale_order_general_report_wizard
 msgid "General report wizard"
-msgstr "Report wizard"
+msgstr "Wizard stampa"
 
 #. module: order_wizard_report
 #: field:sale.order.general.report.wizard,id:0
 msgid "ID"
 msgstr "ID"
+
+#. module: order_wizard_report
+#: selection:sale.order.general.report.wizard,fiscal_position:0
+msgid "Italy"
+msgstr "Italia"
 
 #. module: order_wizard_report
 #: field:sale.order.general.report.wizard,write_uid:0
@@ -127,11 +256,39 @@ msgid "Mx order list report"
 msgstr "Report lista ordini"
 
 #. module: order_wizard_report
+#: code:addons/order_wizard_report/report/report_parser.py:203
+#, python-format
+msgid "NOT FOUND #: %s"
+msgstr "NON TROVATO #: %s"
+
+#. module: order_wizard_report
+#: selection:sale.order.general.report.wizard,fiscal_position:0
+msgid "Not Italy"
+msgstr "Non Italia"
+
+#. module: order_wizard_report
+#: selection:sale.order.general.report.wizard,data_type:0
+msgid "OC"
+msgstr "OC"
+
+#. module: order_wizard_report
 #: field:sale.order.general.report.wizard,only_remain:0
 msgid "Only remain"
 msgstr "Solo i rimanenti"
 
 #. module: order_wizard_report
+#: selection:sale.order.general.report.wizard,order_status:0
+msgid "Open order"
+msgstr "Apri ordine"
+
+#. module: order_wizard_report
+#: code:addons/order_wizard_report/report/report_parser.py:102
+#, python-format
+msgid "Ora: %s, escluso ordini listino"
+msgstr "Ora: %s, escluso ordini listino"
+
+#. module: order_wizard_report
+#: selection:sale.order.general.report.wizard,data_sort:0
 #: selection:sale.order.general.report.wizard,report_type:0
 msgid "Order deadline"
 msgstr "Scadenza ordine"
@@ -142,15 +299,24 @@ msgid "Order line deadline"
 msgstr "Scadenza riga ordine"
 
 #. module: order_wizard_report
-#: code:addons/order_wizard_report/report/report_parser.py:97
-#, python-format
-msgid "Order open, not pricelist order"
-msgstr "Ordine aperto, non ordine listino"
+#: selection:sale.order.general.report.wizard,data_sort:0
+msgid "Order number"
+msgstr "Numero ordine"
 
 #. module: order_wizard_report
 #: model:ir.ui.menu,name:order_wizard_report.menu_sale_order_general_report
 msgid "Order report"
-msgstr "Report ordine"
+msgstr "Stampa ordine"
+
+#. module: order_wizard_report
+#: field:sale.order.general.report.wizard,order_status:0
+msgid "Order status"
+msgstr "Stato ordine"
+
+#. module: order_wizard_report
+#: selection:sale.order.general.report.wizard,data_type:0
+msgid "Original order"
+msgstr "Ordine originale"
 
 #. module: order_wizard_report
 #: field:sale.order.general.report.wizard,partner_id:0
@@ -168,14 +334,19 @@ msgid "Report type"
 msgstr "Tipo report"
 
 #. module: order_wizard_report
+#: selection:sale.order.general.report.wizard,data_type:0
+msgid "S(suspended)"
+msgstr "S(ospeso)"
+
+#. module: order_wizard_report
 #: model:ir.model,name:order_wizard_report.model_sale_order_general_report_wizard
 msgid "Sale general wizard"
 msgstr "Wizard generale vendite"
 
 #. module: order_wizard_report
 #: help:sale.order.general.report.wizard,only_remain:0
-msgid "Show only element to procuce"
-msgstr "Mostro solo elementi da produrre"
+msgid "Show only element to produce"
+msgstr "Mostra solo elementi da produrre"
 
 #. module: order_wizard_report
 #: field:sale.order.general.report.wizard,to_date:0

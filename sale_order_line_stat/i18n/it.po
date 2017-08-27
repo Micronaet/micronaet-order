@@ -1,0 +1,120 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* sale_order_line_stat
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-27 16:32+0000\n"
+"PO-Revision-Date: 2017-08-16 16:57+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: sale_order_line_stat
+#: view:sale.order.line:sale_order_line_stat.view_sale_order_line_stat_search
+msgid "Agent"
+msgstr "Agente"
+
+#. module: sale_order_line_stat
+#: field:sale.order.line,client_order_ref:0
+msgid "Client order ref."
+msgstr "Rig. ordine cliente"
+
+#. module: sale_order_line_stat
+#: view:sale.order.line:sale_order_line_stat.view_sale_order_line_stat_search
+msgid "Date"
+msgstr "Data"
+
+#. module: sale_order_line_stat
+#: view:sale.order.line:sale_order_line_stat.view_sale_order_line_stat_search
+msgid "Deadline"
+msgstr "Scadenza"
+
+#. module: sale_order_line_stat
+#: view:sale.order.line:sale_order_line_stat.view_sale_order_line_stat_search
+msgid "Deadline from >="
+msgstr "Scadenza da >="
+
+#. module: sale_order_line_stat
+#: view:sale.order.line:sale_order_line_stat.view_sale_order_line_stat_search
+msgid "Deadline to <="
+msgstr "Scadenza a <="
+
+#. module: sale_order_line_stat
+#: field:sale.order.line,destination_partner_id:0
+msgid "Destination"
+msgstr "Destinazione"
+
+#. module: sale_order_line_stat
+#: view:sale.order.line:sale_order_line_stat.view_sale_order_line_tree
+msgid "Force agent"
+msgstr "Forza agente"
+
+#. module: sale_order_line_stat
+#: view:sale.order.line:sale_order_line_stat.view_sale_order_line_tree
+msgid "Force all agent (temp)"
+msgstr "Forza tutti gli agenti (temp)"
+
+#. module: sale_order_line_stat
+#: view:sale.order.line:sale_order_line_stat.view_sale_order_line_tree
+msgid "Force all partner (temp)"
+msgstr "Forza tutti i partner (temp)"
+
+#. module: sale_order_line_stat
+#: view:sale.order.line:sale_order_line_stat.view_sale_order_line_stat_search
+msgid "Group By"
+msgstr "Raggruppa per"
+
+#. module: sale_order_line_stat
+#: view:sale.order.line:sale_order_line_stat.view_sale_order_line_stat_search
+msgid "Order"
+msgstr "Ordine"
+
+#. module: sale_order_line_stat
+#: field:sale.order.line,order_date:0
+msgid "Order date"
+msgstr "Data ordine"
+
+#. module: sale_order_line_stat
+#: view:sale.order.line:sale_order_line_stat.view_sale_order_line_stat_search
+msgid "Partner"
+msgstr "Partner"
+
+#. module: sale_order_line_stat
+#: view:sale.order.line:sale_order_line_stat.view_sale_order_line_stat_search
+msgid "Product"
+msgstr "Prodotto"
+
+#. module: sale_order_line_stat
+#: view:sale.order.line:sale_order_line_stat.view_sale_order_line_stat_search
+msgid "Quotation"
+msgstr "Preventivo"
+
+#. module: sale_order_line_stat
+#: view:sale.order.line:sale_order_line_stat.view_sale_order_line_stat_search
+#: view:sale.order.line:sale_order_line_stat.view_sale_order_line_tree
+msgid "Sale order line"
+msgstr "Righe ordine"
+
+#. module: sale_order_line_stat
+#: model:ir.actions.act_window,name:sale_order_line_stat.action_sale_order_line
+#: model:ir.ui.menu,name:sale_order_line_stat.menu_action_sale_order_line_analysys
+msgid "Sale order line analysis"
+msgstr "Analisi righe ordine"
+
+#. module: sale_order_line_stat
+#: model:ir.model,name:sale_order_line_stat.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Linea d'ordine di vendita"
+
+#. module: sale_order_line_stat
+#: view:sale.order.line:sale_order_line_stat.view_sale_order_line_stat_search
+msgid "Status"
+msgstr "Stato"

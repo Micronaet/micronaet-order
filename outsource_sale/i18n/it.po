@@ -1,0 +1,171 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* outsource_sale
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-27 16:28+0000\n"
+"PO-Revision-Date: 2017-08-06 20:58+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: outsource_sale
+#: code:addons/outsource_sale/outsource.py:210
+#, python-format
+msgid ""
+"\n"
+"                <p><b>Partner: %s</b> [%s]<br/>\n"
+"                Destination: %s<br/>\n"
+"                Total: %s [Taxed: %s]<br>\n"
+"                Customer ref.: %s\n"
+"                "
+msgstr ""
+"\n"
+"                <p><b>Partner: %s</b> [%s]<br/>\n"
+"                Destinazione: %s<br/>\n"
+"                Totale: %s [IVA: %s]<br>\n"
+"                Rif. cliente.: %s\n"
+"                "
+
+#. module: outsource_sale
+#: code:addons/outsource_sale/outsource.py:235
+#, python-format
+msgid ""
+"\n"
+"                <table class=\"oe_list_content\">\n"
+"                    <tr><th>Code</th><th>Q.</th><th>Deadline</th></tr>\n"
+"                "
+msgstr ""
+"\n"
+"                <table class=\"oe_list_content\">\n"
+"                    <tr><th>Codice</th><th>Q.</th><th>Scadenza</th></tr>\n"
+"                "
+
+#. module: outsource_sale
+#: code:addons/outsource_sale/outsource.py:180
+#, python-format
+msgid ""
+" \n"
+"                <p>Oustource order create: <br/>\n"
+"                    <b>Number: %s </b><br/>\n"
+"                    Date: %s\n"
+"                </p>"
+msgstr ""
+" \n"
+"                <p>Ordine extra database creato: <br/>\n"
+"                    <b>Numero: %s </b><br/>\n"
+"                    Data: %s\n"
+"                </p>"
+
+#. module: outsource_sale
+#: model:ir.model,name:outsource_sale.model_res_company
+msgid "Companies"
+msgstr "Aziende"
+
+#. module: outsource_sale
+#: view:sale.order:outsource_sale.view_sale_order_outsource_form_view
+msgid "Create outource order"
+msgstr "Crea ordine esterno"
+
+#. module: outsource_sale
+#: code:addons/outsource_sale/outsource.py:297
+#, python-format
+msgid "Error:"
+msgstr "Errore:"
+
+#. module: outsource_sale
+#: field:sale.order,linked:0
+msgid "Linked order"
+msgstr "Ordine collegato"
+
+#. module: outsource_sale
+#: code:addons/outsource_sale/outsource.py:278
+#, python-format
+msgid "No outsource order!"
+msgstr "Nessun ordine collegato!"
+
+#. module: outsource_sale
+#: code:addons/outsource_sale/outsource.py:98
+#, python-format
+msgid "Order jet present! Delete and reimport if not started!"
+msgstr "Ordine già presente! Cancellare e reimportare se non è confermato!"
+
+#. module: outsource_sale
+#: view:sale.order:outsource_sale.view_sale_order_outsource_form_view
+msgid "Original order:"
+msgstr "Ordine originale:"
+
+#. module: outsource_sale
+#: view:sale.order:outsource_sale.view_sale_order_outsource_form_view
+msgid "Ousourced!"
+msgstr "Esterno!"
+
+#. module: outsource_sale
+#: view:sale.order:outsource_sale.view_sale_order_outsource_form_view
+#: field:sale.order.line,outsource:0
+msgid "Outsource"
+msgstr "Esterno"
+
+#. module: outsource_sale
+#: field:sale.order,outsource:0
+msgid "Outsource order"
+msgstr "Ordine esterno"
+
+#. module: outsource_sale
+#: view:sale.order:outsource_sale.view_sale_order_outsource_form_view
+msgid "Outsource order esit:"
+msgstr "Esito ordine esterno:"
+
+#. module: outsource_sale
+#: view:sale.order:outsource_sale.view_sale_order_outsource_form_view
+msgid "Outsource product"
+msgstr "Prodotto esterno"
+
+#. module: outsource_sale
+#: field:res.company,outsourced_partner_id:0
+msgid "Outsourced partner"
+msgstr "Partner esterno"
+
+#. module: outsource_sale
+#: help:res.company,outsourced_partner_id:0
+msgid "Partner linked as company ref. (used in order header)"
+msgstr "Partner collegato come rif. azienda (utilizzato nella testata ordine)"
+
+#. module: outsource_sale
+#: field:sale.order,outsource_esit:0 field:sale.order,outsource_order:0
+msgid "Remote order"
+msgstr "Ordine remoto"
+
+#. module: outsource_sale
+#: model:ir.model,name:outsource_sale.model_sale_order
+msgid "Sales Order"
+msgstr "Ordine di vendita"
+
+#. module: outsource_sale
+#: model:ir.model,name:outsource_sale.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Riga ordine di vendita"
+
+#. module: outsource_sale
+#: help:sale.order,linked:0
+msgid "This order has an order in other company"
+msgstr "Questo ordine ha un ordine nella azienda esterna"
+
+#. module: outsource_sale
+#: help:sale.order,outsource:0
+msgid "This order will be outsourced"
+msgstr "Questo ordine verrà esportato"
+
+#. module: outsource_sale
+#: code:addons/outsource_sale/outsource.py:278
+#, python-format
+msgid "Warning:"
+msgstr "Attenzione:"
