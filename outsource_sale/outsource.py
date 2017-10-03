@@ -285,7 +285,6 @@ class SaleOrder(orm.Model):
             cr, uid, order_dict) 
         
         # Call XML RPC import procedure:
-        import pdb; pdb.set_trace()
         (db, user_id, password, sock) = \
             company_pool.get_outsource_xmlrpc_socket(cr, uid)
 
