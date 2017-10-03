@@ -175,15 +175,12 @@ class SaleOrder(orm.Model):
 
         return (
             True, 
-            _(''' 
-                <p>Oustource order create: <br/>
-                    <b>Number: %s </b><br/>
-                    Date: %s
-                </p>''')  % (
-                    order_proxy.name,
-                    order_proxy.date_order,
-                    )
-            ) # no error    
+            _('''<p>Oustource order create: <br/>
+                <b>Number: %s </b><br/>
+                Date: %s</p>''')  % (
+                order_proxy.name,
+                order_proxy.date_order,
+                )) # no error    
         
     # -------------------------------------------------------------------------
     #                             MASTER PROCEDURE: 
@@ -222,7 +219,7 @@ class SaleOrder(orm.Model):
                     order.amount_untaxed,
                     order.amount_total,               
                     order.client_order_ref or '/',             
-                )
+                    )
 
             order_dict['header'] = {
                 'name': order.name,
@@ -233,10 +230,10 @@ class SaleOrder(orm.Model):
                 }
             order_dict['line'] = []
             i = 0
-            note += _('''
-                <table class="oe_list_content">
-                    <tr><th>Code</th><th>Q.</th><th>Deadline</th></tr>
-                ''')
+            #note += _('''
+            #    <table class="oe_list_content">
+            #        <tr><th>Code</th><th>Q.</th><th>Deadline</th></tr>
+            #    ''')
             #mask_bold = '''
             #    <tr><td><b>%s</b></td><td><b>%s</b></td><td><b>%s</b></td></tr>
             #    '''
@@ -260,11 +257,11 @@ class SaleOrder(orm.Model):
                 #    date_deadline or '/',
                 #    )
                 #else:
-                note += mask_normal % (
-                    default_code or '/',
-                    product_uom_qty,
-                    date_deadline or '/',
-                )                    
+                #note += mask_normal % (
+                #    default_code or '/',
+                #    product_uom_qty,
+                #    date_deadline or '/',
+                #)                    
                 #    continue # no writing!!
                     
                 order_dict['line'].append({
@@ -273,7 +270,7 @@ class SaleOrder(orm.Model):
                     'date_deadline': date_deadline,                 
                     })
 
-            note += '</table>'
+            #note += '</table>'
             order_dict['header']['note'] = note
 
         if not i:
@@ -290,6 +287,7 @@ class SaleOrder(orm.Model):
 
         esit, message = sock.execute(db, user_id, password, 'sale.order', 
             'create_order_outsource', pickle_file)
+            
         if esit:
             # TODO message??
             return  self.write(cr, uid, ids, {
