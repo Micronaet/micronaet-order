@@ -199,12 +199,14 @@ class SaleOrder(orm.Model):
         '''
         assert len(ids) == 1, 'Call only for once'
         
+        # Get product mask:
         company_pool = self.pool.get('res.company')
         company_ids = company_pool.search(cr, uid, [], context=context)
         company_proxy = company_pool.browse(
             cr, uid, company_ids, context=context)[0]
         product_mask = company_proxy.outsource_product_mask or '%s'
-            
+        
+        # Generate file for pass order:    
         order_dict = {}
         for order in self.browse(cr, uid, ids, context=context):
             note = _('''<p><b>Partner: %s</b> [%s]<br/>
