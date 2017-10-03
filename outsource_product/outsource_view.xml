@@ -46,7 +46,7 @@
                     <group colspan="4" col="4">
                         <separator string="XMLRPC parameters:" colspan="4"/>
                         <field name="outsource_management" />   
-                        <newline/>                    
+                        <newline/>           
                         
                         <field name="outsource_db" attrs="{'invisible':[('outsource_management','=',False)],'required':[('outsource_management','=',True)]}"/>                       
                         <field name="outsource_hostname" attrs="{'invisible':[('outsource_management','=',False)],'required':[('outsource_management','=',True)]}" />                       

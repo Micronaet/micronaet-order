@@ -129,7 +129,7 @@ class SaleOrderSpeechProductWizard(orm.TransientModel):
 
         if not structure_id:
             return res
-            
+
         if block_parent_id:
             value_proxy = value_pool.browse(
                 cr, uid, block_parent_id, context=context)
@@ -184,10 +184,11 @@ class SaleOrderSpeechProductWizard(orm.TransientModel):
                     cr, uid, product_ids, context=context)[0]
                 res['value']['product_id'] = product_proxy.id
                 res['value']['lst_price'] = product_proxy.lst_price
-                
+            else:    
+                res['value']['product_id'] = False
+                res['value']['lst_price'] = False                
         return res    
-            
-
+        
     # --------------------
     # Wizard button event:
     # --------------------

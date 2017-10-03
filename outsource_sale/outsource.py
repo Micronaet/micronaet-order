@@ -119,7 +119,7 @@ class SaleOrder(orm.Model):
             product_ids = product_pool.search(cr, uid, [
                 ('default_code', '=', line['default_code'])
                 ], context=context)
-            
+
             if not product_ids:
                 # Remove order:
                 self.unlink(cr, uid, [order_id], context=context)
@@ -127,7 +127,7 @@ class SaleOrder(orm.Model):
                     False, 
                     'Code not found: %s' % line['default_code'],
                     )
-                        
+
             product_id = product_ids[0]
             product_proxy = product_pool.browse(cr, uid, product_id, 
                 context=context)
@@ -166,10 +166,8 @@ class SaleOrder(orm.Model):
                     order_proxy.partner_id.discount_rates or '',
                 'discount_value': 
                     order_proxy.partner_id.discount_value or 0.0,                
-                })
-                
+                })                
             sol_pool.create(cr, uid, line_data, context=context)
-
         try:
             os.remove(pickle_file)
         except:
@@ -205,11 +203,14 @@ class SaleOrder(orm.Model):
         assert len(ids) == 1, 'Call only for once'
         
         company_pool = self.pool.get('res.company')
+        company_ids = company_pool.search(cr, uid, [], context=context)
+        company_proxy = company_pool.browse(
+            cr, uid, company_ids, context=context)[0]
+        product_mask = company_proxy.outsource_product_mask or '%s'
+            
         order_dict = {}
         for order in self.browse(cr, uid, ids, context=context):
-            note = _(
-                '''
-                <p><b>Partner: %s</b> [%s]<br/>
+            note = _('''<p><b>Partner: %s</b> [%s]<br/>
                 Destination: %s<br/>
                 Total: %s [Taxed: %s]<br>
                 Customer ref.: %s
@@ -236,34 +237,35 @@ class SaleOrder(orm.Model):
                 <table class="oe_list_content">
                     <tr><th>Code</th><th>Q.</th><th>Deadline</th></tr>
                 ''')
-            mask_bold = '''
-                <tr><td><b>%s</b></td><td><b>%s</b></td><td><b>%s</b></td></tr>
-                '''
+            #mask_bold = '''
+            #    <tr><td><b>%s</b></td><td><b>%s</b></td><td><b>%s</b></td></tr>
+            #    '''
             mask_normal = '<tr><td>%s</td><td>%s</td><td>%s</td></tr>'
-            for line in order.order_line:
+            for line in order.order_line:                
                 i += 1
+                product = line.product_id
                 
                 # Fields:    
-                default_code = line.product_id.default_code_linked or \
-                    line.product_id.default_code
+                if product.default_code_linked:
+                    default_code = product.default_code_linked
+                else:
+                    default_code = product_mask % product.default_code
                 product_uom_qty = line.product_uom_qty
                 date_deadline = line.date_deadline              
 
-                
-
-                if line.outsource:
-                    note += mask_bold % (
-                        default_code or '/',
-                        product_uom_qty,
-                        date_deadline or '/',
-                        )
-                else:
-                    note += mask_normal % (
-                        default_code or '/',
-                        product_uom_qty,
-                        date_deadline or '/',
-                        )                    
-                    continue # no writing!!
+                #if line.outsource:
+                #note += mask_bold % (
+                #    default_code or '/',
+                #    product_uom_qty,
+                #    date_deadline or '/',
+                #    )
+                #else:
+                note += mask_normal % (
+                    default_code or '/',
+                    product_uom_qty,
+                    date_deadline or '/',
+                )                    
+                #    continue # no writing!!
                     
                 order_dict['line'].append({
                     'default_code': default_code,
@@ -283,6 +285,7 @@ class SaleOrder(orm.Model):
             cr, uid, order_dict) 
         
         # Call XML RPC import procedure:
+        import pdb; pdb.set_trace()
         (db, user_id, password, sock) = \
             company_pool.get_outsource_xmlrpc_socket(cr, uid)
 
