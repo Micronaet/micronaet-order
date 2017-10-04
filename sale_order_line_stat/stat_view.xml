@@ -49,10 +49,10 @@
                      <field name="default_code" readonly="1" />
                      <field name="product_id" readonly="1" /> 
                      <field name="product_uom" readonly="1" />                     
-                     <field name="product_uom_qty" readonly="1" />
+                     <field name="product_uom_qty" readonly="1" sum="total_quantity"/>
                      <!--<field name="product_uom_maked_sync_qty" readonly="1" />-->
                      <field name="delivered_qty" readonly="1" />
-                     <field name="price_subtotal" readonly="1" />
+                     <field name="price_subtotal" readonly="1" sum="total_price"/>
                      <field name="state" readonly="1" />
                      <!--TODO remove:-->
                      <button name="force_all_partner_id" string="Force all partner (temp)" type="object" icon="gtk-refresh" />
