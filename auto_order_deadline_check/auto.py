@@ -50,7 +50,6 @@ class SaleOrder(orm.Model):
             self, cr, uid, context=None):
         ''' Generate email for check deadline status
         '''
-        import pdb; pdb.set_trace()
         if context is None:
             context = {
                 'lang': 'it_IT',
@@ -59,6 +58,7 @@ class SaleOrder(orm.Model):
         sol_pool = self.pool.get('sale.order.line')
         sol_ids = sol_pool.search(cr, uid, [
             ('order_id.state', 'not in', ('cancel', 'draft', 'sent')),
+            ('order_id.forecasted_production_id', '=', False),
             ('order_id.mx_closed', '=', False),
             ('date_deadline', '=', False),
             ], context=context)
@@ -86,8 +86,11 @@ class SaleOrder(orm.Model):
                     )
         body = '''
             <table>
+                <tr>
                 <td>Ordine</td><td>Partner</td><td>Data</td>
                 <td>Codice</td><td>Nome</td><td>Q.</td>
+                </tr>
+                <tr>%s</tr>
             </table>''' % body
             
         # ---------------------------------------------------------------------

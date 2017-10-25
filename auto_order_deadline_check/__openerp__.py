@@ -30,6 +30,8 @@
     'depends': [
         'base',
         'sale',
+        'mx_close_order', 
+        'production_forecast_order', 
         ],
     'init_xml': [],
     'demo': [],
