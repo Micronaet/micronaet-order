@@ -31,7 +31,7 @@ msgstr "Indirizzo automatico"
 #: view:res.partner:order_partner_default_address.view_partner_form_address_list_default
 #: view:res.partner:order_partner_default_address.view_partner_tree_address_list_default
 msgid "No default for partner"
-msgstr "Nessin predefinito per partner"
+msgstr "Nessun predefinito per partner"
 
 #. module: order_partner_default_address
 #: model:ir.model,name:order_partner_default_address.model_res_partner
