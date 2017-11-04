@@ -6,9 +6,10 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//notebook" position="before">
+                <!--<xpath expr="//notebook" position="before">-->
+                <field name="order_line" position="before">
                      <button name="extract_sale_order_line" string="Righe in lista" type="object" icon="gtk-find"/>
-                </xpath>
+                </field>
             </field>
         </record>
         
