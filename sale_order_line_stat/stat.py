@@ -76,12 +76,23 @@ class SaleOrderLine(orm.Model):
         '''
         return ids
 
+    def _get_default_code_from_product(self, cr, uid, ids, context=None):
+        ''' Change defauld code in product
+        '''
+        sol_pool = self.pool.get('sale.order.line')
+        return sol_pool.search(cr, uid, [
+            ('product_id', 'in', ids),
+            ], context=context)
+        
     _columns = {
         'default_code': fields.related(
             'product_id', 'default_code', type='char',
             store={
                 'sale.order.line': (
                     _get_default_code_from_sol, ['product_id'], 10),
+                }, string='Default code', 
+                'product.product': (
+                    _get_default_code_from_product, ['default_code'], 10),
                 }, string='Default code', 
             ),
 
