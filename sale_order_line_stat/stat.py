@@ -90,7 +90,6 @@ class SaleOrderLine(orm.Model):
             store={
                 'sale.order.line': (
                     _get_default_code_from_sol, ['product_id'], 10),
-                }, string='Default code', 
                 'product.product': (
                     _get_default_code_from_product, ['default_code'], 10),
                 }, string='Default code', 
