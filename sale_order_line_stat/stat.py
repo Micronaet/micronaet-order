@@ -56,6 +56,10 @@ class SaleOrderLine(orm.Model):
                 }, context=context)                
         return True
         
+    # -------------------------------------------------------------------------
+    # Store function:
+    # -------------------------------------------------------------------------
+    # sale.order:
     def _get_date_order_from_order(self, cr, uid, ids, context=None):
         ''' When change sol line order
         '''
@@ -71,6 +75,7 @@ class SaleOrderLine(orm.Model):
         '''
         return ids
 
+    # sale.order.line:
     def _get_default_code_from_sol(self, cr, uid, ids, context=None):
         ''' When change sol line order
         '''
@@ -92,8 +97,7 @@ class SaleOrderLine(orm.Model):
                     _get_default_code_from_sol, ['product_id'], 10),
                 'product.product': (
                     _get_default_code_from_product, ['default_code'], 10),
-                }, string='Default code', 
-            ),
+                }, string='Default code'),
 
         'destination_partner_id': fields.related(
             'order_id', 'destination_partner_id', 
@@ -103,11 +107,11 @@ class SaleOrderLine(orm.Model):
         'order_date': fields.related(
             'order_id', 'date_order', type='date',
             store={
-                'sale.order.line': (_get_date_order_from_sol, ['order_id'], 10),
-                'sale.order': (_get_date_order_from_order, [
-                    'date_order'], 10),
-                }, string='Order date',            
-            )
+                'sale.order.line': (
+                    _get_date_order_from_sol, ['order_id'], 10),
+                'sale.order': (
+                    _get_date_order_from_order, ['date_order'], 10),
+                }, string='Order date'),
         }
     
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
