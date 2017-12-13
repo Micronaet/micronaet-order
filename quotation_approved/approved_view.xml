@@ -1,30 +1,44 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-    <record model="ir.ui.view" id="view_sale_order_quotation_confirmed_tree">
-        <field name="name">sale.order.tree</field>
-        <field name="model">sale.order</field>
-        <field name="inherit_id" ref="sale.view_order_tree"/>
-        <field name="arch" type="xml">
-            <field name="state" position="after">
-                <field name="quotation_confirmed" invisible="1" />
-                <button name="set_quotation_as_confirmed" string="Vinta!" type="object" attrs="{'invisible': ['|',('quotation_confirmed','=','True'),('state','not in',('cancel', 'draft', 'sent'))]}" icon="gtk-yes"/>
-                <button name="set_quotation_as_not_confirmed" string="Persa!" type="object" attrs="{'invisible': ['|',('quotation_confirmed','=','False'),('state','not in',('cancel', 'draft', 'sent'))]}" icon="gtk-no"/>
-            </field>            
-        </field>
-    </record>
-    <record model="ir.ui.view" id="view_sale_order_quotation_confirmed_form">
-        <field name="name">sale.order.form</field>
-        <field name="model">sale.order</field>
-        <field name="inherit_id" ref="sale.view_order_form" />
-        <field name="arch" type="xml">
-            <field name="state" position="before">
-                <field name="quotation_confirmed" invisible="1" />
-                <button name="set_quotation_as_confirmed" string="Vinta!" type="object" attrs="{'invisible': ['|',('quotation_confirmed','=','True'),('state','not in',('cancel', 'draft', 'sent'))]}" icon="gtk-yes"/>
-                <button name="set_quotation_as_not_confirmed" string="Persa!" type="object" attrs="{'invisible': ['|',('quotation_confirmed','=','False'),('state','not in',('cancel', 'draft', 'sent'))]}" icon="gtk-no"/>
+        <record model="ir.ui.view" id="view_sale_order_quotation_confirmed_tree">
+            <field name="name">sale.order.tree</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_quotation_tree" />
+            <field name="arch" type="xml">
+                <field name="state" position="after">
+                    <field name="quotation_confirmed" invisible="1" />
+                    <button name="set_quotation_as_confirmed" string="Vinto!" type="object" attrs="{'invisible': ['|',('quotation_confirmed','=',True),('state','not in',('draft', 'sent'))]}" icon="gtk-yes"/>
+                    <button name="set_quotation_as_not_confirmed" string="Perso!" type="object" attrs="{'invisible': ['|',('quotation_confirmed','=',False),('state','not in',('draft', 'sent'))]}" icon="gtk-no"/>
+                </field>
             </field>
-        </field>
-    </record>
+        </record>
+        <record model="ir.ui.view" id="view_sale_order_quotation_confirmed_form">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form" />
+            <field name="arch" type="xml">
+                <field name="state" position="before">
+                    <field name="quotation_confirmed" invisible="1" />
+                    <button name="set_quotation_as_confirmed" string="Vinta!" type="object" attrs="{'invisible': ['|',('quotation_confirmed','=',True),('state','not in',('draft', 'sent'))]}" icon="gtk-yes"/>
+                    <button name="set_quotation_as_not_confirmed" string="Persa!" type="object" attrs="{'invisible': ['|',('quotation_confirmed','=',False),('state','not in',('draft', 'sent'))]}" icon="gtk-no"/>
+                </field>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_sale_order_win_lost_search">
+            <field name="name">sale.order.search</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="arch" type="xml">                    
+                <xpath expr="//group[1]" position="after">
+                    <filter name="marked_win" string="Vinto" domain="[('quotation_confirmed','=',True)]"/>
+                    <filter name="marked_lost" string="Perso" domain="[('quotation_confirmed','=',False)]"/>
+                </xpath>                
+                <xpath expr="//group[1]/filter[1]" position="after">
+                    <filter name="group_confirmed" string="Vinti/Persi" context="{'group_by': 'quotation_confirmed'}"/>
+                </xpath>                
+            </field>
+        </record>        
     </data>
 </openerp>
-
+ 

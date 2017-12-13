@@ -18,11 +18,11 @@
 ###############################################################################
 
 {
-    'name': 'Quotation passed',
+    'name': 'Quotation approved',
     'version': '0.1',
     'category': 'Sale',
     'description': ''' 
-        Mark quotation as passed when order will be reinsert with detailed
+        Mark quotation as win or lost when order will be reinsert with detailed
         product informations       
         ''',
     'author': 'Micronaet S.r.l. - Nicola Riolini',

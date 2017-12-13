@@ -47,13 +47,18 @@ class SaleOrder(orm.Model):
     def set_quotation_as_confirmed(self, cr, uid, ids, context=None):
         """ Button event
         """
-        return True
+        return self.write(cr, uid, ids, {
+            'quotation_confirmed': True,
+            }, context=context)  
+        
 
     def set_quotation_as_not_confirmed(self, cr, uid, ids, context=None):
         """ Button event
         """
-        return True
-    
+        return self.write(cr, uid, ids, {
+            'quotation_confirmed': False,
+            }, context=context)  
+            
     _columns = {
         'quotation_confirmed': fields.boolean('Preventivo confermato'),
         }
