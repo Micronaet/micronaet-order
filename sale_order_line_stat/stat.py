@@ -79,24 +79,28 @@ class SaleOrderLine(orm.Model):
     def _get_default_code_from_sol(self, cr, uid, ids, context=None):
         ''' When change sol line order
         '''
+        _logger.warning('Change product_id in sale.order.line')
         return ids
 
     def _get_default_code_from_product(self, cr, uid, ids, context=None):
         ''' Change defauld code in product
         '''
+        _logger.warning('Change default_code in product.product')
         sol_pool = self.pool.get('sale.order.line')
         return sol_pool.search(cr, uid, [
             ('product_id', 'in', ids),
             ], context=context)
-        
+
     _columns = {
+        'force_sol':fields.boolean('Forza SOL'), # force default code calc.
         'default_code': fields.related(
             'product_id', 'default_code', type='char',
             store={
-                'sale.order.line': (
-                    _get_default_code_from_sol, ['product_id'], 10),
-                'product.product': (
-                    _get_default_code_from_product, ['default_code'], 10),
+                'sale.order.line':
+                    (_get_default_code_from_sol, [
+                        'product_id', 'force_sol'], 10),
+                'product.product':
+                    (_get_default_code_from_product, ['default_code'], 10),
                 }, string='Default code'),
 
         'destination_partner_id': fields.related(

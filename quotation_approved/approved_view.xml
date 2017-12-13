@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+    <record model="ir.ui.view" id="view_sale_order_quotation_confirmed_tree">
+        <field name="name">sale.order.tree</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="state" position="after">
+                <field name="quotation_confirmed" invisible="1" />
+                <button name="set_quotation_as_confirmed" string="Vinta!" type="object" attrs="{'invisible': ['|',('quotation_confirmed','=','True'),('state','not in',('cancel', 'draft', 'sent'))]}" icon="gtk-yes"/>
+                <button name="set_quotation_as_not_confirmed" string="Persa!" type="object" attrs="{'invisible': ['|',('quotation_confirmed','=','False'),('state','not in',('cancel', 'draft', 'sent'))]}" icon="gtk-no"/>
+            </field>            
+        </field>
+    </record>
+    <record model="ir.ui.view" id="view_sale_order_quotation_confirmed_form">
+        <field name="name">sale.order.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form" />
+        <field name="arch" type="xml">
+            <field name="state" position="before">
+                <field name="quotation_confirmed" invisible="1" />
+                <button name="set_quotation_as_confirmed" string="Vinta!" type="object" attrs="{'invisible': ['|',('quotation_confirmed','=','True'),('state','not in',('cancel', 'draft', 'sent'))]}" icon="gtk-yes"/>
+                <button name="set_quotation_as_not_confirmed" string="Persa!" type="object" attrs="{'invisible': ['|',('quotation_confirmed','=','False'),('state','not in',('cancel', 'draft', 'sent'))]}" icon="gtk-no"/>
+            </field>
+        </field>
+    </record>
+    </data>
+</openerp>
+
