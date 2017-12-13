@@ -40,27 +40,19 @@ _logger = logging.getLogger(__name__)
 
 class SaleOrder(orm.Model):
     """ Model name: Sale Order
-    """
-    
+    """    
     _inherit = 'sale.order'
     
-    def set_quotation_as_confirmed(self, cr, uid, ids, context=None):
-        """ Button event
-        """
-        return self.write(cr, uid, ids, {
-            'quotation_confirmed': True,
-            }, context=context)  
-        
-
-    def set_quotation_as_not_confirmed(self, cr, uid, ids, context=None):
-        """ Button event
-        """
-        return self.write(cr, uid, ids, {
-            'quotation_confirmed': False,
-            }, context=context)  
-            
     _columns = {
-        'quotation_confirmed': fields.boolean('Preventivo confermato'),
+        'quotation_state': fields.selection([
+            ('waiting', 'In attesa'),
+            ('win', 'Vinto'),
+            ('lost', 'Perso'),
+            ], 'Stato preventivo')
         }
-    
+        
+    _defaults = {
+        # Default value:
+        'quotation_state': lambda *x: 'waiting',
+        }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

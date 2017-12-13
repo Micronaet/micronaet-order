@@ -6,10 +6,8 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_quotation_tree" />
             <field name="arch" type="xml">
-                <field name="state" position="after">
-                    <field name="quotation_confirmed" invisible="1" />
-                    <button name="set_quotation_as_confirmed" string="Vinto!" type="object" attrs="{'invisible': ['|',('quotation_confirmed','=',True),('state','not in',('draft', 'sent'))]}" icon="gtk-yes"/>
-                    <button name="set_quotation_as_not_confirmed" string="Perso!" type="object" attrs="{'invisible': ['|',('quotation_confirmed','=',False),('state','not in',('draft', 'sent'))]}" icon="gtk-no"/>
+                <field name="state" position="before">
+                    <field name="quotation_state" />
                 </field>
             </field>
         </record>
@@ -18,10 +16,10 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form" />
             <field name="arch" type="xml">
-                <field name="state" position="before">
-                    <field name="quotation_confirmed" invisible="1" />
-                    <button name="set_quotation_as_confirmed" string="Vinta!" type="object" attrs="{'invisible': ['|',('quotation_confirmed','=',True),('state','not in',('draft', 'sent'))]}" icon="gtk-yes"/>
-                    <button name="set_quotation_as_not_confirmed" string="Persa!" type="object" attrs="{'invisible': ['|',('quotation_confirmed','=',False),('state','not in',('draft', 'sent'))]}" icon="gtk-no"/>
+                <field name="note" position="before">
+                    <group colspan="4" col="4">
+                        <field name="quotation_state" />
+                    </group>    
                 </field>
             </field>
         </record>
@@ -31,11 +29,12 @@
             <field name="inherit_id" ref="sale.view_sales_order_filter"/>
             <field name="arch" type="xml">                    
                 <xpath expr="//group[1]" position="after">
-                    <filter name="marked_win" string="Vinto" domain="[('quotation_confirmed','=',True)]"/>
-                    <filter name="marked_lost" string="Perso" domain="[('quotation_confirmed','=',False)]"/>
+                    <filter name="marked_waiting" string="In attesa" domain="[('quotation_state','=','waiting')]"/>
+                    <filter name="marked_win" string="Vinto" domain="[('quotation_state','=','win')]"/>
+                    <filter name="marked_lost" string="Perso" domain="[('quotation_state','=','lost')]"/>
                 </xpath>                
                 <xpath expr="//group[1]/filter[1]" position="after">
-                    <filter name="group_confirmed" string="Vinti/Persi" context="{'group_by': 'quotation_confirmed'}"/>
+                    <filter name="group_confirmed" string="Stato prev." context="{'group_by': 'quotation_state'}"/>
                 </xpath>                
             </field>
         </record>        
