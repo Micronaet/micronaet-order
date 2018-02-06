@@ -49,7 +49,7 @@ class ResCompany(orm.Model):
         'outsourced_partner_id': fields.many2one(
             'res.partner', 'Outsourced partner', 
             help='Partner linked as company ref. (used in order header)', 
-            required=False),     
+            required=False),                 
         }    
 
 class SaleOrder(orm.Model):
@@ -316,11 +316,38 @@ class SaleOrderLine(orm.Model):
     
     def nothing(self, cr, uid, ids, context=None):
         return True
-    
+
+    # -------------------------------------------------------------------------
+    # Store function:
+    # -------------------------------------------------------------------------
+    def _store_related_get_sol_marketed(self, cr, uid, ids, context=None):
+        ''' Change marketed in product
+        '''
+        _logger.warning('Change product_id in sale.order.line')
+        return ids
+
+    def _store_related_get_marketed(self, cr, uid, ids, context=None):
+        ''' Change marketed in product
+        '''
+        _logger.warning('Change marketed in product.product')
+        return self.pool.get('sale.order.line').search(cr, uid, [
+            ('product_id', 'in', ids),
+            ], context=context)
+
     _columns = {
         'outsource': fields.related(
             'product_id', 'outsource', 
             type='boolean', string='Outsource', store=False), 
+
+        # TODO new implementation:            
+        'marketed': fields.related(
+            'product_id', 'marketed', 
+            type='boolean', string='Marketed', store={
+                'product.product':
+                    (_store_related_get_marketed, ['marketed'], 10),
+                'sale.order.line':
+                    (_store_related_get_sol_marketed, ['product_id'], 10),                    
+                }),
         }
 
 

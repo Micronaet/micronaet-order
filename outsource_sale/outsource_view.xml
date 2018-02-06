@@ -28,9 +28,16 @@
             </xpath>
 
             <!--sale.order.line LINE:-->
+            <xpath expr="//page/field[@name='order_line']/tree" position="attributes">
+                <attribute name="colors">blue:marketed==True or outsource==True</attribute>
+            </xpath>
+
             <xpath expr="//page/field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
                 <field name="outsource" invisible="1"/>
                 <button name="nothing" string="Outsource product" type="object" icon="gtk-convert" attrs="{'invisible': [('outsource', '=', False)]}" />            
+
+                <field name="marketed" invisible="1" />
+                <button name="nothing" string="Marketed product" type="object" icon="gtk-leave-fullscreen" attrs="{'invisible': [('marketed', '=', False)]}" />            
             </xpath>
         </field>
     </record>

@@ -49,6 +49,10 @@ class ProductProductOutsource(orm.Model):
         'outsource': fields.boolean('Outsource', 
             help='Product made or buyed from other company'),
         'default_code_linked': fields.char('Code linked', size=64),
+        
+        # TODO New management not yet implemented:
+        'marketed': fields.boolean('Marketed', 
+            help='Product marketed from another company database'),
         # TODO company DB?
         }
 
