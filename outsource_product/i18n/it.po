@@ -1,21 +1,19 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# 	* outsource_product
+#	* outsource_product
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-27 16:28+0000\n"
-"PO-Revision-Date: 2017-08-06 20:55+0100\n"
+"POT-Creation-Date: 2018-02-06 14:30+0000\n"
+"PO-Revision-Date: 2018-02-06 14:30+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
-"Language: it\n"
-"X-Generator: Poedit 1.6.10\n"
 
 #. module: outsource_product
 #: field:product.product,default_code_linked:0
@@ -31,6 +29,11 @@ msgstr "Aziende"
 #: help:res.company,outsource_management:0
 msgid "If is remote company no XMLRPC connection"
 msgstr "Se è azienda remota nessuna connessione XMLRPC"
+
+#. module: outsource_product
+#: field:product.product,marketed:0
+msgid "Marketed"
+msgstr "Commercializzato"
 
 #. module: outsource_product
 #: field:res.company,outsource_product_mask:0
@@ -63,6 +66,11 @@ msgstr "Prodotto"
 #: help:product.product,outsource:0
 msgid "Product made or buyed from other company"
 msgstr "Prodotto fatto o comprato dall'altra azienda"
+
+#. module: outsource_product
+#: help:product.product,marketed:0
+msgid "Product marketed from another company database"
+msgstr "Prodotto commercializzato in un'altra azienda"
 
 #. module: outsource_product
 #: field:res.company,outsource_db:0
@@ -98,3 +106,4 @@ msgstr "XMLRPC Utente"
 #: view:res.company:outsource_product.view_res_company_pick_type_form
 msgid "XMLRPC parameters:"
 msgstr "XMLRPC parametri:"
+

@@ -1,69 +1,43 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# 	* outsource_sale
+#	* outsource_sale
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-27 16:28+0000\n"
-"PO-Revision-Date: 2017-08-06 20:58+0100\n"
+"POT-Creation-Date: 2018-02-06 14:31+0000\n"
+"PO-Revision-Date: 2018-02-06 14:31+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
-"Language: it\n"
-"X-Generator: Poedit 1.6.10\n"
 
 #. module: outsource_sale
-#: code:addons/outsource_sale/outsource.py:210
+#: code:addons/outsource_sale/outsource.py:212
 #, python-format
-msgid ""
-"\n"
-"                <p><b>Partner: %s</b> [%s]<br/>\n"
+msgid "<p><b>Partner: %s</b> [%s]<br/>\n"
 "                Destination: %s<br/>\n"
 "                Total: %s [Taxed: %s]<br>\n"
 "                Customer ref.: %s\n"
 "                "
-msgstr ""
-"\n"
-"                <p><b>Partner: %s</b> [%s]<br/>\n"
+msgstr "<p><b>Partner: %s</b> [%s]<br/>\n"
 "                Destinazione: %s<br/>\n"
-"                Totale: %s [IVA: %s]<br>\n"
-"                Rif. cliente.: %s\n"
+"                Totale: %s [Tasse: %s]<br>\n"
+"                Rif. cliente: %s\n"
 "                "
 
 #. module: outsource_sale
-#: code:addons/outsource_sale/outsource.py:235
+#: code:addons/outsource_sale/outsource.py:178
 #, python-format
-msgid ""
-"\n"
-"                <table class=\"oe_list_content\">\n"
-"                    <tr><th>Code</th><th>Q.</th><th>Deadline</th></tr>\n"
-"                "
-msgstr ""
-"\n"
-"                <table class=\"oe_list_content\">\n"
-"                    <tr><th>Codice</th><th>Q.</th><th>Scadenza</th></tr>\n"
-"                "
-
-#. module: outsource_sale
-#: code:addons/outsource_sale/outsource.py:180
-#, python-format
-msgid ""
-" \n"
-"                <p>Oustource order create: <br/>\n"
-"                    <b>Number: %s </b><br/>\n"
-"                    Date: %s\n"
-"                </p>"
-msgstr ""
-" \n"
-"                <p>Ordine extra database creato: <br/>\n"
-"                    <b>Numero: %s </b><br/>\n"
-"                    Data: %s\n"
-"                </p>"
+msgid "<p>Oustource order create: <br/>\n"
+"                <b>Number: %s </b><br/>\n"
+"                Date: %s</p>"
+msgstr "<p>Ordine esterno creato: <br/>\n"
+"                <b>Numero: %s </b><br/>\n"
+"                Data: %s</p>"
 
 #. module: outsource_sale
 #: model:ir.model,name:outsource_sale.model_res_company
@@ -76,7 +50,7 @@ msgid "Create outource order"
 msgstr "Crea ordine esterno"
 
 #. module: outsource_sale
-#: code:addons/outsource_sale/outsource.py:297
+#: code:addons/outsource_sale/outsource.py:299
 #, python-format
 msgid "Error:"
 msgstr "Errore:"
@@ -87,7 +61,17 @@ msgid "Linked order"
 msgstr "Ordine collegato"
 
 #. module: outsource_sale
-#: code:addons/outsource_sale/outsource.py:278
+#: field:sale.order.line,marketed:0
+msgid "Marketed"
+msgstr "Commercializzato"
+
+#. module: outsource_sale
+#: view:sale.order:outsource_sale.view_sale_order_outsource_form_view
+msgid "Marketed product"
+msgstr "Prodotto commercializzato"
+
+#. module: outsource_sale
+#: code:addons/outsource_sale/outsource.py:279
 #, python-format
 msgid "No outsource order!"
 msgstr "Nessun ordine collegato!"
@@ -140,7 +124,8 @@ msgid "Partner linked as company ref. (used in order header)"
 msgstr "Partner collegato come rif. azienda (utilizzato nella testata ordine)"
 
 #. module: outsource_sale
-#: field:sale.order,outsource_esit:0 field:sale.order,outsource_order:0
+#: field:sale.order,outsource_esit:0
+#: field:sale.order,outsource_order:0
 msgid "Remote order"
 msgstr "Ordine remoto"
 
@@ -152,7 +137,7 @@ msgstr "Ordine di vendita"
 #. module: outsource_sale
 #: model:ir.model,name:outsource_sale.model_sale_order_line
 msgid "Sales Order Line"
-msgstr "Riga ordine di vendita"
+msgstr "Linea d'ordine di vendita"
 
 #. module: outsource_sale
 #: help:sale.order,linked:0
@@ -165,7 +150,13 @@ msgid "This order will be outsourced"
 msgstr "Questo ordine verrà esportato"
 
 #. module: outsource_sale
-#: code:addons/outsource_sale/outsource.py:278
+#: code:addons/outsource_sale/outsource.py:279
 #, python-format
 msgid "Warning:"
 msgstr "Attenzione:"
+
+#. module: outsource_sale
+#: view:sale.order:outsource_sale.view_sale_order_outsource_form_view
+msgid "blue:marketed==True or outsource==True"
+msgstr "blue:marketed==True or outsource==True"
+
