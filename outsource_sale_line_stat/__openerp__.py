@@ -31,6 +31,7 @@
         'base',
         'outsource_product',
         'outsource_sale',        
+        'sale_order_line_stat',
         ],
     'init_xml': [],
     'demo': [],
