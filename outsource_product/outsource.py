@@ -46,7 +46,10 @@ class ProductProductOutsource(orm.Model):
     _inherit = 'product.product'
     
     _columns = {
+        # ---------------------------------------------------------------------
+        # TODO Toglierlo senza però non si installava il modulo
         'colour': fields.char('Colour', size=64),
+        # ---------------------------------------------------------------------
         'outsource': fields.boolean('Outsource', 
             help='Product made or buyed from other company'),
         'default_code_linked': fields.char('Code linked', size=64),
