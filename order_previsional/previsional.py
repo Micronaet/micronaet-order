@@ -48,4 +48,14 @@ class SaleOrder(orm.Model):
         'previsional': fields.boolean('Previsionale'),
         }    
     
+class SaleOrderLine(orm.Model):
+    """ Model name: SaleOrderLine
+    """    
+    _inherit = 'sale.order.line'
+    
+    _columns = {
+        'previsional': fields.related(
+            'order_id', 'previsional', 
+            type='boolean', string='Previsionale', store=False),
+        }    
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
