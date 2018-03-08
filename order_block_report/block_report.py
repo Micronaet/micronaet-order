@@ -47,25 +47,43 @@ class SaleOrderBlockGroup(orm.Model):
     _rec_name = 'code'
     _order = 'code'
     
+    def _function_get_total_block(self, cr, uid, ids, fields, args, context=None):
+        ''' Fields function for calculate 
+        '''
+        res = {}
+        return res
     _columns = {
-        'order_id': fields.many2one('sale.order', 'Order'),
         'code': fields.integer('Code', required=True),
         'name': fields.char('Name', size=64, required=True),
+        
         'pre_text': fields.text('Pre text'),
         'post_text': fields.text('Post text'),
         
+        'total': fields.float(
+            'Block total', digits=(16, 2), 
+            help='Total written in offer block'),
+        'real_total': fields.function(
+            _function_get_total_block, method=True, 
+            type='float', string='Real total', store=False, 
+            help='Total sum of sale line in this block'),
+        'order_id': fields.many2one('sale.order', 'Order'),
+        
         # Parameter for line:
-        'header': fields.boolean('Header'),
-        'unit_price': fields.boolean('Unit price'),
-        'subtotal': fields.boolean('Subtotal'),
-        'total': fields.boolean('Total'),
+        'show_header': fields.boolean('Show header'),
+        'show_detail': fields.boolean('Show details'),
+        'show_price': fields.boolean(
+            'Show price', 
+            help='Show unit price and subtotal'),
+        #'show_subtotal': fields.boolean('Show Subtotal'),
+        'show_total': fields.boolean('Show total'),        
         }
     
     _defaults = {
-       'header': lambda *a: True,
-       'unit_pric': lambda *a: True,
-       'subtotal': lambda *a: True,
-       'total': lambda *a: True,
+       'show_header': lambda *a: True,
+       'show_detail': lambda *a: True,
+       'show_price': lambda *a: True,
+       #'show_subtotal': lambda *a: True,
+       'show_total': lambda *a: True,
         }
 
 class SaleOrder(orm.Model):
@@ -82,8 +100,20 @@ class SaleOrderLine(orm.Model):
     """ Model name: SaleOrder
     """    
     _inherit = 'sale.order.line'
+    _order = 'block_id,sequence'
     
     _columns = {
         'block_id': fields.many2one('sale.order.block.group', 'Block'),
+        }
+
+class SaleOrderBlockGroup(orm.Model):
+    """ Model name: SaleOrderBlockGroup
+    """
+    
+    _inherit = 'sale.order.block.group'
+    
+    _columns = {
+        'block_ids': fields.one2many(
+            'sale.order.line', 'block_id', 'Sale order line'),
         }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
