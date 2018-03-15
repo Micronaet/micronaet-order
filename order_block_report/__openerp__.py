@@ -30,12 +30,15 @@
     'depends': [
         'base',
         'sale',
+        'report_aeroo',
         ],
     'init_xml': [],
     'demo': [],
     'data': [
         'security/ir.model.access.csv',
+        
         'block_view.xml',
+        'report/order_report.xml',
         ],
     'active': False,
     'installable': True,

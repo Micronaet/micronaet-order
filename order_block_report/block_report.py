@@ -52,6 +52,7 @@ class SaleOrderBlockGroup(orm.Model):
         '''
         res = {}
         return res
+        
     _columns = {
         'code': fields.integer('Code', required=True),
         'name': fields.char('Name', size=64, required=True),
@@ -66,7 +67,7 @@ class SaleOrderBlockGroup(orm.Model):
             _function_get_total_block, method=True, 
             type='float', string='Real total', store=False, 
             help='Total sum of sale line in this block'),
-        'order_id': fields.many2one('sale.order', 'Order'),
+        'order_id': fields.many2one('sale.order', 'Order', ondelete='cascade'),
         
         # Parameter for line:
         'show_header': fields.boolean('Show header'),
@@ -102,8 +103,24 @@ class SaleOrderLine(orm.Model):
     _inherit = 'sale.order.line'
     _order = 'block_id,sequence'
     
+    def onchange_categ_id(self, cr, uid, ids, categ_id, context=None):
+        ''' Force domain of product   
+        '''
+        res = {
+            'domain': {},
+            'value': {},
+            }
+        if categ_id:
+            res['domain']['product_id'] = [('categ_id', '=', categ_id)]
+            res['value']['product_id'] = False
+        else:    
+            res['domain']['product_id'] = []        
+        return res
+        
     _columns = {
-        'block_id': fields.many2one('sale.order.block.group', 'Block'),
+        'block_id': fields.many2one('sale.order.block.group', 'Block', 
+            ondelete='set null'),
+        'categ_id': fields.many2one('product.category', 'Category'),    
         }
 
 class SaleOrderBlockGroup(orm.Model):
@@ -113,7 +130,7 @@ class SaleOrderBlockGroup(orm.Model):
     _inherit = 'sale.order.block.group'
     
     _columns = {
-        'block_ids': fields.one2many(
+        'line_ids': fields.one2many(
             'sale.order.line', 'block_id', 'Sale order line'),
         }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

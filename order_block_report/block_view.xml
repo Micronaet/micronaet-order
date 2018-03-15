@@ -1,7 +1,62 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-
+        <!--sale.order-->
+        <record model="ir.ui.view" id="view_sale_order_block_group_page_form">
+            <field name="name">Block page</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//field[@name='order_line']" position="attributes">
+                      <attribute name="context">{'default_order_id': active_id}</attribute>
+                 </xpath>                 
+                 <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="before">
+                     <field name="block_id" domain="[('order_id', '=', order_id)]" widget="selection"/>
+                     <field name="categ_id" on_change="onchange_categ_id(categ_id)"/>
+                     <field name="order_id" invisible="1" />
+                 </xpath>                 
+                 <xpath expr="//page[1]" position="after">
+                     <page string="Block">
+                          <field name="block_ids">
+                                <tree string="Block">
+                                    <field name="code" />
+                                    <field name="name" />        
+                                    
+                                    <field name="show_header" />
+                                    <field name="show_detail" />
+                                    <field name="show_price" />
+                                    <field name="show_total" />
+                                    
+                                    <field name="real_total" />
+                                    <field name="total" />
+                                </tree>                              
+                                <form string="Block" version="7.0">
+                                    <sheet>
+                                        <group col="4" colspan="4">
+                                            <field name="code" />
+                                            <field name="name" />
+                                            
+                                            <separator string="Pre text:" colspan="2"/>
+                                            <separator string="Post text:" colspan="2"/>
+                                            <field name="pre_text" nolabel="1" colspan="2"/>
+                                            <field name="post_text" nolabel="1" colspan="2"/>
+                                            
+                                            <separator string="Show / Hide:" colspan="4"/>
+                                            <field name="show_header" />
+                                            <field name="show_detail" />
+                                            <field name="show_price" />
+                                            <field name="show_total" />
+                                            
+                                            <field name="real_total" readonly="1"/>
+                                            <field name="total" />
+                                        </group>
+                                    </sheet>
+                                </form>
+                          </field>
+                     </page>
+                 </xpath>
+            </field>
+        </record>
     </data>
 </openerp>
 
