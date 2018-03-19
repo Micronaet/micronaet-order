@@ -259,6 +259,7 @@ class Parser(report_sxw.rml_parse):
         self.general_total = [0, 0, 0, 0]
         for default_code in codes:
             total = [0, 0, 0, 0]
+                
             # Add product line:
             for line in products[default_code]:
                 res.append(('P', line))
@@ -281,7 +282,7 @@ class Parser(report_sxw.rml_parse):
                 self.general_total[3] += delivered_qty
     
             # Add total line:    
-            res.append(('T', total))                
+            res.append(('T', total))
         return res
 
     """def get_object_grouped_line(self, data):

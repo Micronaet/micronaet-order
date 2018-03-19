@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_view_order_check_pack_form">
+            <field name="name">sale.order.pack.check.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']/tree//field[@name='product_uom_qty']" position="before">
+                    <field name="error_pack" invisible="1" />
+                    <button name="dummy_action" string="Errore imballo" type="object" attrs="{'invisible': [('error_pack','=',False)]}" icon="gtk-no"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/form//field[@name='product_uom']" position="before">
+                    <field name="product_q_x_pack" />
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>
+
