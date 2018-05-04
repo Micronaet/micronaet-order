@@ -51,6 +51,11 @@ class SaleOrderBlockGroup(orm.Model):
         ''' Fields function for calculate 
         '''
         res = {}
+        for block in self.browse(cr, uid, ids, context=context):            
+            res[block.id] = 0.0
+            for sol in block.order_id.order_line:
+                if sol.block_id.id == block.id:
+                    res[block.id] += sol.price_subtotal
         return res
         
     _columns = {

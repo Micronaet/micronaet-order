@@ -61,11 +61,21 @@
                  </tree>
              </field>
          </record>
+         <record model="ir.ui.view" id="view_sale_order_line_graph">
+             <field name="name">sale.order.line.graph</field>
+             <field name="model">sale.order.line</field>
+             <field name="arch" type="xml">
+                 <graph string="Righe ordine" type="pie">
+                     <field name="season_id"/>
+                     <field name="price_subtotal" operator="+"/>
+                 </graph>
+             </field>
+         </record>
          <record model="ir.actions.act_window" id="action_sale_order_line">
              <field name="name">Sale order line analysis</field>
              <field name="res_model">sale.order.line</field>
              <field name="view_type">form</field>
-             <field name="view_mode">tree,form</field>
+             <field name="view_mode">tree,form,graph</field>
              <field name="view_id" ref="view_sale_order_line_tree"/>
              <field name="search_view_id" ref="view_sale_order_line_stat_search"/>             
              <field name="context">{'search_default_order_state': True}</field>
