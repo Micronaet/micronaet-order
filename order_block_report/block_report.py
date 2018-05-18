@@ -57,7 +57,7 @@ class SaleOrderBlockGroup(orm.Model):
                 if sol.block_id.id == block.id:
                     res[block.id] += sol.price_subtotal
         return res
-        
+
     _columns = {
         'code': fields.integer('Code', required=True),
         'name': fields.char('Name', size=64, required=True),
