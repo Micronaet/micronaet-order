@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<openerp>
+    <data noupdate="1">
+       <record model="csv.import.order.element" id="csv_import_order_element_c3">
+           <field name="code">company3</field>
+           <field name="name">Company 3</field>
+           <field name="note">Note for company 3</field>
+           <field name="filepath">~/etl/order/comapany3</field>
+       </record>
+    </data>
+</openerp>
+
