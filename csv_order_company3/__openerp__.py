@@ -37,6 +37,7 @@
     'demo': [],
     'data': [
         'data/mode_data.xml',
+        'scheduler.xml',
         ],
     'active': False,
     'installable': True,

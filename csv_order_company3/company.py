@@ -69,7 +69,19 @@ class CsvImportOrderElement(orm.Model):
             return 0.0
 
 
+    # -------------------------------------------------------------------------
+    # Scheduled
+    # -------------------------------------------------------------------------
+    def scheduled_csv_import_order(self, cr, uid, context=None):
+        ''' Launch import via scheduled operation
+        '''
+        # Launch normal operation with company3 code
+        self._csv_import_order(cr, uid, 'company3', context=context)
+        return True
+        
+    # -------------------------------------------------------------------------
     # Virtual procedure overrided:
+    # -------------------------------------------------------------------------
     def _csv_import_order(self, cr, uid, code, context=None):
         ''' Import procedure that will be called from modules (depend on this)
             code is the code of element to load (data.xml of every new mod.)
