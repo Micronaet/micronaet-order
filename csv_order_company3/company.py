@@ -68,6 +68,23 @@ class CsvImportOrderElement(orm.Model):
         except:
             return 0.0
 
+    def _csv_c3_logmessage(self, logfile, message, mode='info', verbose=False):
+        ''' Log file operation
+            logfile: handle for log file
+            message: text to write
+            mode: info, warning, error
+            verbose: print also in odoo log files
+        '''
+        if verbose:
+            _logger.info(message)
+            
+        message = '%s [%s] - %s' % (
+            datetime.now,
+            mode,
+            message,
+            )
+        logfile.write(message)
+        return True
 
     # -------------------------------------------------------------------------
     # Scheduled
@@ -131,16 +148,16 @@ class CsvImportOrderElement(orm.Model):
         # Folder used:
         base_folder = os.path.expanduser(item_proxy.filepath)
         in_folder = os.path.join(base_folder, 'IN')
-        #history_folder
-        #log_folder
+        history_folder = os.path.join(base_folder, 'HISTORY')
+        log_folder = os.path.join(base_folder, 'LOG')
 
         # 2 log files:
         log_scheduler = os.path.join(log_folder, 'scheduler.log')
-        #log_activity
+        log_import = os.path.join(log_folder, 'import.log')
 
         # Open 2 log files:
         f_log_scheduler = open(log_scheduler, 'a')
-        #f_log_activity
+        f_log_import = open(log_import, 'a')
 
         partner_id = item_proxy.partner_id.id
         extension = item_proxy.fileextension or ''
@@ -175,11 +192,22 @@ class CsvImportOrderElement(orm.Model):
         order_list.sort()
 
         # ---------------------------------------------------------------------
+        # Log schedule start operation:
+        # ---------------------------------------------------------------------
+        self._csv_c3_logmessage(
+            f_log_scheduler, 
+            'Start import procedure, file selected: %s' % len(order_list), 
+            mode='info', 
+            verbose=True,
+            )
+
+        # ---------------------------------------------------------------------
         #                      Import order:
         # ---------------------------------------------------------------------
         # Init log elements:
         error = ''
         comment = ''
+        imported = 0
         for f in order_list:
             fullname = os.path.join(in_folder, f)
             history_fullname = os.path.join(history_folder, f)
@@ -352,11 +380,25 @@ class CsvImportOrderElement(orm.Model):
             _logger.info('History file: %s > %s' % (
                 fullname, history_fullname))
             shutil.move(fullname, history_fullname)
+            imported += 1
 
         if error:
             log_pool.write(cr, uid, importation_id, {
                 'error': error,
                 }, context=context)
+
+        # ---------------------------------------------------------------------
+        # Log schedule end operation:
+        # ---------------------------------------------------------------------
+        self._csv_c3_logmessage(
+            f_log_scheduler,
+            'End import procedure, file imported: %s / %s' % (
+                imported,
+                len(order_list),
+                ),
+            mode='info', 
+            verbose=True,
+            )
 
         return {
             'type': 'ir.actions.act_window',
