@@ -29,8 +29,9 @@
     'license': 'AGPL-3',
     'depends': [
         'base',
+        'sale',
         'csv_order_import_base',
-        'base_log', # Micronaet/mcironaet-product.git 
+        'base_log', # Micronaet/micronaet-product.git 
         ],
     'init_xml': [],
     'demo': [],

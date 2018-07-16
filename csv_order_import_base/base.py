@@ -63,6 +63,7 @@ class CsvImportOrderElement(orm.Model):
         'filepath': fields.char('Path', size=180, required=True),
         'filename': fields.char('File name', size=80),        
         'filemask': fields.char('Mask', size=80), # Used?
+        'fileextension': fields.char('Ext.', size=10),
         'company_tag': fields.char('Company tag', size=10, 
             help='Company tag for replate in file name'),
         'partner_id': fields.many2one('res.partner', 'Customer'),
