@@ -32,9 +32,9 @@ from openerp import SUPERUSER_ID, api
 from openerp import tools
 from openerp.tools.translate import _
 from openerp.tools.float_utils import float_round as round
-from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT, 
-    DEFAULT_SERVER_DATETIME_FORMAT, 
-    DATETIME_FORMATS_MAP, 
+from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
+    DEFAULT_SERVER_DATETIME_FORMAT,
+    DATETIME_FORMATS_MAP,
     float_compare)
 
 
@@ -43,12 +43,12 @@ _logger = logging.getLogger(__name__)
 class CsvImportOrderElement(orm.Model):
     """ Model name: CsvImportOrderTrace
         Object for save list of type of order that could be imported
-        Virtual import procedure that will be overrided from all 
+        Virtual import procedure that will be overrided from all
         extra modules
     """
-    
+
     _inherit = 'csv.import.order.element'
-    
+
     def _csv_format_c3_date(self, value):
         ''' Return correct date from YYYMMDD
         '''
@@ -58,17 +58,17 @@ class CsvImportOrderElement(orm.Model):
                  value[4:6],
                  value[6:8])
         except:
-            return False         
+            return False
 
     def _csv_c3_float(self, value):
-        ''' Return remove . and / 10.000
+        ''' Normal float
         '''
         try:
-            return float(value.replace('.', '')) / 10000
+            return float(value)
         except:
             return 0.0
-                 
-    
+
+
     # Virtual procedure overrided:
     def _csv_import_order(self, cr, uid, code, context=None):
         ''' Import procedure that will be called from modules (depend on this)
@@ -83,14 +83,14 @@ class CsvImportOrderElement(orm.Model):
             for c in value:
                 if ord(c) < 128:
                     res += c
-                else:  
+                else:
                     res += '#'
             return res
-                        
+
         if code != 'company3':
             return super(CsvImportOrderElement, self)._csv_import_order(
                 cr, uid, code, context=context)
-        
+
         # ---------------------------------------------------------------------
         #                      Company 3 Import procedure:
         # ---------------------------------------------------------------------
@@ -100,7 +100,7 @@ class CsvImportOrderElement(orm.Model):
         if not item_ids:
             _logger.error(
                 _('Import code not found: company3 (record deleted?)'))
-            return False    
+            return False
 
         # Pool used:
         log_pool = self.pool.get('log.importation')
@@ -109,7 +109,7 @@ class CsvImportOrderElement(orm.Model):
         partner_pool = self.pool.get('res.partner')
         partic_pool = self.pool.get('res.partner.product.partic')
         product_pool = self.pool.get('product.product')
-        
+
         # ---------------------------------------------------------------------
         # Read parametric data:
         # ---------------------------------------------------------------------
@@ -117,23 +117,23 @@ class CsvImportOrderElement(orm.Model):
         _logger.info('Start import %s order' % (item_proxy.name))
 
         # Folder used:
-        base_folder = os.path.expanduser(item_proxy.filepath)                
+        base_folder = os.path.expanduser(item_proxy.filepath)
         in_folder = os.path.join(base_folder, 'IN')
-        #history_folder 
+        #history_folder
         #log_folder
-        
+
         # 2 log files:
         log_scheduler = os.path.join(log_folder, 'scheduler.log')
         #log_activity
-        
+
         # Open 2 log files:
         f_log_scheduler = open(log_scheduler, 'a')
         #f_log_activity
-        
+
         partner_id = item_proxy.partner_id.id
         extension = item_proxy.fileextension or ''
         mask = item_proxy.filemask or '' # starts with
-        
+
         code_mapping = {}
         for mapping in item_proxy.mapping_ids:
             code_mapping[mapping.name] = mapping.product_id.id
@@ -157,14 +157,14 @@ class CsvImportOrderElement(orm.Model):
 
             if extension and not f.endswith(extension):
                 continue
-            
+
             if os.path.isfile(os.path.join(in_folder, f)):
                 order_list.append(f)
         order_list.sort()
-        
-        # -----------------------------------------------------------------
+
+        # ---------------------------------------------------------------------
         #                      Import order:
-        # -----------------------------------------------------------------            
+        # ---------------------------------------------------------------------
         # Init log elements:
         error = ''
         comment = ''
@@ -172,8 +172,8 @@ class CsvImportOrderElement(orm.Model):
             fullname = os.path.join(in_folder, f)
             history_fullname = os.path.join(history_folder, f)
             _logger.info('Read file: %s' % fullname)
-            f_in = open(fullname, 'r')            
-            
+            f_in = open(fullname, 'r')
+
             # reset header / footer element:
             note = ''
             order_id = False
@@ -185,65 +185,65 @@ class CsvImportOrderElement(orm.Model):
                 # Read as CSV:
                 line = line.strip()
                 line = line.split('|')
-                
-                if counter == 1: 
+
+                if counter == 1:
                     # -----------------------------------------------------
                     #                     HEADER DATA:
                     # -----------------------------------------------------
                     # Read all header fields:
                     number = line[0] # customer order number
-                    order_date = self._csv_format_c3_date(line[1])                        
+                    order_date = self._csv_format_c3_date(line[1])
                     reference_code = line[2]
                     destination_code = line[3]
                     # payment_terms = line[4]
                     # currency = line[5]
                     # note = line[6]
                     total = line[7]
-                    customer_id = line[8]                    
+                    customer_id = line[8]
                     date_deadline = self._csv_format_c3_date(line[9])
-                    
+
                     # Create order:
                     if destination_code: # XXX mandatory?
                         destination_ids = partner_pool.search(cr, uid, [
                             ('parent_id', '=', partner_id),
                             ('csv_import_code', '=', destination_code),
                             ], context=context)
-                        if destination_ids: 
+                        if destination_ids:
                             destination_partner_id = destination_ids[0]
                         else:
                             error += '''
-                                File: %s destination code %s 
+                                File: %s destination code %s
                                 not found in ODOO<br/>\n''' % (
                                     f, destination_code)
-                            break # jump file        
+                            break # jump file
                     else:
                         error += '''
-                            File: %s destination code %s 
+                            File: %s destination code %s
                             not found in file<br/>\n''' % (
                                 f, destination_code)
-                        break # jump file        
-                    
-                    # Search if there's a previous import (not done)            
+                        break # jump file
+
+                    # Search if there's a previous import (not done)
                     order_ids = order_pool.search(cr, uid, [
                         ('client_order_ref', '=', number),
                         ('partner_id', '=', partner_id),
                         ], context=context)
-                    
+
                     if order_ids: # on same order:
                         error += 'Order yet present: %s' % number
-                        # TODO delete detail and import?                        
+                        # TODO delete detail and import?
                         break
-                        
+
                     try:
                         onchange_data = order_pool.onchange_partner_id(
                             cr, uid, [], partner_id, context=context)[
                                 'value']
                     except:
                         error += '''
-                            Onchange partner data not 
+                            Onchange partner data not
                             'present in order %s!''' % number
                         break # No order creation jump file
-                                    
+
                     onchange_data.update({
                         'importation_id': importation_id,
                         'partner_id': partner_id,
@@ -254,8 +254,8 @@ class CsvImportOrderElement(orm.Model):
                         })
                     order_id = order_pool.create(
                         cr, uid, onchange_data, context=context)
-                    continue # header read   
-                
+                    continue # header read
+
                 # -------------------------------------------------------------
                 #                          ROW DATA:
                 # -------------------------------------------------------------
@@ -263,13 +263,13 @@ class CsvImportOrderElement(orm.Model):
                     error += 'File: %s header not created<br/>\n' % (
                         f)
                     break # next order
-                    
-                # ------------    
+
+                # ------------
                 # Read fields:
-                # ------------    
-                # TODO 
+                # ------------
+                # TODO
                 sequence = line[0]
-                product_customer = line[1] 
+                product_customer = line[1]
                 product_code = line[2]
                 description = line[3]
                 ean = line[4]
@@ -278,24 +278,24 @@ class CsvImportOrderElement(orm.Model):
                 price_unit = self._csv_c1_float(line[7])
                 #subtotal = line[8]
                 date_deadline = self._csv_format_c3_date(line[9])
-                
+
                 # Product:
                 product_ids = product_pool.search(cr, uid, [
                     ('default_code', '=', product_code),
                     ], context=context)
-                    
+
                 if product_ids:
-                    product_id = product_ids[0]           
+                    product_id = product_ids[0]
                 else:
                     # Try search in mapping code:
                     product_id = code_mapping.get(
                         product_customer, False)
-                    if not product_id:    
+                    if not product_id:
                         error += \
                             '%s. File: %s no product: %s>%s<br/>\n' % (
                                 counter,
-                                f, 
-                                product_customer, 
+                                f,
+                                product_customer,
                                 product_code,
                                 )
                         break # End import of this order
@@ -312,7 +312,7 @@ class CsvImportOrderElement(orm.Model):
                         'partner_code': '%s - EAN %s' % (
                             product_customer, ean)
                         }, context=context)
-                else: # create        
+                else: # create
                     partic_pool.create(cr, uid, {
                         'partner_id': partner_id,
                         'product_id': product_id,
@@ -320,7 +320,7 @@ class CsvImportOrderElement(orm.Model):
                         'partner_code': '%s - EAN %s' % (
                             product_customer, ean)
                         }, context=context)
-                        
+
                 # TODO onchange for extra data??
                 data = {
                     'order_id': order_id,
@@ -333,9 +333,9 @@ class CsvImportOrderElement(orm.Model):
                     # TODO discount, scale vat ecc.
                     }
 
-                line_pool.create(cr, uid, data, context=context)    
+                line_pool.create(cr, uid, data, context=context)
                 _logger.info('Create line: %s' % data)
-                    
+
             # History file if not error:
             _logger.info('History file: %s > %s' % (
                 fullname, history_fullname))
@@ -345,7 +345,7 @@ class CsvImportOrderElement(orm.Model):
             log_pool.write(cr, uid, importation_id, {
                 'error': error,
                 }, context=context)
-                
+
         return {
             'type': 'ir.actions.act_window',
             'name': 'Log importation',
