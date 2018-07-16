@@ -193,13 +193,14 @@ class CsvImportOrderElement(orm.Model):
                     # Read all header fields:
                     number = line[0] # customer order number
                     order_date = self._csv_format_c3_date(line[1])                        
-                    # TODO 
-                    
-
-                    # TODO remove:                                               
-                    destination_code = line[1]
-                    insert_date = self._csv_format_c3_date(line[6])
-                    date_deadline = self._csv_format_c3_date(line[23])
+                    reference_code = line[2]
+                    destination_code = line[3]
+                    # payment_terms = line[4]
+                    # currency = line[5]
+                    # note = line[6]
+                    total = line[7]
+                    customer_id = line[8]                    
+                    date_deadline = self._csv_format_c3_date(line[9])
                     
                     # Create order:
                     if destination_code: # XXX mandatory?
@@ -230,6 +231,7 @@ class CsvImportOrderElement(orm.Model):
                     
                     if order_ids: # on same order:
                         error += 'Order yet present: %s' % number
+                        # TODO delete detail and import?                        
                         break
                         
                     try:
@@ -248,8 +250,7 @@ class CsvImportOrderElement(orm.Model):
                         'date_order': order_date,
                         'date_deadline': date_deadline,
                         'client_order_ref': number,
-                        'destination_partner_id':  
-                            destination_partner_id,
+                        'destination_partner_id': destination_partner_id,
                         })
                     order_id = order_pool.create(
                         cr, uid, onchange_data, context=context)
@@ -268,14 +269,16 @@ class CsvImportOrderElement(orm.Model):
                 # ------------    
                 # TODO 
                 sequence = line[0]
-                ean = line[9]
-                # destination EAN
-                product_code = line[10]
-                product_customer = line[11]
-                description = line[12]
-                product_uom_qty = self._csv_c1_float(line[13])
-                price_unit = self._csv_c1_float(line[14])
-         
+                product_customer = line[1] 
+                product_code = line[2]
+                description = line[3]
+                ean = line[4]
+                product_uom_qty = self._csv_c1_float(line[5])
+                #uom_code = line[6]
+                price_unit = self._csv_c1_float(line[7])
+                #subtotal = line[8]
+                date_deadline = self._csv_format_c3_date(line[9])
+                
                 # Product:
                 product_ids = product_pool.search(cr, uid, [
                     ('default_code', '=', product_code),
@@ -288,7 +291,6 @@ class CsvImportOrderElement(orm.Model):
                     product_id = code_mapping.get(
                         product_customer, False)
                     if not product_id:    
-                        do_history = False
                         error += \
                             '%s. File: %s no product: %s>%s<br/>\n' % (
                                 counter,
