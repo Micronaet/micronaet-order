@@ -211,7 +211,14 @@ class CsvImportOrderElement(orm.Model):
         for f in order_list:
             fullname = os.path.join(in_folder, f)
             history_fullname = os.path.join(history_folder, f)
-            _logger.info('Read file: %s' % fullname)
+            
+            # Load read file:
+            self._csv_c3_logmessage(
+                f_log_import, 
+                'Start read file: %s' % f, 
+                mode='info', 
+                verbose=True,
+                )
             f_in = open(fullname, 'r')
 
             # reset header / footer element:
@@ -251,16 +258,27 @@ class CsvImportOrderElement(orm.Model):
                         if destination_ids:
                             destination_partner_id = destination_ids[0]
                         else:
-                            error += '''
-                                File: %s destination code %s
-                                not found in ODOO<br/>\n''' % (
+                            error_text += '''File: %s destination code %s
+                                not found in ODOO''' % (
                                     f, destination_code)
+                            error += '%s<br/>\n' % error_text
+                            self._csv_c3_logmessage(
+                                f_log_import, 
+                                error_text, 
+                                mode='error', 
+                                )                            
                             break # jump file
                     else:
-                        error += '''
+                        error_text = '''
                             File: %s destination code %s
-                            not found in file<br/>\n''' % (
+                            not found in file''' % (
                                 f, destination_code)
+                        error += '%s<br/>\n' % error_text
+                        self._csv_c3_logmessage(
+                            f_log_import,
+                            error_text,
+                            mode='error', 
+                            )                            
                         break # jump file
 
                     # Search if there's a previous import (not done)
@@ -270,7 +288,13 @@ class CsvImportOrderElement(orm.Model):
                         ], context=context)
 
                     if order_ids: # on same order:
-                        error += 'Order yet present: %s' % number
+                        error_text = 'Order yet present: %s' % number
+                        error += '%s<br/>\n' % error_text
+                        self._csv_c3_logmessage(
+                            f_log_import,
+                            error_text,
+                            mode='error', 
+                            )                            
                         # TODO delete detail and import?
                         break
 
@@ -279,9 +303,15 @@ class CsvImportOrderElement(orm.Model):
                             cr, uid, [], partner_id, context=context)[
                                 'value']
                     except:
-                        error += '''
+                        error_text = '''
                             Onchange partner data not
-                            'present in order %s!''' % number
+                            present in order %s!''' % number
+                        error += '%s<br/>\n' % error_text
+                        self._csv_c3_logmessage(
+                            f_log_import,
+                            error_text,
+                            mode='error', 
+                            )                            
                         break # No order creation jump file
 
                     onchange_data.update({
@@ -300,8 +330,14 @@ class CsvImportOrderElement(orm.Model):
                 #                          ROW DATA:
                 # -------------------------------------------------------------
                 if not order_id:
-                    error += 'File: %s header not created<br/>\n' % (
+                    error_text = 'File: %s header not created' % (
                         f)
+                    error += '%s<br/>\n' % error_text
+                    self._csv_c3_logmessage(
+                        f_log_import,
+                        error_text,
+                        mode='error', 
+                        )                            
                     break # next order
 
                 # ------------
@@ -331,13 +367,19 @@ class CsvImportOrderElement(orm.Model):
                     product_id = code_mapping.get(
                         product_customer, False)
                     if not product_id:
-                        error += \
-                            '%s. File: %s no product: %s>%s<br/>\n' % (
+                        error_text = \
+                            '%s. File: %s no product: %s>%s' % (
                                 counter,
                                 f,
                                 product_customer,
                                 product_code,
                                 )
+                        error += '%s<br/>\n' % error_text
+                        self._csv_c3_logmessage(
+                            f_log_import,
+                            error_text,
+                            mode='error', 
+                            )                            
                         break # End import of this order
 
                 # Partner - product partic:
@@ -374,12 +416,20 @@ class CsvImportOrderElement(orm.Model):
                     }
 
                 line_pool.create(cr, uid, data, context=context)
-                _logger.info('Create line: %s' % data)
+                self._csv_c3_logmessage(
+                    f_log_import,
+                    'Create line: %s' % data,
+                    mode='info', 
+                    )                            
 
             # History file if not error:
-            _logger.info('History file: %s > %s' % (
-                fullname, history_fullname))
             shutil.move(fullname, history_fullname)
+            self._csv_c3_logmessage(
+                f_log_import,
+                'History file: %s > %s' % (
+                    fullname, history_fullname))
+                mode='info',
+                )                            
             imported += 1
 
         if error:
