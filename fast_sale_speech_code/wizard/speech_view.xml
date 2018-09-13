@@ -27,7 +27,8 @@
                         <field name="quantity" />
                         <field name="lst_price" />
                         <field name="discount_scale" />
-                        <field name="product_id" readonly="1"/>
+                        <field name="product_id" invisible="1" />
+                        <field name="stock" readonly="1" colspan="4" />
                         <button name="action_done" string="Done" type="object" icon="gtk-jump-to" class="oe_highlight" />
                    </group>
                 </form>

@@ -427,9 +427,9 @@ class CsvImportOrderElement(orm.Model):
             self._csv_c3_logmessage(
                 f_log_import,
                 'History file: %s > %s' % (
-                    fullname, history_fullname))
+                    fullname, history_fullname),
                 mode='info',
-                )                            
+                )
             imported += 1
 
         if error:

@@ -50,81 +50,18 @@ class SaleOrderLine(orm.Model):
         'to_confirm_code': fields.boolean('Confirm code'),
         }
 
-class StructureBlockValue(orm.Model):
-    """ Model name: StructureBlockValue
-    """
-    
-    _inherit = 'structure.block.value'
-    
-    def name_search(self, cr, uid, name, args=None, operator='ilike', 
-            context=None, limit=80):
-        """ Return a list of tupples contains id, name, as internally its calls 
-            {def name_get}
-            result format : {[(id, name), (id, name), ...]}
-            
-            @param cr: cursor to database
-            @param uid: id of current user
-            @param name: name to be search 
-            @param args: other arguments
-            @param operator: default operator is ilike, it can be change
-            @param context: context arguments, like lang, time zone
-            @param limit: returns first n ids of complete result, default it is 80
-            
-            @return: return a list of tupples contains id, name
-        """
-        
-        if not args:
-            args = []
-        if not context:
-            context = {}
-        ids = []
-        
-        if name:
-            ids = self.search(cr, uid, [
-                ('code', 'ilike', name),
-                ] + args, limit=limit)
-        if not ids:
-            ids = self.search(cr, uid, [
-                ('name', operator, name),
-                ] + args, limit=limit)
-        return self.name_get(cr, uid, ids, context=context)
-    
-    def name_get(self, cr, uid, ids, context=None):
-        """ Return a list of tupples contains id, name.
-            result format : {[(id, name), (id, name), ...]}
-            
-            @param cr: cursor to database
-            @param uid: id of current user
-            @param ids: list of ids for which name should be read
-            @param context: context arguments, like lang, time zone
-            
-            @return: returns a list of tupples contains id, name
-        """
-        
-        if isinstance(ids, (list, tuple)) and not len(ids):
-            return []
-        if isinstance(ids, (long, int)):
-            ids = [ids]            
-        res = []
-        for record in self.browse(cr, uid, ids, context=context):
-            if context.get('only_code', False):
-                res.append((record.id, '[%s] %s' % (record.code, record.name)))
-            else:
-                res.append((record.id, record.name))
-        return res
-
-class SaleOrderSpeechProductWizard(orm.TransientModel):
+class SaleOrderSelectedProductWizard(orm.TransientModel):
     ''' Wizard for generate code
     '''
-    _name = 'sale.order.speech.product.wizard'
+    _name = 'sale.order.selected.product.wizard'
 
     def onchange_blocks_information(self, cr, uid, ids, structure_id, 
-            block_parent_id, block_fabric_id, block_frame_id, block_color_id,
+            block_parent_id, block_frame_id, block_color_id,
             block_partic_id, context=None):
         ''' Generate product code
         '''            
         res = {'value': {}}
-        value_pool = self.pool.get('structure.block.value')
+        value_pool = self.pool.get('product.insert.block')
         product_pool = self.pool.get('product.product')
 
         if not structure_id:
@@ -135,15 +72,8 @@ class SaleOrderSpeechProductWizard(orm.TransientModel):
                 cr, uid, block_parent_id, context=context)
             block_parent = value_proxy.code
         else:
-            block_parent = '***'    
+            block_parent = '******'
 
-        if block_fabric_id:
-            value_proxy = value_pool.browse(
-                cr, uid, block_fabric_id, context=context)
-            block_fabric = '%-3s' % value_proxy.code
-        else:
-            block_fabric = '   '    
-            
         if block_frame_id:
             value_proxy = value_pool.browse(
                 cr, uid, block_frame_id, context=context)
@@ -167,9 +97,8 @@ class SaleOrderSpeechProductWizard(orm.TransientModel):
         else:
             block_partic = '' # XXX not present = nothing    
             
-        code = '%s%s%s%s%s' % (
+        code = '%s%s%s%s' % (
             block_parent,
-            block_fabric,
             block_frame,
             block_color,
             block_partic,
@@ -184,15 +113,9 @@ class SaleOrderSpeechProductWizard(orm.TransientModel):
                     cr, uid, product_ids, context=context)[0]
                 res['value']['product_id'] = product_proxy.id
                 res['value']['lst_price'] = product_proxy.lst_price
-                res['value']['stock'] = 'ESISTENTE: Netto [%s] Lordo [%s]' % (
-                    product_proxy.mx_net_mrp_qty,
-                    product_proxy.mx_lord_mrp_qty,
-                    ) 
             else:    
                 res['value']['product_id'] = False
-                res['value']['lst_price'] = False            
-                res['value']['stock'] = 'NON ESISTENTE!' 
-                    
+                res['value']['lst_price'] = False                
         return res    
         
     # --------------------
@@ -280,20 +203,6 @@ class SaleOrderSpeechProductWizard(orm.TransientModel):
             'type': 'ir.actions.act_window_close'
             }
 
-    def get_discount_scale(self, cr, uid, context=None):
-        ''' Get discount from partner
-        '''
-        if not context:
-            return ''
-            
-        try:
-            order_pool = self.pool.get('sale.order')    
-            order_proxy = order_pool.browse(
-                cr, uid, context.get('active_id'), context=context)
-            return order_proxy.partner_id.discount_rates    
-        except:    
-            return ''    
-        
     _columns = {
         'product_id': fields.many2one(
             'product.product', 'Product', 
@@ -301,26 +210,23 @@ class SaleOrderSpeechProductWizard(orm.TransientModel):
         'quantity': fields.float('Q.ty', digits=(16, 2), required=True),
         'lst_price': fields.float('Price', digits=(16, 2), required=True),
         'discount_scale': fields.char('Discount scale', size=64),
+        
         'structure_id': fields.many2one(
-            'structure.structure', 'Structure', required=True),
+            'product.insert.block', 'Structure', required=True),
+            
         'block_parent_id': fields.many2one(
-            'structure.block.value', 'Parent', required=True),
-        'block_fabric_id': fields.many2one(
-            'structure.block.value', 'Fabric', required=True),
+            'product.insert.block', 'Parent', required=True),
         'block_frame_id': fields.many2one(
-            'structure.block.value', 'Frame'),
+            'product.insert.block', 'Frame'),
         'block_color_id': fields.many2one(
-            'structure.block.value', 'Color', required=True),
+            'product.insert.block', 'Color', required=True),
         'block_partic_id': fields.many2one(
-            'structure.block.value', 'Partic'),
-        'code': fields.char('Code', size=13),
-        'stock': fields.char('Stock', size=200, readonly=True), 
+            'product.insert.block', 'Partic'),
+        'code': fields.char('Code', size=13),    
         }
         
     _defaults = {
         'quantity': lambda *x: 1.0,
-        'discount_scale': lambda s, cr, uid, ctx: s.get_discount_scale(
-            cr, uid, ctx),
         }    
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

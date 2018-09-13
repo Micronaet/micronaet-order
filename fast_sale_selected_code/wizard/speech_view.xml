@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+       <!-- module.wizard -->
+       <record id="sale_order_selected_product_wizard_view" model="ir.ui.view">
+            <field name="name">Generate product</field>
+            <field name="model">sale.order.selected.product.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Wizard" version="7.0">
+                   <header>
+                       <button string="Cancel" special="cancel" />
+                   </header>                   
+                   <group colspan="4" col="4">
+                        <field name="structure_id" domain="[('mode', '=', 'structure')]" widget="selection"/> <!--attrs="{'invisible': [('structure_id','!=',False)]}"-->
+                        <newline/>
+                        <field name="block_parent_id" context="{'only_code': True}" domain="[('mode', '=', 'parent')]" options="{'limit': 130, 'create': false, 'create_edit': false}"
+                            on_change="onchange_blocks_information(structure_id,block_parent_id, block_frame_id, block_color_id,block_partic_id, context)"/>
+                        <field name="block_frame_id" domain="[('mode', '=', 'frame'),('parent_id', '=', block_parent_id)]" widget="selection"
+                            on_change="onchange_blocks_information(structure_id,block_parent_id, block_frame_id, block_color_id,block_partic_id, context)"/>
+                        <field name="block_color_id" domain="[('mode', '=', 'color'),('parent_id', '=', block_parent_id)]" widget="selection"
+                            on_change="onchange_blocks_information(structure_id,block_parent_id, block_frame_id, block_color_id,block_partic_id, context)"/>
+                        <field name="block_partic_id" domain="[('mode', '=', 'extra')]" widget="selection"
+                            on_change="onchange_blocks_information(structure_id,block_parent_id, block_frame_id, block_color_id,block_partic_id, context)"/>
+                        <field name="code" />
+                        <field name="quantity" />
+                        <field name="lst_price" />
+                        <field name="discount_scale" />
+                        <field name="product_id" readonly="1"/>
+                        <button name="action_done" string="Done" type="object" icon="gtk-jump-to" class="oe_highlight" />
+                   </group>
+                </form>
+            </field>
+      </record>
+
+      <record model="ir.actions.act_window" id="action_sale_order_selected_product_wizard">
+          <field name="name">Generate product code</field>
+          <field name="res_model">sale.order.selected.product.wizard</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">form</field>
+          <field name="target">new</field>
+          <field name="view_id" ref="sale_order_selected_product_wizard_view"/>
+      </record>      
+
+       <record model="ir.ui.view" id="view_sale_order_form_fast_wizard_form">
+            <field name="name">sale.order.form.fast</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_order_fast.view_sale_order_form_fast_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="before">
+                    <button name="%(action_sale_order_selected_product_wizard)d" string="Product selection" type="action" icon="gtk-execute"/>
+                </xpath>
+            </field>
+       </record>         
+    </data>
+</openerp>
