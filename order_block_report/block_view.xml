@@ -47,8 +47,8 @@
                                             <field name="show_price" />
                                             <field name="show_total" />
                                             
-                                            <field name="real_total" readonly="1"/>
-                                            <field name="total" />
+                                            <field name="real_total" readonly="1" sum="real_sum"/>
+                                            <field name="total" sum="total_sum"/>
                                         </group>
                                     </sheet>
                                 </form>
