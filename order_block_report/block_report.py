@@ -97,10 +97,22 @@ class SaleOrder(orm.Model):
     """    
     _inherit = 'sale.order'
     
+   
+    def print_quotation(self, cr, uid, ids, context=None):
+        ''' Override sale order print function
+        '''
+        res = super(SaleOrder, self).print_quotation(
+            cr, uid, ids, context=context)
+        
+        # replace report name:
+        res['report_name'] = 'custom_block_sale_order_report'
+        return res        
+
     _columns = {
         'block_ids': fields.one2many(
             'sale.order.block.group', 'order_id', 'Block'),
         }
+
 
 class SaleOrderLine(orm.Model):
     """ Model name: SaleOrder
