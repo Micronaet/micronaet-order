@@ -107,6 +107,7 @@ class SaleOrder(orm.Model):
         assert len(ids) == 1, \
             'This option should only be used for a single id at a time'
 
+        # Mark as sent: TODO use workflow?
         #wf_service = netsvc.LocalService("workflow")
         #wf_service.trg_validate(
         #    uid, 'sale.order', ids[0], 'quotation_sent', cr)
@@ -122,12 +123,6 @@ class SaleOrder(orm.Model):
             'datas': datas, 
             'nodestroy': True,
             }
-               
-        #res = super(SaleOrder, self).print_quotation(
-        #    cr, uid, ids, context=context)
-        # replace report name:
-        #res['report_name'] = 'custom_block_sale_order_report'
-        #return res        
 
     _columns = {
         'block_ids': fields.one2many(
