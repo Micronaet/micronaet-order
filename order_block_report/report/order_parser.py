@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-##############################################################################
+###############################################################################
 #
 #   Copyright (C) 2010-2012 Associazione OpenERP Italia
 #   (<http://www.openerp-italia.org>).
@@ -20,7 +20,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-##############################################################################
+###############################################################################
 import os
 import sys
 import logging
@@ -46,8 +46,19 @@ _logger = logging.getLogger(__name__)
 
 
 class Parser(report_sxw.rml_parse):
-    def __init__(self, cr, uid, name, context):
-        
+    def __init__(self, cr, uid, name, context):        
         super(Parser, self).__init__(cr, uid, name, context)
-        self.localcontext.update({})
+        self.localcontext.update({
+            'clean_name': self.clean_name,
+            })
+
+    def clean_name(self, line):
+        ''' Clean line product name depend on block setup
+        '''        
+        name = line.name
+        if line.block_id.show_code:
+            return name
+            
+        name = name.split('] ')[-1]        
+        return name
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

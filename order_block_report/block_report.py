@@ -77,6 +77,9 @@ class SaleOrderBlockGroup(orm.Model):
         # Parameter for line:
         'show_header': fields.boolean('Show header'),
         'show_detail': fields.boolean('Show details'),
+        'show_code': fields.boolean(
+            'Show code', 
+            help='Show code in line details'),
         'show_price': fields.boolean(
             'Show price', 
             help='Show unit price and subtotal'),
@@ -87,6 +90,7 @@ class SaleOrderBlockGroup(orm.Model):
     _defaults = {
        'show_header': lambda *a: True,
        'show_detail': lambda *a: True,
+       'show_code': lambda *a: True,
        'show_price': lambda *a: True,
        #'show_subtotal': lambda *a: True,
        'show_total': lambda *a: True,
@@ -97,9 +101,73 @@ class SaleOrder(orm.Model):
     """    
     _inherit = 'sale.order'
     
-    # ------------------
+    # -------------------------------------------------------------------------
     # Override function:
-    # ------------------
+    # -------------------------------------------------------------------------
+    def copy(self, cr, uid, old_id, default=None, context=None):
+        """ Create a new record in ClassName model from existing one
+            @param cr: cursor to database
+            @param uid: id of current user
+            @param id: list of record ids on which copy method executes
+            @param default: dict type contains the values to override in copy oper.
+            @param context: context arguments
+            
+            @return: returns a id of newly created record
+        """
+        new_id = super(SaleOrder, self).copy(
+            cr, uid, old_id, default=default, context=context)
+        
+        block_pool = self.pool.get('sale.order.block.group')
+        block_ids = block_pool.search(cr, uid, [
+            ('order_id', '=', old_id),
+            ], context=context)
+        convert_db = []
+        
+        # XXX When adding new parameter put here!
+        # ---------------------------------------------------------------------
+        # Duplicate block list:
+        # ---------------------------------------------------------------------
+        _logger.warning('Duplicate extra block in sale: %s' % len(block_ids))
+        for block in block_pool.browse(cr, uid, block_ids, context=context):
+            data = {
+                'code': block.code,
+                'name': block.name,
+                
+                'pre_text': block.pre_text,
+                'post_text': block.post_text,
+                
+                'total': block.total,
+                #'real_total': 
+                'order_id': new_id,
+                
+                # Parameter for line:
+                'show_header': block.show_header,
+                'show_detail': block.show_detail,
+                'show_code': block.show_code,                
+                'show_price': block.show_detail,
+                #'show_subtotal': fields.boolean('Show Subtotal'),
+                'show_total': block.show_total,
+                }
+            convert_db.append((
+                block.id, block_pool.create(cr, uid, data, context=context)))
+
+        # ---------------------------------------------------------------------
+        # Change reference for block in detail list:
+        # ---------------------------------------------------------------------
+        sol_pool = self.pool.get('sale.order.line')
+        _logger.warning('Update reference in details: %s' % len(convert_db))
+        for old, new in convert_db:
+            sol_ids = sol_pool.search(cr, uid, [
+                ('order_id', '=', new_id),
+                ('block_id', '=', old),
+                ], context=context)
+            if not sol_ids:
+                continue
+            sol_pool.write(cr, uid, sol_ids, {
+                'block_id': new,
+                }, context=context)            
+        return new_id
+        
     def print_quotation(self, cr, uid, ids, context=None):
         ''' This function prints the sales order and mark it as sent
             so that we can see more easily the next step of the workflow

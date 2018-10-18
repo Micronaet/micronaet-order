@@ -25,6 +25,7 @@
                                     <field name="show_header" />
                                     <field name="show_detail" />
                                     <field name="show_price" />
+                                    <field name="show_code" />
                                     <field name="show_total" />
                                     
                                     <field name="real_total" sum="real_sum" />
@@ -44,6 +45,7 @@
                                             <separator string="Show / Hide:" colspan="4"/>
                                             <field name="show_header" />
                                             <field name="show_detail" />
+                                            <field name="show_code" />
                                             <field name="show_price" />
                                             <field name="show_total" />
                                             
