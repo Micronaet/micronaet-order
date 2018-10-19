@@ -56,11 +56,15 @@ class SaleOrderBlockGroup(orm.Model):
             for sol in block.order_id.order_line:
                 if sol.block_id.id == block.id:
                     res[block.id] += sol.price_subtotal
+            if block.block_margin:
+                res[block.id] = block.block_margin * res[block.id] / 100.0
         return res
 
     _columns = {
         'code': fields.integer('Code', required=True),
         'name': fields.char('Name', size=64, required=True),
+        'block_margin': fields.float('Extra margin %', digits=(16, 3), 
+            help='Add extra margin to calculate real total'),
         
         'pre_text': fields.text('Pre text'),
         'post_text': fields.text('Post text'),

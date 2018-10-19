@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-19 16:09+0000\n"
-"PO-Revision-Date: 2018-10-19 18:14+0100\n"
+"POT-Creation-Date: 2018-10-19 16:34+0000\n"
+"PO-Revision-Date: 2018-10-19 18:35+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,6 +16,11 @@ msgstr ""
 "Plural-Forms: \n"
 "Language: it\n"
 "X-Generator: Poedit 1.6.10\n"
+
+#. module: order_block_report
+#: help:sale.order.block.group,block_margin:0
+msgid "Add extra margin to calculate real total"
+msgstr "Aggiunge un margine extra da calcolare sul totale reale"
 
 #. module: order_block_report
 #: view:sale.order:order_block_report.view_sale_order_block_group_page_form
@@ -67,6 +72,11 @@ msgstr "Creato il"
 #: report:ir.actions.report.xml:order_block_report.aeroo_block_sale_order_report_id
 msgid "E-mail"
 msgstr "E-mail"
+
+#. module: order_block_report
+#: field:sale.order.block.group,block_margin:0
+msgid "Extra margin %"
+msgstr "Margine extra %"
 
 #. module: order_block_report
 #: report:ir.actions.report.xml:order_block_report.aeroo_block_sale_order_report_id
