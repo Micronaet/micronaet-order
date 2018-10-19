@@ -25,16 +25,12 @@
                                     <tree string="Block">
                                         <field name="code" />
                                         <field name="name" />        
-                                        
                                         <field name="show_header" />
                                         <field name="show_detail" />
-                                        
                                         <field name="show_price" />
                                         <field name="show_code" />
-                                        
                                         <field name="show_total" />
                                         <field name="block_margin" />
-
                                         <field name="real_total" sum="real_sum" />
                                         <field name="total" sum="total_sum"/>
                                     </tree>                              
@@ -46,15 +42,19 @@
                                                 
                                                 <separator string="Pre text:" colspan="2"/>
                                                 <separator string="Post text:" colspan="2"/>
+
                                                 <field name="pre_text" nolabel="1" colspan="2"/>
                                                 <field name="post_text" nolabel="1" colspan="2"/>
                                                 
                                                 <separator string="Show / Hide:" colspan="4"/>
                                                 <field name="show_header" />
                                                 <field name="show_detail" />
+
                                                 <field name="show_code" />
                                                 <field name="show_price" />
+
                                                 <field name="show_total" />
+                                                <field name="block_margin" />
                                                 
                                                 <field name="real_total" readonly="1"/>
                                                 <field name="total" />
