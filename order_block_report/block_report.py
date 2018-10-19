@@ -106,6 +106,11 @@ class SaleOrder(orm.Model):
     """    
     _inherit = 'sale.order'
     
+    def dummy_action(self, cr, uid, ids, context=None):
+        ''' Dummy button to refresh data
+        '''
+        return True
+
     # -------------------------------------------------------------------------
     # Override function:
     # -------------------------------------------------------------------------
@@ -233,21 +238,28 @@ class SaleOrderLine(orm.Model):
     _inherit = 'sale.order.line'
     _order = 'block_id,sequence'
     
-    def onchange_categ_id(self, cr, uid, ids, categ_id, context=None):
+    def onchange_categ_id(self, cr, uid, ids, categ_id, pre_filter, 
+            context=None):
         ''' Force domain of product   
         '''
         res = {
-            'domain': {},
+            'domain': {
+                'product_id': []},
             'value': {},
             }
         if categ_id:
-            res['domain']['product_id'] = [('categ_id', '=', categ_id)]
+            res['domain']['product_id'].append(
+                ('categ_id', '=', categ_id))
             res['value']['product_id'] = False
-        else:    
-            res['domain']['product_id'] = []        
+
+        if pre_filter:
+            res['domain']['product_id'].append(
+                ('default_code', 'ilike', pre_filter))
+            res['value']['pre_filter'] = False # XXX reset filter
         return res
         
     _columns = {
+        'pre_filter': fields.char('Pre filter', size=50),
         'block_id': fields.many2one('sale.order.block.group', 'Block', 
             ondelete='set null'),
         'categ_id': fields.many2one('product.category', 'Category'),    
