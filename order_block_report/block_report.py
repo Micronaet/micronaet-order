@@ -192,10 +192,34 @@ class SaleOrder(orm.Model):
             'nodestroy': True,
             }
 
+    # -------------------------------------------------------------------------
+    # Fields function:
+    # -------------------------------------------------------------------------
+    def _function_get_total_block(
+            self, cr, uid, ids, fields, args, context=None):
+        ''' Fields function for calculate 
+        '''
+        res = {}
+        for order in self.browse(cr, uid, ids, context=context):            
+            res[order.id] = 0.0
+            for block in order.block_ids:
+                res[order.id] += block.total or block.real_total
+        return res
+
     _columns = {
+        'show_master_total': fields.boolean('Show master total'),
         'block_ids': fields.one2many(
             'sale.order.block.group', 'order_id', 'Block'),
+
+        'real_total': fields.function(
+            _function_get_total_block, method=True, 
+            type='float', string='Real total', store=False, 
+            help='Total sum of sale line in this block'),
         }
+    
+    _defaults = {
+        'show_master_total': lambda *x: True,
+        }    
 
 
 class SaleOrderLine(orm.Model):
@@ -230,8 +254,10 @@ class SaleOrderBlockGroup(orm.Model):
     
     _inherit = 'sale.order.block.group'
     
+    
     _columns = {
+
         'line_ids': fields.one2many(
-            'sale.order.line', 'block_id', 'Sale order line'),
+            'sale.order.line', 'block_id', 'Sale order line'),            
         }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

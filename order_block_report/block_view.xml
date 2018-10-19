@@ -17,44 +17,49 @@
                  </xpath>                 
                  <xpath expr="//page[1]" position="after">
                      <page string="Block">
-                          <field name="block_ids">
-                                <tree string="Block">
-                                    <field name="code" />
-                                    <field name="name" />        
-                                    
-                                    <field name="show_header" />
-                                    <field name="show_detail" />
-                                    <field name="show_price" />
-                                    <field name="show_code" />
-                                    <field name="show_total" />
-                                    
-                                    <field name="real_total" sum="real_sum" />
-                                    <field name="total" sum="total_sum"/>
-                                </tree>                              
-                                <form string="Block" version="7.0">
-                                    <sheet>
-                                        <group col="4" colspan="4">
-                                            <field name="code" />
-                                            <field name="name" />
-                                            
-                                            <separator string="Pre text:" colspan="2"/>
-                                            <separator string="Post text:" colspan="2"/>
-                                            <field name="pre_text" nolabel="1" colspan="2"/>
-                                            <field name="post_text" nolabel="1" colspan="2"/>
-                                            
-                                            <separator string="Show / Hide:" colspan="4"/>
-                                            <field name="show_header" />
-                                            <field name="show_detail" />
-                                            <field name="show_code" />
-                                            <field name="show_price" />
-                                            <field name="show_total" />
-                                            
-                                            <field name="real_total" readonly="1"/>
-                                            <field name="total" />
-                                        </group>
-                                    </sheet>
-                                </form>
-                          </field>
+                          <group colspan="4" col="4">
+                              <field name="show_master_total" />
+                              <field name="real_total" />
+                              <separator string="Blocks:" colspan="4"/>
+                              <field name="block_ids" nolabel="1" colspan="4">                                  
+                                    <tree string="Block">
+                                        <field name="code" />
+                                        <field name="name" />        
+                                        
+                                        <field name="show_header" />
+                                        <field name="show_detail" />
+                                        <field name="show_price" />
+                                        <field name="show_code" />
+                                        <field name="show_total" />
+                                        
+                                        <field name="real_total" sum="real_sum" />
+                                        <field name="total" sum="total_sum"/>
+                                    </tree>                              
+                                    <form string="Block" version="7.0">
+                                        <sheet>
+                                            <group col="4" colspan="4">
+                                                <field name="code" />
+                                                <field name="name" />
+                                                
+                                                <separator string="Pre text:" colspan="2"/>
+                                                <separator string="Post text:" colspan="2"/>
+                                                <field name="pre_text" nolabel="1" colspan="2"/>
+                                                <field name="post_text" nolabel="1" colspan="2"/>
+                                                
+                                                <separator string="Show / Hide:" colspan="4"/>
+                                                <field name="show_header" />
+                                                <field name="show_detail" />
+                                                <field name="show_code" />
+                                                <field name="show_price" />
+                                                <field name="show_total" />
+                                                
+                                                <field name="real_total" readonly="1"/>
+                                                <field name="total" />
+                                            </group>
+                                        </sheet>
+                                    </form>
+                              </field>
+                          </group>    
                      </page>
                  </xpath>
             </field>
