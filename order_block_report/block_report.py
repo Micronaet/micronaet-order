@@ -57,7 +57,8 @@ class SaleOrderBlockGroup(orm.Model):
                 if sol.block_id.id == block.id:
                     res[block.id] += sol.price_subtotal
             if block.block_margin:
-                res[block.id] = block.block_margin * res[block.id] / 100.0
+                res[block.id] = res[block.id] * (
+                    100.0 + block.block_margin) / 100.0
         return res
 
     _columns = {
