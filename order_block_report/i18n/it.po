@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-19 16:34+0000\n"
-"PO-Revision-Date: 2018-10-19 18:35+0100\n"
+"POT-Creation-Date: 2018-10-19 17:06+0000\n"
+"PO-Revision-Date: 2018-10-19 19:07+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -124,6 +124,11 @@ msgid "Post text:"
 msgstr "Testo post:"
 
 #. module: order_block_report
+#: field:sale.order.line,pre_filter:0
+msgid "Pre filter"
+msgstr "Pre-filtro"
+
+#. module: order_block_report
 #: field:sale.order.block.group,pre_text:0
 msgid "Pre text"
 msgstr "Testo pre"
@@ -137,6 +142,11 @@ msgstr "Testo pre:"
 #: field:sale.order,real_total:0 field:sale.order.block.group,real_total:0
 msgid "Real total"
 msgstr "Totale reale"
+
+#. module: order_block_report
+#: view:sale.order:order_block_report.view_sale_order_block_group_page_form
+msgid "Refresh"
+msgstr "Aggiorna totale"
 
 #. module: order_block_report
 #: model:ir.model,name:order_block_report.model_sale_order_block_group
