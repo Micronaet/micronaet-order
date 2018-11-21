@@ -161,7 +161,7 @@ msgstr "Ordine calcolato"
 #. module: electrical_sale_order
 #: field:sale.order.line,sale_real_revenue:0
 msgid "Sale price (unit.)"
-msgstr "Prezzo di vendita (unit.)"
+msgstr "Prezzo vend. (unit.)"
 
 #. module: electrical_sale_order
 #: model:ir.model,name:electrical_sale_order.model_sale_order
@@ -201,12 +201,12 @@ msgstr "Tot. Ricarico manod."
 #. module: electrical_sale_order
 #: field:sale.order,sale_tot_cost:0
 msgid "Tot. real cost"
-msgstr "Tot. costo reale"
+msgstr "Costo (tot.)"
 
 #. module: electrical_sale_order
 #: field:sale.order,sale_total:0 field:sale.order.line,sale_total:0
 msgid "Total"
-msgstr "Totale finale"
+msgstr "Subtotale"
 
 #. module: electrical_sale_order
 #: view:sale.order:electrical_sale_order.view_sale_order_for_cost_form
