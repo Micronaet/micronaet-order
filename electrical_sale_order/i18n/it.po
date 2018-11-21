@@ -157,7 +157,7 @@ msgstr "Base"
 #. module: electrical_sale_order
 #: field:sale.order.line,sale_discount:0
 msgid "Sale discount"
-msgstr "Scontato"
+msgstr "Sconto %"
 
 #. module: electrical_sale_order
 #: view:sale.order:electrical_sale_order.view_sale_order_for_cost_form
