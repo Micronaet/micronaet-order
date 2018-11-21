@@ -78,15 +78,17 @@ class SaleOrderLine(orm.Model):
             # Line calculated data:
             # -----------------------------------------------------------------     
             tot_base = qty * base
-            discount_base = tot_base * (100.0 - discount)
+            discount_base = base * (100.0 - discount) / 100.0
             discount_base_tot = discount_base *  qty
-            recharge = discount_base * (100.0 + order_recharge)
+            recharge = discount_base * (100.0 + order_recharge) / 100.0
             recharge_tot = recharge * qty
+            
             hour_tot = hour * qty
-            hour_cost = hour_tot * order_hour_cost
-            hour_revenue = hour_tot * order_hour_revenue
+            hour_cost = hour * order_hour_cost
+            hour_revenue = hour * order_hour_revenue
             hour_cost_tot = hour_cost * qty
             hour_revenue_tot = hour_revenue * qty
+            
             real_cost = discount_base_tot + hour_cost_tot
             real_revenue = recharge + hour_revenue # XXX
             total = recharge_tot + hour_revenue_tot
@@ -151,7 +153,7 @@ class SaleOrderLine(orm.Model):
             type='float', string='Hour cost', multi=True), 
         'sale_hour_revenue': fields.function(
             _get_line_sale_quotation, method=True, 
-            type='float', string='Hour cost', multi=True), 
+            type='float', string='Hour revenue', multi=True), 
         'sale_hour_cost_tot': fields.function(
             _get_line_sale_quotation, method=True, 
             type='float', string='Hour cost (tot.)', multi=True), 
@@ -181,6 +183,20 @@ class SaleOrder(orm.Model):
     # -------------------------------------------------------------------------
     # Button events:
     # -------------------------------------------------------------------------
+    def update_unit_price_and_return(self, cr, uid, ids, context=None):
+        ''' Save sale_real_cost in price_unit
+        '''
+        assert len(ids) == 1, 'Works only with one record a time'
+        
+        # Pool used:
+        line_pool = self.pool.get('sale.order.line')
+        
+        for line in self.browse(cr, uid, ids, context=context).order_line:
+            line_pool.write(cr, uid, line.id, {
+                'price_unit': line.sale_real_cost,
+                }, context=context)
+        return self.return_sale_view(cr, uid, ids, context=context)    
+        
     def return_sale_view(self, cr, uid, ids, context=None):
         ''' Open normal view
         '''
@@ -236,6 +252,7 @@ class SaleOrder(orm.Model):
         order_proxy = self.browse(cr, uid, ids, context=context)[0]
         sale_base = order_proxy.sale_base
         
+        update_db = {}
         for line in order_proxy.order_line:
             product = line.product_id
             if sale_base == 'last':
@@ -248,9 +265,10 @@ class SaleOrder(orm.Model):
                 cost = product.lst_price
             else:  
                 cost = 0.0 # XXX error!    
+            update_db[line.id] = cost
              
             line_pool.write(cr, uid, line.id, {
-                'price_unit': cost,
+                'sale_base': cost,
                 }, context=context)
         
     # -------------------------------------------------------------------------
@@ -279,10 +297,10 @@ class SaleOrder(orm.Model):
             # Calculate data from lines:                
             for line in order.order_line:
                 tot_base += line.sale_tot_base
-                 tot_discount += line.sale_tot_discount
-                tot_hour += line.sale_hour
-                tot_work_cost += line.hour_cost_tot
-                tot_work_revenue += line.hour_revenue_tot
+                tot_discount += line.sale_discount_base_tot
+                tot_hour += line.sale_hour_tot
+                tot_work_cost += line.sale_hour_cost_tot
+                tot_work_revenue += line.sale_hour_revenue_tot
                 tot_cost += line.sale_real_cost
                 tot_revenue += line.sale_real_revenue
                 total += line.sale_total

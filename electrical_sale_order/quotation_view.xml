@@ -6,8 +6,8 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
-                <field name="state" position="before" />
-                    <button name="open_cost_management_view" string="Cost management" type="object" />
+                <field name="state" position="before">
+                    <button name="open_cost_management_view" string="Cost management" type="object" class="oe_highlight"/>
                 </field>   
             </field>
         </record>
@@ -19,20 +19,26 @@
             <field name="arch" type="xml">
                 <form string="Sale order calc" version="7.0">        
                     <header>
-                        <button name="return_sale_view" string="Normal view" type="object" />
+                        <button name="update_unit_price_and_return" string="Update unit price" type="object" icon="gtk-dnd" class="oe_highlight"/>
+                        <button name="return_sale_view" string="Normal view" type="object" icon="gtk-dnd" />
                         <button name="dummy_button" string="Refresh" type="object" icon="gtk-refresh" />
+                        <field name="state" widget="statusbar"/>
                     </header>
                     
                     <sheet>
-                        <group col="8" colspan="4">
-                            <separator string="Parameter:" colspan="8"/>
+                        <group col="10" colspan="4">
+                            <separator string="Parameter:" colspan="10"/>
+                            <field name="name" />
+                            <field name="partner_id" />
+                            
+                            <separator string="Parameter:" colspan="10"/>
                             <field name="sale_recharge" />
                             <field name="sale_hour_cost" />
                             <field name="sale_hour_revenue" />
                             <field name="sale_base" />
                             <button name="update_base_price" string="Update base" type="object" colspan="2"/>
 
-                            <separator string="Total:" colspan="8"/>
+                            <separator string="Total:" colspan="10"/>
                             <field name="sale_tot_base" />
                             <field name="sale_tot_discount" />
                             <field name="sale_tot_hour" />
@@ -51,14 +57,38 @@
                             <field name="sale_margin_perc" />
                             <newline/>
                             
-                            <separator string="Details:" colspan="8"/>
-                            <field name="order_line" colspan="8" nolabel="1">
+                            <separator string="Details:" colspan="10"/>
+                            <field name="order_line" colspan="10" nolabel="1">
                                 <tree string="Details:" editable="bottom">
                                     <field name="product_id" />
+                                    <field name="name" />
                                     <field name="product_uom_qty" />
+
+                                    <field name="sale_base" />
+                                    <field name="sale_hour" />
+                                    <field name="sale_discount" />
                                     
+                                    <field name="sale_tot_base" />
+                                    <field name="sale_discount_base" />
+                                    <field name="sale_discount_base_tot" />
+                                    
+                                    <field name="sale_recharge" />
+                                    <field name="sale_recharge_tot" />
+                                    
+                                    <field name="sale_hour_tot" />
+                                    <field name="sale_hour_cost" />
+                                    <field name="sale_hour_revenue" />
+                                    <field name="sale_hour_cost_tot" />
+                                    <field name="sale_hour_revenue_tot" />
+                                    
+                                    <field name="sale_real_cost" />
+                                    <field name="sale_real_revenue" />
+                                    
+                                    <field name="sale_total" />
+                                    
+                                    <field name="state" invisible="1" />
                                 </tree>                                
-                            </field>                            
+                            </field>
                         </group>
                     </sheet>        
                 </form>
