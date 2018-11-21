@@ -1,0 +1,230 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* electrical_sale_order
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-11-21 10:38+0000\n"
+"PO-Revision-Date: 2018-11-21 11:51+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: electrical_sale_order
+#: field:sale.order.line,sale_base:0
+msgid "Base"
+msgstr "Base"
+
+#. module: electrical_sale_order
+#: field:sale.order.line,sale_tot_base:0
+msgid "Base (tot.)"
+msgstr "Base (tot.)"
+
+#. module: electrical_sale_order
+#: view:sale.order:electrical_sale_order.view_sale_order_button_form
+msgid "Cost management"
+msgstr "Gestione costi"
+
+#. module: electrical_sale_order
+#: view:sale.order:electrical_sale_order.view_sale_order_for_cost_form
+msgid "Details:"
+msgstr "Dettagli:"
+
+#. module: electrical_sale_order
+#: field:sale.order.line,sale_discount_base_tot:0
+msgid "Discount Base (tot.)"
+msgstr "Base scont. (tot.)"
+
+#. module: electrical_sale_order
+#: field:sale.order.line,sale_discount_base:0
+msgid "Discount Base (unit.)"
+msgstr "Base scontata (unit.)"
+
+#. module: electrical_sale_order
+#: selection:sale.order,sale_base:0
+msgid "Discount price"
+msgstr "Prezzo scontato"
+
+#. module: electrical_sale_order
+#: field:sale.order.line,sale_hour_tot:0
+msgid "Hour (tot.)"
+msgstr "Ore (tot.)"
+
+#. module: electrical_sale_order
+#: field:sale.order,sale_hour_cost:0 field:sale.order.line,sale_hour_cost:0
+msgid "Hour cost"
+msgstr "Costo orario"
+
+#. module: electrical_sale_order
+#: field:sale.order.line,sale_hour_cost_tot:0
+#: field:sale.order.line,sale_hour_revenue_tot:0
+msgid "Hour cost (tot.)"
+msgstr "Costo orario (tot.)"
+
+#. module: electrical_sale_order
+#: field:sale.order,sale_hour_revenue:0
+#: field:sale.order.line,sale_hour_revenue:0
+msgid "Hour revenue"
+msgstr "Ricarico orario"
+
+#. module: electrical_sale_order
+#: field:sale.order.line,sale_hour:0
+msgid "Hours"
+msgstr "Ore"
+
+#. module: electrical_sale_order
+#: selection:sale.order,sale_base:0
+msgid "Last price"
+msgstr "Ultimo prezzo"
+
+#. module: electrical_sale_order
+#: field:sale.order,sale_margin:0
+msgid "Margin"
+msgstr "Margine"
+
+#. module: electrical_sale_order
+#: field:sale.order,sale_margin_perc:0
+msgid "Margin %"
+msgstr "Margine %"
+
+#. module: electrical_sale_order
+#: selection:sale.order,sale_base:0
+msgid "Metel pricelis"
+msgstr "Listino METEL"
+
+#. module: electrical_sale_order
+#: selection:sale.order,sale_base:0
+msgid "Net price"
+msgstr "Prezzo netto"
+
+#. module: electrical_sale_order
+#: view:sale.order:electrical_sale_order.view_sale_order_for_cost_form
+msgid "Normal view"
+msgstr "Vista normale"
+
+#. module: electrical_sale_order
+#: view:sale.order:electrical_sale_order.view_sale_order_for_cost_form
+msgid "Parameter:"
+msgstr "Parametri:"
+
+#. module: electrical_sale_order
+#: field:sale.order.line,sale_real_cost:0
+msgid "Real cost (unit.)"
+msgstr "Costo reale (unit.)"
+
+#. module: electrical_sale_order
+#: field:sale.order.line,sale_real_revenue:0
+msgid "Real revenue (unit.)"
+msgstr "Ricarico reale (unit.)"
+
+#. module: electrical_sale_order
+#: field:sale.order,sale_recharge:0
+msgid "Recharge"
+msgstr "Ricarico"
+
+#. module: electrical_sale_order
+#: field:sale.order.line,sale_recharge_tot:0
+msgid "Recharge (tot.)"
+msgstr "Ricarico (tot.)"
+
+#. module: electrical_sale_order
+#: field:sale.order.line,sale_recharge:0
+msgid "Recharge (unit.)"
+msgstr "Ricarico (unit.)"
+
+#. module: electrical_sale_order
+#: view:sale.order:electrical_sale_order.view_sale_order_for_cost_form
+msgid "Refresh"
+msgstr "Aggiorna totale"
+
+#. module: electrical_sale_order
+#: view:sale.order:electrical_sale_order.view_sale_order_for_cost_form
+msgid "Remember to update unit price after!"
+msgstr "Ricordarsi di aggiornare i prezzi unitari nell'offerta"
+
+#. module: electrical_sale_order
+#: field:sale.order,sale_base:0
+msgid "Sale base"
+msgstr "Base"
+
+#. module: electrical_sale_order
+#: field:sale.order.line,sale_discount:0
+msgid "Sale discount"
+msgstr "Scontato"
+
+#. module: electrical_sale_order
+#: view:sale.order:electrical_sale_order.view_sale_order_for_cost_form
+msgid "Sale order calc"
+msgstr "Ordine calcolato"
+
+#. module: electrical_sale_order
+#: model:ir.model,name:electrical_sale_order.model_sale_order
+msgid "Sales Order"
+msgstr "Ordine di vendita"
+
+#. module: electrical_sale_order
+#: model:ir.model,name:electrical_sale_order.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Riga ordine di vendita"
+
+#. module: electrical_sale_order
+#: field:sale.order,sale_tot_base:0
+msgid "Tot. Base"
+msgstr "Tot. Base"
+
+#. module: electrical_sale_order
+#: field:sale.order,sale_tot_discount:0
+msgid "Tot. Discount"
+msgstr "Tot. Scontato"
+
+#. module: electrical_sale_order
+#: field:sale.order,sale_tot_hour:0
+msgid "Tot. H."
+msgstr "Tot. Ore"
+
+#. module: electrical_sale_order
+#: field:sale.order,sale_tot_work_cost:0
+msgid "Tot. Work cost"
+msgstr "Tot. Costo manod."
+
+#. module: electrical_sale_order
+#: field:sale.order,sale_tot_work_revenue:0
+msgid "Tot. Work revenue"
+msgstr "Tot. Ricarico manod."
+
+#. module: electrical_sale_order
+#: field:sale.order,sale_tot_cost:0
+msgid "Tot. real cost"
+msgstr "Tot. costo reale"
+
+#. module: electrical_sale_order
+#: field:sale.order,sale_tot_revenue:0
+msgid "Tot. revenue"
+msgstr "Tot. ricarico reale"
+
+#. module: electrical_sale_order
+#: field:sale.order,sale_total:0 field:sale.order.line,sale_total:0
+msgid "Total"
+msgstr "Totale finale"
+
+#. module: electrical_sale_order
+#: view:sale.order:electrical_sale_order.view_sale_order_for_cost_form
+msgid "Total:"
+msgstr "Totale:"
+
+#. module: electrical_sale_order
+#: view:sale.order:electrical_sale_order.view_sale_order_for_cost_form
+msgid "Update base"
+msgstr "Aggiorna prezzo base"
+
+#. module: electrical_sale_order
+#: view:sale.order:electrical_sale_order.view_sale_order_for_cost_form
+msgid "Update unit price"
+msgstr "Aggiorna prezzo unitario"

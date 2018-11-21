@@ -20,7 +20,7 @@
                 <form string="Sale order calc" version="7.0">        
                     <header>
                         <button name="update_unit_price_and_return" string="Update unit price" type="object" icon="gtk-dnd" class="oe_highlight"/>
-                        <button name="return_sale_view" string="Normal view" type="object" icon="gtk-dnd" />
+                        <button name="return_sale_view" string="Normal view" type="object" icon="gtk-dnd" confirm="Remember to update unit price after!"/>
                         <button name="dummy_button" string="Refresh" type="object" icon="gtk-refresh" />
                         <field name="state" widget="statusbar"/>
                     </header>
@@ -28,8 +28,8 @@
                     <sheet>
                         <group col="10" colspan="4">
                             <separator string="Parameter:" colspan="10"/>
-                            <field name="name" />
-                            <field name="partner_id" />
+                            <field name="name" readonly="1" colspan="4"/>
+                            <field name="partner_id" colspan="4" />
                             
                             <separator string="Parameter:" colspan="10"/>
                             <field name="sale_recharge" />
