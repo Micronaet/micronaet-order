@@ -181,6 +181,52 @@ class SaleOrder(orm.Model):
     # -------------------------------------------------------------------------
     # Button events:
     # -------------------------------------------------------------------------
+    def return_sale_view(self, cr, uid, ids, context=None):
+        ''' Open normal view
+        '''
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Quotation view'),
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'res_id': ids[0],
+            'res_model': 'sale.order',
+            #'view_id': view_id, # False
+            'views': [(False, 'form'),(False, 'tree')],
+            'domain': [],
+            'context': context,
+            'target': 'current',
+            'nodestroy': False,
+            }
+        
+    def open_cost_management_view(self, cr, uid, ids, context=None):
+        ''' Open cost view management
+        '''
+        model_pool = self.pool.get('ir.model.data')
+        view_id = model_pool.get_object_reference(
+            cr, uid, 
+            'electrical_sale_order', 'view_sale_order_for_cost_form')[1]
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Cost management'),
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'res_id': ids[0],
+            'res_model': 'sale.order',
+            'view_id': view_id, # False
+            'views': [(view_id, 'form'),(False, 'tree')],
+            'domain': [],
+            'context': context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
+
+    def dummy_button(self, cr, uid, ids, context=None):
+        ''' Dummy button to update
+        '''
+        return True
+        
     def update_base_price(self, cr, uid, ids, context=None):
         ''' Update base price depend on base selected
         '''
@@ -233,7 +279,7 @@ class SaleOrder(orm.Model):
             # Calculate data from lines:                
             for line in order.order_line:
                 tot_base += line.sale_tot_base
-                tot_discount += line.sale_tot_discount
+                 tot_discount += line.sale_tot_discount
                 tot_hour += line.sale_hour
                 tot_work_cost += line.hour_cost_tot
                 tot_work_revenue += line.hour_revenue_tot
@@ -266,9 +312,9 @@ class SaleOrder(orm.Model):
         'sale_recharge': fields.float(
             'Recharge', digits_compute=dp.get_precision('Product Price')),
         'sale_hour_cost': fields.float(
-            'Hour cost', digits_compute=dp.get_precision('Product Price'),
+            'Hour cost', digits_compute=dp.get_precision('Product Price')),
         'sale_hour_revenue': fields.float(
-            'Hour revenue', digits_compute=dp.get_precision('Product Price'),
+            'Hour revenue', digits_compute=dp.get_precision('Product Price')),
         'sale_base': fields.selection([
             ('last', 'Last price'),
             ('net', 'Net price'),

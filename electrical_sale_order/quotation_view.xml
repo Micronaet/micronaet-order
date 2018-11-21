@@ -1,7 +1,70 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
+        <record model="ir.ui.view" id="view_sale_order_button_form">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <field name="state" position="before" />
+                    <button name="open_cost_management_view" string="Cost management" type="object" />
+                </field>   
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="view_sale_order_for_cost_form">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="priority" eval="40" />
+            <field name="arch" type="xml">
+                <form string="Sale order calc" version="7.0">        
+                    <header>
+                        <button name="return_sale_view" string="Normal view" type="object" />
+                        <button name="dummy_button" string="Refresh" type="object" icon="gtk-refresh" />
+                    </header>
+                    
+                    <sheet>
+                        <group col="8" colspan="4">
+                            <separator string="Parameter:" colspan="8"/>
+                            <field name="sale_recharge" />
+                            <field name="sale_hour_cost" />
+                            <field name="sale_hour_revenue" />
+                            <field name="sale_base" />
+                            <button name="update_base_price" string="Update base" type="object" colspan="2"/>
 
+                            <separator string="Total:" colspan="8"/>
+                            <field name="sale_tot_base" />
+                            <field name="sale_tot_discount" />
+                            <field name="sale_tot_hour" />
+                            <newline/>
+                            
+                            <field name="sale_tot_work_cost" />                            
+                            <field name="sale_tot_work_revenue" />
+                            <newline/>
+                            
+                            <field name="sale_tot_cost" />
+                            <field name="sale_tot_revenue" />
+                            <field name="sale_total" />                            
+                            <newline/>
+                            
+                            <field name="sale_margin" />
+                            <field name="sale_margin_perc" />
+                            <newline/>
+                            
+                            <separator string="Details:" colspan="8"/>
+                            <field name="order_line" colspan="8" nolabel="1">
+                                <tree string="Details:" editable="bottom">
+                                    <field name="product_id" />
+                                    <field name="product_uom_qty" />
+                                    
+                                </tree>                                
+                            </field>                            
+                        </group>
+                    </sheet>        
+                </form>
+            </field>
+        </record>
+        
     </data>
 </openerp>
 
