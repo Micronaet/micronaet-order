@@ -45,7 +45,7 @@ msgstr "Base scont. (tot.)"
 #. module: electrical_sale_order
 #: field:sale.order.line,sale_discount_base:0
 msgid "Discount Base (unit.)"
-msgstr "Base scontata (unit.)"
+msgstr "Base scont. (unit.)"
 
 #. module: electrical_sale_order
 #: selection:sale.order,sale_base:0

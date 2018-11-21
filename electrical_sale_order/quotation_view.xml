@@ -50,7 +50,7 @@
                             
                             <field name="sale_tot_cost" />
                             <field name="sale_tot_revenue" />
-                            <field name="sale_total" />                            
+                            <field name="sale_total" />
                             <newline/>
                             
                             <field name="sale_margin" />
@@ -68,23 +68,23 @@
                                     <field name="sale_hour" />
                                     <field name="sale_discount" />
                                     
-                                    <field name="sale_tot_base" />
+                                    <field name="sale_tot_base" sum="total"/>
                                     <field name="sale_discount_base" />
-                                    <field name="sale_discount_base_tot" />
+                                    <field name="sale_discount_base_tot" sum="total"/>
                                     
                                     <field name="sale_recharge" />
-                                    <field name="sale_recharge_tot" />
+                                    <field name="sale_recharge_tot" sum="total"/>
                                     
-                                    <field name="sale_hour_tot" />
+                                    <field name="sale_hour_tot" sum="total"/>
                                     <field name="sale_hour_cost" />
                                     <field name="sale_hour_revenue" />
-                                    <field name="sale_hour_cost_tot" />
-                                    <field name="sale_hour_revenue_tot" />
+                                    <field name="sale_hour_cost_tot" sum="total"/>
+                                    <field name="sale_hour_revenue_tot" sum="total"/>
                                     
-                                    <field name="sale_real_cost" />
-                                    <field name="sale_real_revenue" />
+                                    <field name="sale_real_cost" sum="total"/>
+                                    <field name="sale_real_revenue" sum="total"/><!--TODO NEED?-->
                                     
-                                    <field name="sale_total" />
+                                    <field name="sale_total" sum="total"/>
                                     
                                     <field name="state" invisible="1" />
                                 </tree>                                
