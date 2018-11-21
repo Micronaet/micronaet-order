@@ -184,16 +184,20 @@ class SaleOrder(orm.Model):
     # Button events:
     # -------------------------------------------------------------------------
     def update_unit_price_and_return(self, cr, uid, ids, context=None):
-        ''' Save sale_real_cost in price_unit
+        ''' Save sale_real_revenue in price_unit
         '''
         assert len(ids) == 1, 'Works only with one record a time'
         
         # Pool used:
         line_pool = self.pool.get('sale.order.line')
         
+        update_db = {}
         for line in self.browse(cr, uid, ids, context=context).order_line:
-            line_pool.write(cr, uid, line.id, {
-                'price_unit': line.sale_real_cost,
+            update_db[line.id] = line.sale_real_revenue
+            
+        for line_id in update_db:    
+            line_pool.write(cr, uid, line_id, {
+                'price_unit': update_db[line_id],
                 }, context=context)
         return self.return_sale_view(cr, uid, ids, context=context)    
         
