@@ -126,63 +126,50 @@ class SaleOrderLine(orm.Model):
         # Material:
         'sale_tot_base': fields.function(
             _get_line_sale_quotation, method=True, 
-            type='float', string='Base (tot.)', store=False, 
-            multi=True), 
+            type='float', string='Base (tot.)', multi=True), 
             
         'sale_discount_base': fields.function(
             _get_line_sale_quotation, method=True, 
-            type='float', string='Discount Base (unit.)', store=False, 
-            multi=True), 
+            type='float', string='Discount Base (unit.)', multi=True), 
         'sale_discount_base_tot': fields.function(
             _get_line_sale_quotation, method=True, 
-            type='float', string='Discount Base (tot.)', store=False, 
-            multi=True), 
+            type='float', string='Discount Base (tot.)', multi=True), 
             
         'sale_recharge': fields.function(
             _get_line_sale_quotation, method=True, 
-            type='float', string='Recharge (unit.)', store=False, 
-            multi=True), 
+            type='float', string='Recharge (unit.)', multi=True), 
         'sale_recharge_tot': fields.function(
             _get_line_sale_quotation, method=True, 
-            type='float', string='Recharge (tot.)', store=False, 
-            multi=True), 
+            type='float', string='Recharge (tot.)', multi=True), 
             
         # Work:        
         'sale_hour_tot': fields.function(
             _get_line_sale_quotation, method=True, 
-            type='float', string='Hour (tot.)', store=False, 
-            multi=True), 
+            type='float', string='Hour (tot.)', multi=True), 
         'sale_hour_cost': fields.function(
             _get_line_sale_quotation, method=True, 
-            type='float', string='Hour cost', store=False, 
-            multi=True), 
+            type='float', string='Hour cost', multi=True), 
         'sale_hour_revenue': fields.function(
             _get_line_sale_quotation, method=True, 
-            type='float', string='Hour cost', store=False, 
-            multi=True), 
+            type='float', string='Hour cost', multi=True), 
         'sale_hour_cost_tot': fields.function(
             _get_line_sale_quotation, method=True, 
-            type='float', string='Hour cost (tot.)', store=False, 
-            multi=True), 
+            type='float', string='Hour cost (tot.)', multi=True), 
         'sale_hour_revenue_tot': fields.function(
             _get_line_sale_quotation, method=True, 
-            type='float', string='Hour cost (tot.)', store=False, 
-            multi=True), 
+            type='float', string='Hour cost (tot.)', multi=True), 
             
         # Total:
         'sale_real_cost': fields.function(
             _get_line_sale_quotation, method=True, 
-            type='float', string='Real cost (unit.)', store=False, 
-            multi=True), 
+            type='float', string='Real cost (unit.)', multi=True), 
         'sale_real_revenue': fields.function(
             _get_line_sale_quotation, method=True, 
-            type='float', string='Real revenue (unit.)', store=False, 
-            multi=True), 
+            type='float', string='Real revenue (unit.)', multi=True), 
             
         'sale_total': fields.function(
             _get_line_sale_quotation, method=True, 
-            type='float', string='Total', store=False, 
-            multi=True), 
+            type='float', string='Total', multi=True), 
         }
         
 class SaleOrder(orm.Model):
@@ -292,40 +279,43 @@ class SaleOrder(orm.Model):
         # ---------------------------------------------------------------------        
         # Calculated fields:    
         # ---------------------------------------------------------------------        
-        # Total:
+        # Material:
         'sale_tot_base': fields.function(
             _get_header_sale_quotation, method=True, 
-            type='float', string='Tot. Base', store=False, multi=True), 
+            type='float', string='Tot. Base', multi=True), 
         'sale_tot_discount': fields.function(
             _get_header_sale_quotation, method=True, 
-            type='float', string='Tot. Discount', store=False, multi=True), 
+            type='float', string='Tot. Discount', multi=True), 
         'sale_tot_hour': fields.function(
             _get_header_sale_quotation, method=True, 
-            type='float', string='Tot. H.', store=False, multi=True), 
+            type='float', string='Tot. H.', multi=True), 
             
+        # Work:    
         'sale_tot_work_cost': fields.function(
             _get_header_sale_quotation, method=True, 
-            type='float', string='Tot. Work cost', store=False, multi=True), 
+            type='float', string='Tot. Work cost', multi=True), 
         'sale_tot_work_revenue': fields.function(
             _get_header_sale_quotation, method=True, 
-            type='float', string='Tot. Work revenue', store=False, multi=True), 
+            type='float', string='Tot. Work revenue', multi=True), 
 
+        # Total:
         'sale_tot_cost': fields.function(
             _get_header_sale_quotation, method=True, 
-            type='float', string='Tot. real cost', store=False, multi=True), 
+            type='float', string='Tot. real cost', multi=True), 
         'sale_tot_revenue': fields.function(
             _get_header_sale_quotation, method=True, 
-            type='float', string='Tot. revenue', store=False, multi=True), 
+            type='float', string='Tot. revenue', multi=True), 
         'sale_total': fields.function(
             _get_header_sale_quotation, method=True, 
-            type='float', string='Total', store=False, multi=True), 
+            type='float', string='Total', multi=True), 
 
+        # Margin:
         'sale_margin': fields.function(
             _get_header_sale_quotation, method=True, 
-            type='float', string='Margin', store=False, multi=True), 
+            type='float', string='Margin', multi=True), 
         'sale_margin_perc': fields.function(
             _get_header_sale_quotation, method=True, 
-            type='float', string='Margin %', store=False, multi=True), 
+            type='float', string='Margin %', multi=True), 
         }
         
     _defaults = {
