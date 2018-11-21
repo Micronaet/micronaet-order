@@ -6,15 +6,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-21 10:38+0000\n"
-"PO-Revision-Date: 2018-11-21 11:51+0100\n"
+"POT-Creation-Date: 2018-11-21 11:30+0000\n"
+"PO-Revision-Date: 2018-11-21 12:32+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
-"Language: it\n"
 "X-Generator: Poedit 1.6.10\n"
 
 #. module: electrical_sale_order
@@ -45,7 +44,7 @@ msgstr "Base scont. (tot.)"
 #. module: electrical_sale_order
 #: field:sale.order.line,sale_discount_base:0
 msgid "Discount Base (unit.)"
-msgstr "Base scont. (unit.)"
+msgstr "Base scontata (unit.)"
 
 #. module: electrical_sale_order
 #: selection:sale.order,sale_base:0
@@ -116,13 +115,8 @@ msgstr "Parametri:"
 
 #. module: electrical_sale_order
 #: field:sale.order.line,sale_real_cost:0
-msgid "Real cost (unit.)"
-msgstr "Costo reale (unit.)"
-
-#. module: electrical_sale_order
-#: field:sale.order.line,sale_real_revenue:0
-msgid "Real revenue (unit.)"
-msgstr "Ricarico reale (unit.)"
+msgid "Real cost (tot.)"
+msgstr "Costo (tot.)"
 
 #. module: electrical_sale_order
 #: field:sale.order,sale_recharge:0
@@ -157,12 +151,17 @@ msgstr "Base"
 #. module: electrical_sale_order
 #: field:sale.order.line,sale_discount:0
 msgid "Sale discount"
-msgstr "Sconto %"
+msgstr "Scontato"
 
 #. module: electrical_sale_order
 #: view:sale.order:electrical_sale_order.view_sale_order_for_cost_form
 msgid "Sale order calc"
 msgstr "Ordine calcolato"
+
+#. module: electrical_sale_order
+#: field:sale.order.line,sale_real_revenue:0
+msgid "Sale price (unit.)"
+msgstr "Prezzo di vendita (unit.)"
 
 #. module: electrical_sale_order
 #: model:ir.model,name:electrical_sale_order.model_sale_order
@@ -205,11 +204,6 @@ msgid "Tot. real cost"
 msgstr "Tot. costo reale"
 
 #. module: electrical_sale_order
-#: field:sale.order,sale_tot_revenue:0
-msgid "Tot. revenue"
-msgstr "Tot. ricarico reale"
-
-#. module: electrical_sale_order
 #: field:sale.order,sale_total:0 field:sale.order.line,sale_total:0
 msgid "Total"
 msgstr "Totale finale"
@@ -228,3 +222,8 @@ msgstr "Aggiorna prezzo base"
 #: view:sale.order:electrical_sale_order.view_sale_order_for_cost_form
 msgid "Update unit price"
 msgstr "Aggiorna prezzo unitario"
+
+#. module: electrical_sale_order
+#: view:sale.order:electrical_sale_order.view_sale_order_for_cost_form
+msgid "total"
+msgstr "total"
