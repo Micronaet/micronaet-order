@@ -27,7 +27,7 @@
                     
                     <sheet>
                         <group col="10" colspan="4">
-                            <separator string="Parameter:" colspan="10"/>
+                            <separator string="Order:" colspan="10"/>
                             <field name="name" readonly="1" colspan="4"/>
                             <field name="partner_id" colspan="4" />
                             
