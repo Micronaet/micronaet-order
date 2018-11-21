@@ -49,7 +49,6 @@
                             <newline/>
                             
                             <field name="sale_tot_cost" />
-                            <field name="sale_tot_revenue" />
                             <field name="sale_total" />
                             <newline/>
                             
@@ -82,7 +81,7 @@
                                     <field name="sale_hour_revenue_tot" sum="total"/>
                                     
                                     <field name="sale_real_cost" sum="total"/>
-                                    <field name="sale_real_revenue" sum="total"/><!--TODO NEED?-->
+                                    <field name="sale_real_revenue" />
                                     
                                     <field name="sale_total" sum="total"/>
                                     

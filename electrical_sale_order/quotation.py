@@ -164,10 +164,10 @@ class SaleOrderLine(orm.Model):
         # Total:
         'sale_real_cost': fields.function(
             _get_line_sale_quotation, method=True, 
-            type='float', string='Real cost (unit.)', multi=True), 
+            type='float', string='Real cost (tot.)', multi=True), 
         'sale_real_revenue': fields.function(
             _get_line_sale_quotation, method=True, 
-            type='float', string='Real revenue (unit.)', multi=True), 
+            type='float', string='Sale price (unit.)', multi=True), 
             
         'sale_total': fields.function(
             _get_line_sale_quotation, method=True, 
@@ -291,7 +291,6 @@ class SaleOrder(orm.Model):
             tot_work_revenue = 0.0
             
             tot_cost = 0.0
-            tot_revenue = 0.0
             total = 0.0
 
             # Calculate data from lines:                
@@ -302,7 +301,6 @@ class SaleOrder(orm.Model):
                 tot_work_cost += line.sale_hour_cost_tot
                 tot_work_revenue += line.sale_hour_revenue_tot
                 tot_cost += line.sale_real_cost
-                tot_revenue += line.sale_real_revenue
                 total += line.sale_total
 
             margin = total - tot_cost
@@ -318,7 +316,6 @@ class SaleOrder(orm.Model):
                 'sale_tot_work_cost': tot_work_cost,
                 'sale_tot_work_revenue': tot_work_revenue,
                 'sale_tot_cost': tot_cost,
-                'sale_tot_revenue': tot_revenue,
                 'sale_total': total,
                 'sale_margin': margin,
                 'sale_margin_perc': margin_perc,
@@ -366,9 +363,6 @@ class SaleOrder(orm.Model):
         'sale_tot_cost': fields.function(
             _get_header_sale_quotation, method=True, 
             type='float', string='Tot. real cost', multi=True), 
-        'sale_tot_revenue': fields.function(
-            _get_header_sale_quotation, method=True, 
-            type='float', string='Tot. revenue', multi=True), 
         'sale_total': fields.function(
             _get_header_sale_quotation, method=True, 
             type='float', string='Total', multi=True), 
