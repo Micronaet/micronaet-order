@@ -31,6 +31,7 @@
         'base',
         'sale',
         'report_aeroo',
+        #'product_search_only_code', # Code search mode
         ],
     'init_xml': [],
     'demo': [],

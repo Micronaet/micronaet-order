@@ -253,8 +253,12 @@ class SaleOrderLine(orm.Model):
             res['value']['product_id'] = False
 
         if pre_filter:
+            #res['domain']['product_id'].extend(
+            #    self.pool.get('product.product').clean_domain_filter_from_text(
+            #    cr, uid, pre_filter, context=context))
             res['domain']['product_id'].append(
                 ('default_code', 'ilike', pre_filter))
+            #print res
             res['value']['pre_filter'] = False # XXX reset filter
         return res
         
