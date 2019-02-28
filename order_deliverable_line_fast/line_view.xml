@@ -6,7 +6,7 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale_order_fast.view_sale_order_form_fast_form"/>
             <field name="arch" type="xml">
-                <button name="go_normal_view" string="Standard view" position="before"/>
+                <button name="go_normal_view" string="Standard view" position="before">
                      <button name="extract_sale_order_line" string="Righe in lista" type="object" icon="gtk-find"/>
                 </button>
             </field>
