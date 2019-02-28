@@ -1,24 +1,18 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-    <record model="ir.ui.view" id="view_sale_order_product_status_form_view">
-        <field name="name">sale.order.product.status.form</field>
-        <field name="model">sale.order</field>
-        <field name="inherit_id" ref="sale.view_order_form" />
-        <field name="arch" type="xml">
-            <!--sale.order.line HEADER:-->
-                <!---TODO add check for show hide columns-->
-            <!--<xpath expr="//page/field[@name='order_line']" position="before">
-                <field name="show_stock_status" />
-            </xpath>-->
-
-            <!--sale.order.line LINE:-->
-            <xpath expr="//page/field[@name='order_line']/tree/field[@name='product_uom_qty']" position="after">
-                <field name="mx_net_qty" />
-                <field name="mx_lord_qty" />
-            </xpath>
-        </field>
-    </record>
+    <!--
+        <record model="ir.ui.view" id="view_sale_order_product_status_form_view">
+            <field name="name">sale.order.product.status.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//page/field[@name='order_line']/tree/field[@name='product_uom_qty']" position="after">
+                    <field name="mx_net_qty" />
+                    <field name="mx_lord_qty" />
+                </xpath>
+            </field>
+        </record>
+    -->
     </data>
 </openerp>
-

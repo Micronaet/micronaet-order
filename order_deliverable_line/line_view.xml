@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_sale_order_line_extracted_tree">
+            <field name="name">sale.order.line.extracted.tree</field>
+            <field name="model">sale.order.line</field>
+            <field name="inherit_id" ref="order_open_tree_line.view_sale_order_line_extracted_tree"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="product_uom_qty" position="after">
+                    <field name="mx_net_qty" />
+                    <field name="mx_lord_qty" />                    
+                </field>                
+            </field>
+        </record>    
+
+    </data>
+</openerp>
+
