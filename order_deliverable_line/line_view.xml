@@ -8,8 +8,8 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <field name="product_uom_qty" position="after">
-                    <field name="mx_net_qty" />
-                    <field name="mx_lord_qty" />                    
+                    <field name="mx_net_qty" readonly="1"/>
+                    <field name="mx_lord_qty" readonly="1" />                    
                 </field>                
             </field>
         </record>    
