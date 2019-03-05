@@ -279,7 +279,7 @@ msgstr "Solo i rimanenti"
 #. module: order_wizard_report
 #: selection:sale.order.general.report.wizard,order_status:0
 msgid "Open order"
-msgstr "Apri ordine"
+msgstr "Ordini aperti"
 
 #. module: order_wizard_report
 #: code:addons/order_wizard_report/report/report_parser.py:102

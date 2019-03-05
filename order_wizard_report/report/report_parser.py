@@ -219,7 +219,9 @@ class Parser(report_sxw.rml_parse):
                 
             try: # for no production company:
                 if line.product_uom_maked_sync_qty > line.delivered_qty:
-                    value_b = line.product_uom_maked_sync_qty - line.delivered_qty
+                    # B = Produced + assigned:
+                    value_b = line.mx_assigned_qty + \
+                        line.product_uom_maked_sync_qty - line.delivered_qty
                 else:
                     value_b = 0
             except:
