@@ -59,16 +59,19 @@ class SaleOrderServer(orm.Model):
     def force_download_new_mail(self, cr, uid, ids, context=None):
         ''' Button to force read current mailbox
         '''
+        # Pool used:
+        user_pool = self.pool.get('res.users')
+        partner_pool = self.pool.get('res.partner')
+        message_pool = self.pool.get('sale.order.message')
+
         mail_proxy = self.browse(cr, uid, ids, context=context)[0]
         
         cr = '\r\n'
-        folder = mail_proxy.folder
-        
-        # TODO change:        
-        server = 'imap.gmail.com'
-        port = '993'
-        username = 'ced@fiam.it'
-        password = 'vainRyg8'
+        folder = mail_proxy.folder        
+        server = mail_proxy.server
+        port = mail_proxy.port
+        username = mail_proxy.username
+        password = mail_proxy.password
         SSL = True
         folder = 'INBOX'
 
@@ -128,18 +131,17 @@ class SaleOrderServer(orm.Model):
             
             # Auto user:
             # Try to search user from 'from address':
+            # TODO create in res_users field: order_emails (list or sender)
             email_address = (
                 record.get('From') or '').split('<')[-1].split('>')[0]
-            # TODO find user user_id = 1
+            user_id = uid # Current user
+            if email_address:
+                user_ids = user_pool.search(cr, uid, [
+                    ('login', '=', email_address),
+                    ], context=context)
+                if user_ids:
+                    user_id = user_ids[0]
                 
-            #if email_address:
-            #    # Search user:
-            #    user_ids = user_pool.search(cr, uid, [
-            #        ('email', '=', email_address),
-            #        ], context=context)d
-            #    if user_ids:
-            #        user_id = user_ids[0]
-
             # Parse body text:
             import pdb; pdb.set_trace() 
             if record.get('Subject', '').startswith(start['subject']):
@@ -169,11 +171,14 @@ class SaleOrderServer(orm.Model):
                          data['article'].append(line.strip())
                               
                 # TODO create sale.order.message
-                # partner cercarlo nel database
-                # articoli vedrificare il codice 
-                # errori di confersione numerici 
-                
                 # usare: data
+                # partner cercarlo nel database
+                
+                # articoli verificare il codice 
+                
+                # errori di conversione numerici 
+                                                    
+                                
             
 
             # TODO Mark as deleted (or move)<<<< AFTER ALL!!:
@@ -193,21 +198,29 @@ class SaleOrderServer(orm.Model):
     
     _columns = {
         'name': fields.char(
+            'Name', size=64, required=True, 
+            help='Mailbox name, ex.: Sales for Fiam'),            
+        'server': fields.char(
             'Server name', size=64, required=True, 
-            help='Server mail name, ex. mail.google.com'),
+            help='Server mail name, ex. mail.google.com'),            
         'folder': fields.char(
             'Folder name', size=64, required=True, 
             help='Folder where check the messages'),
-        'server': fields.char(
-            'Server', size=64, required=True, 
-            help='Indirizzo server mail'),
-        
-            
-        # TODO
-        }
+        'port': fields.integer('Port Server', required=True, 
+            help='Port Server, ex.: 993'),
+        'username': fields.char(
+            'Username', size=64, required=True, 
+            help='Username, ex. sales@example.it'),
+        'password': fields.char(
+            'Password', size=64, required=True),
+        'ssl': fields.boolean('SSL', help='Server has SSL protocol'),
+        'scheduled': fields.boolean(
+            'Scheduled', help='Will be lauched in schedule interval'),
+        } 
         
     _defaults = {
         'folder': lambda *x: 'INBOX',
+        'port': lambda *x: 993,
         }    
 
 class SaleOrderMessage(orm.Model):
@@ -222,9 +235,36 @@ class SaleOrderMessage(orm.Model):
         'name': fields.char(
             'Message ID', size=80, required=True, 
             help='ID of message on mail server'),
+
+        'user_id': fields.many2one(
+            'res.users', 'Sender',
+            help='User who send the email order'),
+        'partner_id': fields.many2one(
+            'res.partner', 'Partner', help='Sale order partner (if found)'),
+        'order_id': fields.many2one(
+            'sale.order', 'Sale order',            
+            help='Sale order created from this message'),
+        'server_id': fields.many2one(
+            'sale.order.server', 'Server',            
+            help='Mail server where message was downloaded'),
             
-        # TODO
+        'message_text': fields.text(
+            'Text', help='Text message extracted from mail'),
+        'original_text': fields.text(
+            'Original message',
+            help='Original message extracted from mail'),
+        'error_text': fields.text(
+            'Error message', help='Error found in text message'),
+            
+        'state': fields.selection([
+            ('draft', 'Draft'),
+            ('error', 'Error'),
+            ('done', 'Done'),           
+            ], 'State'),            
         }
 
-
+    _defaults = {
+        'state': lambda *x: 'draft',
+        }
+ 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
