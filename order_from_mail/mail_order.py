@@ -59,10 +59,20 @@ class SaleOrderServer(orm.Model):
     def force_download_new_mail(self, cr, uid, ids, context=None):
         ''' Button to force read current mailbox
         '''
+        def clean_float(value):
+            ''' Clean float from text
+            '''
+            try:
+                return float(value.replace(' ', '').replace(',', '.'))
+            except:
+                return 0.0    
+            
         # Pool used:
         user_pool = self.pool.get('res.users')
         partner_pool = self.pool.get('res.partner')
+        product_pool = self.pool.get ('product.product')
         message_pool = self.pool.get('sale.order.message')
+
 
         mail_proxy = self.browse(cr, uid, ids, context=context)[0]
         
@@ -151,7 +161,7 @@ class SaleOrderServer(orm.Model):
                     'article': False,
                     }
                 data = {
-                    'partner': [],
+                    'partner': [], # 0. Name, 1. Street, 2. Country, 3. VAT...
                     'article': [],
                     }
                 for line in text.split(cr):
@@ -170,16 +180,82 @@ class SaleOrderServer(orm.Model):
                     elif switch['article']:
                          data['article'].append(line.strip())
                               
-                # TODO create sale.order.message
-                # usare: data
-                # partner cercarlo nel database
+                # -------------------------------------------------------------
+                # Partner part:
+                # -------------------------------------------------------------
+                try:
+                    partner_ids = partner_pool.search(cr, uid, [
+                        ('name', '=', data['partner'][0]),
+                        ], context=context)
+                    partner_id = partner_ids[0]
+                except:
+                    _logger.error('Partner not found!')
+                    partner_id = False
                 
-                # articoli verificare il codice 
-                
-                # errori di conversione numerici 
-                                                    
-                                
-            
+                # -------------------------------------------------------------
+                # Detail:
+                # -------------------------------------------------------------
+                for line in data['article']:
+                    row = line.split('*') # TODO do better
+                    
+                    # ---------------------------------------------------------
+                    # Product:
+                    # ---------------------------------------------------------
+                    line_error = False
+                    try:
+                        default_code = row[0].strip().upper()
+                    
+                        product_ids = product_pool.search(cr,uid, [
+                            ('default_code', '=', default_code),
+                            ], context=context)
+                        if product_ids:
+                            product_id = product_ids[0]
+                    except:
+                        line_error = True
+                        _logger.error('Product code not found %s!' % line)
+                        product_id = False
+                        
+                    # ---------------------------------------------------------
+                    # Quantity:
+                    # ---------------------------------------------------------
+                    try:
+                        product_qty = clean_float(row[1]
+                    except:
+                        line_error = True
+                        _logger.error('Quantity not found %s!' % line)
+                        product_qty = 0.0    
+
+                    # ---------------------------------------------------------
+                    # Price:
+                    # ---------------------------------------------------------
+                    try:
+                        price = clean_float(row[2])
+                    except:
+                        line_error = True
+                        _logger.error('Price not found %s!' % line)
+                        price = 0.0    
+
+                    # ---------------------------------------------------------
+                    # Discount:
+                    # ---------------------------------------------------------
+                    # TODO 
+
+                    if line_error:
+                        # TODO log error
+                        continue
+                                                
+                # Create message:
+                message_pool.create(cr, uid, {
+                    'name': record.get('Message-ID'),
+                    'user_id': user_id,
+                    'partner_id': partner_id,
+                    'server_id': ids[0],
+                    'message_text': record.get('Body'),
+                    'original_text': record.get('Body'),
+                    'error_text': '', # TODO             
+                    #'state': # TODO                     
+                    }, context=context)                    
+
 
             # TODO Mark as deleted (or move)<<<< AFTER ALL!!:
             # mail.store(msg_id, '+FLAGS', '\\Deleted')
