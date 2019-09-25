@@ -82,8 +82,7 @@ class SaleOrderServer(orm.Model):
         port = mail_proxy.port
         username = mail_proxy.username
         password = mail_proxy.password
-        SSL = True
-        folder = 'INBOX'
+        SSL = mail_proxy.ssl
 
         # XXX create field for parameters?
         start = {
