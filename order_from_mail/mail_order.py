@@ -219,7 +219,7 @@ class SaleOrderServer(orm.Model):
                     # Quantity:
                     # ---------------------------------------------------------
                     try:
-                        product_qty = clean_float(row[1]
+                        product_qty = clean_float(row[1])
                     except:
                         line_error = True
                         _logger.error('Quantity not found %s!' % line)

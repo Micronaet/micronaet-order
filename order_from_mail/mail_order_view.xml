@@ -1,7 +1,15 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-
+        <record model="ir.ui.view" id="view_sale_order_server_tree">
+            <field name="name">sale.order.server.tree</field>
+            <field name="model">sale.order</field>
+            <field name="arch" type="xml">
+                <tree string="Download" editable="bottom">        
+                    <field name="name" />
+                </tree>
+            </field>
+        </record>
     </data>
 </openerp>
 
