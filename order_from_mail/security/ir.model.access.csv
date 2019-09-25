@@ -1,0 +1,4 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+access_sale_order_server_user,sale.order.server,model_sale_order_server,base.group_user,1,1,1,1
+access_sale_order_message_user,sale.order.message,model_sale_order_message,base.group_user,1,1,1,1
+
