@@ -92,14 +92,16 @@ class SaleOrderServer(orm.Model):
             'article': 'ARTICOLO',
             'end': 'FINE',
             }
-        hostname = server #server = '%s:%s' % (server, port)
+        hostname = str(server) #server = '%s:%s' % (server, port)
 
         # -----------------------------------------------------------------
         # Read all email:
         # -----------------------------------------------------------------
+        import pdb; pdb.set_trace()
         try:
             if SSL:
-                mail = imaplib.IMAP4_SSL(server)
+                mail = imaplib.IMAP4(server)            
+                #mail = imaplib.IMAP4_SSL(server)
             else:
                 mail = imaplib.IMAP4(server)            
             mail.login(username, password)            
@@ -153,7 +155,6 @@ class SaleOrderServer(orm.Model):
                     user_id = user_ids[0]
                 
             # Parse body text:
-            import pdb; pdb.set_trace() 
             if record.get('Subject', '').startswith(start['subject']):
                 text = record['Body']    
                 switch = {
