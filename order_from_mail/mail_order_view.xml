@@ -6,7 +6,7 @@
             <field name="name">sale.order.server.tree</field>
             <field name="model">sale.order.server</field>
             <field name="arch" type="xml">
-                <tree string="Download" editable="bottom">
+                <!---<tree string="Download" editable="bottom">--->
                     <field name="name" />
                     <field name="server" />
                     <field name="folder" />
@@ -15,7 +15,7 @@
                     <field name="password" />
                     <field name="ssl" />
                     <field name="scheduled" />
-                    <button name="force_download_new_mail" string="Download messages" type="object" icon="gtk-refresh"/>
+                    <!---<button name="force_download_new_mail" string="Download messages" type="object" icon="gtk-refresh"/>--->
                 </tree>
             </field>
         </record>

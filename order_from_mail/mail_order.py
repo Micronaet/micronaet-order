@@ -96,7 +96,6 @@ class SaleOrderServer(orm.Model):
         # -----------------------------------------------------------------
         # Read all email:
         # -----------------------------------------------------------------
-        import pdb; pdb.set_trace()
         try:
             if SSL:
                 mail = imaplib.IMAP4(server)            
