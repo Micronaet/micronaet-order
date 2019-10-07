@@ -62,6 +62,7 @@ class SaleOrderLine(orm.Model):
             ('order_id.state', 'not in', ('draft', 'cancel', 'sent')),
             ('order_id.mx_closed', '=', False),
             ('mx_closed', '=', False),
+            ('product_id.dynamic_bom_checked', '=', True),
             ]
 
         if 'pricelist_order' in self._columns:
