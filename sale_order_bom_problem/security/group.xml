@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+   <data>
+        <record id="group_order_bom_check_mail" model="res.groups">
+            <field name="name">Check BOM problem in order</field>
+        </record>
+   </data>
+</openerp>
