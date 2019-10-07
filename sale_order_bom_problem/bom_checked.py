@@ -62,7 +62,7 @@ class SaleOrderLine(orm.Model):
             ('order_id.state', 'not in', ('draft', 'cancel', 'sent')),
             ('order_id.mx_closed', '=', False),
             ('mx_closed', '=', False),
-            ('product_id.dynamic_bom_checked', '=', True),
+            ('product_id.dynamic_bom_checked', '=', False),
             ]
 
         if 'pricelist_order' in self._columns:
@@ -122,8 +122,8 @@ class SaleOrderLine(orm.Model):
         excel_pool.create_worksheet(ws_name)
 
         # Write header:
-        header = ['Codice', 'Nome', 'Ricorrenze', 'Check']
-        width = [20, 40, 10, 5]
+        header = ['Codice', 'Nome', 'Ricorrenze']
+        width = [20, 40, 10]
         excel_pool.column_width(ws_name, width)
 
         row = 0        
@@ -141,7 +141,6 @@ class SaleOrderLine(orm.Model):
                 product.default_code or '',
                 product.name or '',
                 total,
-                'X' if product.dynamic_bom_checked else '',
                 ], excel_format['text'])
             
         return excel_pool.send_mail_to_group(cr, uid, 
