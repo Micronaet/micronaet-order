@@ -141,6 +141,7 @@ class SaleOrderLine(orm.Model):
                 product.default_code or '',
                 product.name or '',
                 total,
+                'X' if product.dynamic_bom_checked else '',
                 ], excel_format['text'])
             
         return excel_pool.send_mail_to_group(cr, uid, 
