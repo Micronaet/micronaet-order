@@ -75,7 +75,7 @@ class SaleOrderLine(orm.Model):
 
         # ---------------------------------------------------------------------
         #                              Excel:
-        # ---------------------------------------------------------------------
+        # ---------------------------------------------------------------------        
         ws_name = 'Righe ordine'
         excel_pool.create_worksheet(ws_name)
 
@@ -99,14 +99,47 @@ class SaleOrderLine(orm.Model):
 
         row += 1
         excel_pool.write_xls_line(ws_name, row, header, excel_format['header'])
-        
+        product_list = {}
         for line in self.browse(
                 cr, uid, line_ids, context=context):
             row += 1
+            product = line.product_id
+            if product in product_list:
+                product_list[product] += 1
+            else:    
+                product_list[product] = 1
+                
             excel_pool.write_xls_line(ws_name, row, [
                 line.order_id.name, 
                 line.order_id.partner_id.name,
-                line.product_id.default_code,
+                product.default_code,
+                ], excel_format['text'])
+            
+
+        # ---------------------------------------------------------------------        
+        ws_name = 'Prodotti'
+        excel_pool.create_worksheet(ws_name)
+
+        # Write header:
+        header = ['Codice', 'Nome', 'Ricorrenze']   
+        width = [20, 40, 10]
+        excel_pool.column_width(ws_name, width)
+
+        row = 0        
+        excel_pool.write_xls_line(ws_name, row, [
+            'Elenco prodotti con ricorrenze',
+            ], excel_format['title'])
+
+        row += 1
+        excel_pool.write_xls_line(ws_name, row, header, excel_format['header'])
+        for product in sorted(product_list, key=lambda x: x.default_code):
+            row += 1
+            total = product_list[product]
+            
+            excel_pool.write_xls_line(ws_name, row, [
+                product.default_code or '',
+                product.name or '',
+                total,
                 ], excel_format['text'])
             
         return excel_pool.send_mail_to_group(cr, uid, 
