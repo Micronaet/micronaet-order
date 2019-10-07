@@ -122,8 +122,8 @@ class SaleOrderLine(orm.Model):
         excel_pool.create_worksheet(ws_name)
 
         # Write header:
-        header = ['Codice', 'Nome', 'Ricorrenze']   
-        width = [20, 40, 10]
+        header = ['Codice', 'Nome', 'Ricorrenze', 'Check']
+        width = [20, 40, 10, 5]
         excel_pool.column_width(ws_name, width)
 
         row = 0        
