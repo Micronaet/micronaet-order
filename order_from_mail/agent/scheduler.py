@@ -184,6 +184,7 @@ for mailbox in server_pool.browse(server_ids):
             # -----------------------------------------------------------------
             # Detail:
             # -----------------------------------------------------------------
+            message_article = ''
             for line in data['article']:
                 row = line.split('*') # TODO do better
                 
@@ -233,7 +234,15 @@ for mailbox in server_pool.browse(server_ids):
                 if line_error:
                     # TODO log error
                     continue
-            
+                
+                # Update message article    
+                message_article += '%s|%s|%s|%s|%s\n' % (
+                    default_code,
+                    product_qty,
+                    price, 
+                    discount,
+                    product_id,                   
+                    )
             # TODO Check valid message
                                             
             # Create message:
@@ -242,6 +251,7 @@ for mailbox in server_pool.browse(server_ids):
                 'user_id': user_id,
                 'partner_id': partner_id,
                 'server_id': mailbox.id,
+                'message_article': message_article,
                 'message_text': message_text,
                 'original_text': message_text, # record.get('Body'),
                 'error_text': '', # TODO             

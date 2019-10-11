@@ -88,6 +88,7 @@ class SaleOrderServer(orm.Model):
         start = {
             'subject': 'ORDINE',
             'partner': 'CLIENTE',
+            'deadline': 'SCADENZA',            
             'article': 'ARTICOLO',
             'end': 'FINE',
             }
@@ -157,6 +158,7 @@ class SaleOrderServer(orm.Model):
                 text = record['Body']    
                 switch = {
                     'partner': False,
+                    'deadline': False,
                     'article': False,
                     }
                 data = {
@@ -166,6 +168,9 @@ class SaleOrderServer(orm.Model):
                 for line in text.split(cr):
                     if line.startswith(start['partner']):
                         switch['partner'] = True
+                        continue
+                    if line.startswith(start['deadline']):
+                        switch['deadline'] = True
                         continue
                     if line.startswith(start['article']):
                         switch['article'] = True
@@ -248,6 +253,7 @@ class SaleOrderServer(orm.Model):
                     'name': record.get('Message-ID'),
                     'user_id': user_id,
                     'partner_id': partner_id,
+                    # TODO import deadline,
                     'server_id': ids[0],
                     'message_text': record.get('Body'),
                     'original_text': record.get('Body'),
@@ -306,11 +312,70 @@ class SaleOrderMessage(orm.Model):
     _description = 'Mail order received'
     _order = 'name'
     
+    # -------------------------------------------------------------------------
+    # Button event:
+    # -------------------------------------------------------------------------
+    def create_partner(self, cr, uid, ids, context=None):
+        ''' Create partner from message data
+        '''
+        partner_pool = self.pool.get('res.partner')
+        
+        # TODO
+        current_proxy = self.browse(cr, uid, ids, context=context)[0]
+        message_text = current_proxy.message_text
+        partner_text = message_text.split(
+            'CLIENTE')[-1].split('ARTICOLI')[0].strip()
+
+        partner_part = partner_text.split('\n')    
+        partner_name = partner_part[0]
+        domain = [
+            ('name', '=', partner_name),
+            ]
+
+        if len(partner_part) > 1: # Address
+            street = partner_part[1]
+
+        if len(partner_part) > 2: # CAP City (provincia)
+            city_complete = partner_part[2] # TODO parser
+            
+        if len(partner_part) > 3: # CAP City (provincia)
+            vat = partner_part[3] # TODO parser
+            domain = [
+                ('vat', '=', vat),
+                ]        
+            
+        partner_ids = partner_pool.search(cr, uid, domain, context=context)
+        if partner_ids:
+            partner_id = partner_ids[0]
+        else:
+            partner_id = partner_pool.create(cr, uid, {
+                'name': partner_name,
+                # TODO 
+                #street'
+                #city
+                #zip,
+                #country_id,
+                #state_id,
+                #vat,
+                }, context=context)        
+                
+        return self.write(cr, uid, ids, {
+            'partner_id': partner_id,
+            }, context=context)
+
+    def create_order(self, cr, uid, ids, context=None):
+        ''' Create order from message data
+        '''
+        # TODO 
+        return True
+        
+    
     _columns = {
         'name': fields.char(
             'Message ID', size=80, required=True, 
             help='ID of message on mail server'),
 
+        'deadline': fields.date('Deadline'),
         'user_id': fields.many2one(
             'res.users', 'Sender',
             help='User who send the email order'),
@@ -322,7 +387,11 @@ class SaleOrderMessage(orm.Model):
         'server_id': fields.many2one(
             'sale.order.server', 'Server',            
             help='Mail server where message was downloaded'),
-            
+        
+        # TODO keep it?    
+        'message_article': fields.text(
+            'Text', help='Text message csv for order line'),
+
         'message_text': fields.text(
             'Text', help='Text message extracted from mail'),
         'original_text': fields.text(

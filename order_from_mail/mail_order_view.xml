@@ -57,16 +57,20 @@
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
-                        <group colspan="4" col="4">
+                        <group colspan="4" col="5">
                             <field name="server_id" />
                             <field name="name" />
+                            <newline/>
 
                             <field name="user_id" />
                             <field name="partner_id" />
+                            <button name="create_partner" string="Create partner" type="object" attrs="{'invisible': [('partner_id','!=',False)]}" colspan="1" icon="terp-partner"/>
 
                             <field name="order_id" />
+                            <field name="deadline" />
+                            <button name="create_order" string="Create order" type="object" attrs="{'invisible': [('order_id','!=',False)]}" colspan="1" icon="gtk-execute"/>
                             
-                            <notebook colspan="4">
+                            <notebook colspan="5">
                                 <page string="Message">
                                     <group colspan="4" col="4">
                                         <separator string="Message:" colspan="4"/>
