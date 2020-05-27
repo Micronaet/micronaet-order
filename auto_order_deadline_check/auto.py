@@ -49,13 +49,12 @@ class SaleOrder(orm.Model):
     def send_sale_order_email_check(self, cr, uid, context=None):
         ''' Generate email for check deadline status
         '''
-        import pdb; pdb.set_trace()
         order_pool = self.pool.get('sale.order')
-        order_ids = sol_pool.search(cr, uid, [
-            ('order_id.state', 'not in', ('cancel', 'draft', 'sent')),
-            ('order_id.forecasted_production_id', '=', False),
+        order_ids = order_pool.search(cr, uid, [
+            ('state', 'not in', ('cancel', 'draft', 'sent')),
+            ('forecasted_production_id', '=', False),
             ('partner_id.email', '=', False),
-            ('partner_id.email_invoice_address', '=', False),
+            ('partner_id.email_invoice_id.email', '=', False),
             ], context=context)
         
         if not order_ids:    
@@ -64,7 +63,7 @@ class SaleOrder(orm.Model):
         
         partner_found = []
         body = ''    
-        for order in order_pool.browse(cr, uid, sol_ids, context=context):
+        for order in order_pool.browse(cr, uid, order_ids, context=context):
             partner = order.partner_id
             if partner in partner_found:
                 continue
