@@ -4,5 +4,8 @@
         <record id="group_order_deadline_report_admin" model="res.groups">
             <field name="name">Order deadline report admin</field>
         </record>
+        <record id="group_order_email_report_admin" model="res.groups">
+            <field name="name">Order email report admin</field>
+        </record>
     </data>
 </openerp>

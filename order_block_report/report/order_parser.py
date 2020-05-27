@@ -30,7 +30,7 @@ import openerp.addons.decimal_precision as dp
 from openerp.osv import fields, osv, expression, orm
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-from openerp import SUPERUSER_ID#, api
+from openerp import SUPERUSER_ID
 from openerp import tools
 from openerp.report import report_sxw
 from openerp.report.report_sxw import rml_parse
@@ -50,8 +50,19 @@ class Parser(report_sxw.rml_parse):
         super(Parser, self).__init__(cr, uid, name, context)
         self.localcontext.update({
             'clean_name': self.clean_name,
+            'show_the_block': self.show_the_block,
             })
 
+    def show_the_block(self, block, data):
+        ''' Check if the block need to be showed
+        '''
+        only_this_block = data.get('only_this_block')
+        if only_this_block:
+            return only_this_block == block.id
+    
+        return not block.hide_block
+            
+        
     def clean_name(self, line):
         ''' Clean line product name depend on block setup
         '''        

@@ -23,17 +23,20 @@
                               <field name="real_total" />
                               <separator string="Blocks:" colspan="3"/><button name="dummy_action" string="Refresh" type="object" class="oe_highlight" colspan="1"/>
                               <field name="block_ids" nolabel="1" colspan="4">
-                                    <tree string="Block">
+                                    <tree string="Block" colors="red:not_confirmed==True;grey:hide_block==True">
+                                        <field name="hide_block" invisible="1" />
+                                        <field name="not_confirmed" invisible="1" />
                                         <field name="code" />
                                         <field name="name" />        
-                                        <field name="show_header" />
-                                        <field name="show_detail" />
-                                        <field name="show_price" />
-                                        <field name="show_code" />
-                                        <field name="show_total" />
-                                        <field name="block_margin" />
-                                        <field name="real_total" sum="real_sum" />
-                                        <field name="total" sum="total_sum"/>
+                                        <field name="show_header" string="Intest."/>
+                                        <field name="show_detail" string="Dettaglio"/>                                        
+                                        <field name="show_price" string="Prezzo"/>
+                                        <field name="show_code" string="Codice"/>
+                                        <field name="show_total" string="Totale"/>
+                                        <field name="block_margin" string="Ricarico"/>
+                                        <field name="real_total" sum="real_sum" string="Tot. calc."/>
+                                        <field name="total" sum="total_sum" string="Tot. esposto"/>
+                                        <button name="print_only_this" string="Print only this" type="object" icon="gtk-print" />
                                     </tree>                              
                                     <form string="Block" version="7.0">
                                         <sheet>
@@ -59,6 +62,10 @@
                                                 
                                                 <field name="real_total" readonly="1"/>
                                                 <field name="total" />
+
+                                                <separator string="Order:" colspan="4"/>
+                                                <field name="hide_block" />
+                                                <field name="not_confirmed" />                                                
                                             </group>
                                         </sheet>
                                     </form>

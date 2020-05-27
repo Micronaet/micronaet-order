@@ -47,6 +47,20 @@ class SaleOrderBlockGroup(orm.Model):
     _rec_name = 'code'
     _order = 'code'
     
+    def print_only_this(self, cr, uid, ids, context=None):
+        ''' Print sale order only with this block
+        '''
+        if context is None:
+            context = {}
+            
+        sale_pool = self.pool.get('sale.order')
+        
+        current_proxy = self.browse(cr, uid, ids, context=context)
+        context['only_this_block'] = ids[0]
+        
+        return sale_pool.print_quotation(
+            cr, uid, [current_proxy.order_id.id], context=context)
+
     def _function_get_total_block(self, cr, uid, ids, fields, args, context=None):
         ''' Fields function for calculate 
         '''
@@ -64,8 +78,8 @@ class SaleOrderBlockGroup(orm.Model):
     _columns = {
         'code': fields.integer('Code', required=True),
         'name': fields.char('Name', size=64, required=True),
-        'block_margin': fields.float('Extra margin %', digits=(16, 3), 
-            help='Add extra margin to calculate real total'),
+        'block_margin': fields.float('Extra recharge %', digits=(16, 3), 
+            help='Add extra recharge to calculate real total'),
         
         'pre_text': fields.text('Pre text'),
         'post_text': fields.text('Post text'),
@@ -80,6 +94,11 @@ class SaleOrderBlockGroup(orm.Model):
         'order_id': fields.many2one('sale.order', 'Order', ondelete='cascade'),
         
         # Parameter for line:
+        'hide_block': fields.boolean(
+            'Hide block', help='Hide in report for simulation'),
+        'not_confirmed': fields.boolean(
+            'Not confirmed', help='Removed from order'),
+
         'show_header': fields.boolean('Show header'),
         'show_detail': fields.boolean('Show details'),
         'show_code': fields.boolean(
@@ -182,6 +201,9 @@ class SaleOrder(orm.Model):
         ''' This function prints the sales order and mark it as sent
             so that we can see more easily the next step of the workflow
         '''
+        if context is None:
+            context = {}
+            
         assert len(ids) == 1, \
             'This option should only be used for a single id at a time'
 
@@ -195,6 +217,10 @@ class SaleOrder(orm.Model):
             'ids': ids,
             'form': self.read(cr, uid, ids[0], context=context),
             }
+        only_this_block = context.get('only_this_block')
+        if only_this_block:
+            datas['only_this_block'] = only_this_block
+
         return {
             'type': 'ir.actions.report.xml', 
             'report_name': 'custom_block_sale_order_report', 

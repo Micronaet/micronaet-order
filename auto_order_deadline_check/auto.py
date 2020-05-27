@@ -46,6 +46,71 @@ class SaleOrder(orm.Model):
         
     _inherit = 'sale.order'
 
+    def send_sale_order_email_check(self, cr, uid, context=None):
+        ''' Generate email for check deadline status
+        '''
+        import pdb; pdb.set_trace()
+        order_pool = self.pool.get('sale.order')
+        order_ids = sol_pool.search(cr, uid, [
+            ('order_id.state', 'not in', ('cancel', 'draft', 'sent')),
+            ('order_id.forecasted_production_id', '=', False),
+            ('partner_id.email', '=', False),
+            ('partner_id.email_invoice_address', '=', False),
+            ], context=context)
+        
+        if not order_ids:    
+            _logger.info('No email missed in partner with order found!')
+            return True
+        
+        partner_found = []
+        body = ''    
+        for order in order_pool.browse(cr, uid, sol_ids, context=context):
+            partner = order.partner_id
+            if partner in partner_found:
+                continue
+            partner_found.append(partner)
+            
+            body += '''
+                <tr>
+                    <td>%s</td>                    
+                    <td>%s</td>                    
+                </tr>''' % (
+                    partner.name,
+                    partner.city or '',
+                    )
+        body = '''
+            <table>
+            </table>''' % body
+            
+        # ---------------------------------------------------------------------
+        # Send report:
+        # ---------------------------------------------------------------------        
+        # Send mail with attachment:
+        group_pool = self.pool.get('res.groups')
+        model_pool = self.pool.get('ir.model.data')
+        thread_pool = self.pool.get('mail.thread')
+        
+        group_id = model_pool.get_object_reference(
+            cr, uid, 
+            'auto_order_deadline_check', 
+            'group_order_email_report_admin')[1]    
+        partner_ids = []
+        for user in group_pool.browse(
+                cr, uid, group_id, context=context).users:
+            partner_ids.append(user.partner_id.id)
+            
+        thread_pool = self.pool.get('mail.thread')
+        thread_pool.message_post(cr, uid, False,
+            type='email', 
+            body=body, 
+            subject='Partner con ordini senza mail fatturazione o mail: %s' % (
+                datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT),
+                ),
+            partner_ids=[(6, 0, partner_ids)],
+            context=context,
+            )
+        return True    
+        
     def send_sale_order_line_deadline_check(
             self, cr, uid, context=None):
         ''' Generate email for check deadline status

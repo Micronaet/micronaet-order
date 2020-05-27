@@ -18,11 +18,12 @@
 ###############################################################################
 
 {
-    'name': 'Auto order deadline check',
+    'name': 'Auto order deadline email check',
     'version': '0.1',
     'category': 'Report',
     'description': ''' 
         Schedule auto report for check deadline status       
+        Schedule auto report for check email status       
         ''',
     'author': 'Micronaet S.r.l. - Nicola Riolini',
     'website': 'http://www.micronaet.it',
@@ -32,6 +33,7 @@
         'sale',
         'mx_close_order', 
         'production_forecast_order', 
+        'partner_extra_mail',
         ],
     'init_xml': [],
     'demo': [],
