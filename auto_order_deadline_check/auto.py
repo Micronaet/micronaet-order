@@ -49,37 +49,30 @@ class SaleOrder(orm.Model):
     def send_sale_order_email_check(self, cr, uid, context=None):
         ''' Generate email for check deadline status
         '''
-        order_pool = self.pool.get('sale.order')
-        order_ids = order_pool.search(cr, uid, [
-            ('state', 'not in', ('cancel', 'draft', 'sent')),
-            ('forecasted_production_id', '=', False),
-            ('partner_id.email', '=', False),
-            ('partner_id.email_invoice_id.email', '=', False),
-            ], context=context)
+        query = '''
+            SELECT name 
+            FROM res_partner 
+            WHERE 
+                email_invoice_id is null and 
+                email is null and 
+                id IN (
+                    SELECT distinct partner_id 
+                    FROM sale_order 
+                    WHERE 
+                        state not in ('cancel', 'draft', 'sent') and 
+                        forecasted_production_id is null);
+        '''
+        cr.execute(query)
+        partner_name = [item[0] for item in cr.fetchall()]        
         
-        if not order_ids:    
+        if not partner_name:    
             _logger.info('No email missed in partner with order found!')
             return True
         
-        partner_found = []
-        body = ''    
-        for order in order_pool.browse(cr, uid, order_ids, context=context):
-            partner = order.partner_id
-            if partner in partner_found:
-                continue
-            partner_found.append(partner)
-            
-            body += '''
-                <tr>
-                    <td>%s</td>                    
-                    <td>%s</td>                    
-                </tr>''' % (
-                    partner.name,
-                    partner.city or '',
-                    )
-        body = '''
-            <table>
-            </table>''' % body
+        body = '<table>'    
+        for name in partner_name:
+            body += '''<tr><td>%s</td></tr>''' % name
+        body += '</table>'
             
         # ---------------------------------------------------------------------
         # Send report:
