@@ -59,7 +59,7 @@ class SaleOrder(orm.Model):
                     SELECT distinct partner_id 
                     FROM sale_order 
                     WHERE 
-                        state not in ('cancel', 'draft', 'sent');
+                        state not in ('cancel', 'draft', 'sent'));
         '''
         cr.execute(query)
         partner_name = [item[0] for item in cr.fetchall()]        
