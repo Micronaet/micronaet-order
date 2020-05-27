@@ -95,7 +95,8 @@ class SaleOrder(orm.Model):
         thread_pool.message_post(cr, uid, False,
             type='email', 
             body=body, 
-            subject='Partner con ordini senza mail fatturazione o mail: %s' % (
+            subject='%s: Partner senza mail per invio fattura: %s' % (
+                cr.dbname,
                 datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT),
                 ),
             partner_ids=[(6, 0, partner_ids)],
