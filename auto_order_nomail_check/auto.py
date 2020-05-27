@@ -83,7 +83,7 @@ class SaleOrder(orm.Model):
         
         group_id = model_pool.get_object_reference(
             cr, uid, 
-            'auto_order_deadline_check', 
+            'auto_order_nomail_check', 
             'group_order_email_report_admin')[1]    
         partner_ids = []
         for user in group_pool.browse(
