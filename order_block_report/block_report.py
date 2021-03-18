@@ -305,9 +305,7 @@ class SaleOrderBlockGroup(orm.Model):
 
     _inherit = 'sale.order.block.group'
 
-
     _columns = {
-
         'line_ids': fields.one2many(
             'sale.order.line', 'block_id', 'Sale order line'),
         }
