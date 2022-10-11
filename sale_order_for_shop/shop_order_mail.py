@@ -159,7 +159,11 @@ class SaleOrder(orm.Model):
 
         return excel_pool.send_mail_to_group(cr, uid,
             'sale_order_for_shop.group_sale_order_for_shop_mail',
-            'Ordini per negozio',
-            'In allegato gli ordini del negozio',
-            'ordini_negozio.xlsx',
+            u'Ordini per negozio',
+            u'In allegato gli ordini aperti per il negozio.'
+            u'Le righe verdi rappresentano la merce pronta.'
+            u'Ci sono delle colonne di dettaglio che permettono di sapere'
+            u'quale è la quantita ordinata, quella assegnata da magazzino,'
+            u'quella prodotta, quella consegnata e la residua.',
+            u'ordini_negozio.xlsx',
             context=context)
