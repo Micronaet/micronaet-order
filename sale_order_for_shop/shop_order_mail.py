@@ -48,7 +48,6 @@ class SaleOrder(orm.Model):
             self, cr, uid, partner_id, destination_id, context=None):
         """ Report for order to the shop
         """
-        pdb.set_trace()
         # ---------------------------------------------------------------------
         # Search data order line:
         # ---------------------------------------------------------------------
@@ -144,7 +143,7 @@ class SaleOrder(orm.Model):
                 line.mx_assigned_qty,  # Stock
                 line.product_uom_maked_sync_qty,  # B
                 line.delivered_qty,  # D
-                line.remain_qty,  # Remain
+                '',  # line.remain_qty,  # Remain
 
             ], excel_format['black']['text'])
 
