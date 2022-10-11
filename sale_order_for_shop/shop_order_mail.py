@@ -81,14 +81,14 @@ class SaleOrder(orm.Model):
             # 'Partner', 'Destinazione',
             'Prodotto', 'Descrizione', 'Scadenza',
             'Produzione',
-            'Ordinata', 'Prootta', 'Consegnata', 'Residua',
+            'Ordinata', 'Assegnata', 'Prodotta', 'Consegnata', 'Residua',
              ]
         width = [
             20, 15,
             # 20, 20,
             20, 35, 15,
             15,
-            10, 10, 10, 10,
+            10, 10, 10, 10, 10,
             ]
         excel_pool.column_width(ws_name, width)
 
@@ -129,12 +129,24 @@ class SaleOrder(orm.Model):
             product = line.product_id
 
             excel_pool.write_xls_line(ws_name, row, [
+
                 order.name,
                 order.date_order,
                 # order.partner_id.name,
-                product.default_code,
+
+                product.default_code or '',
                 line.name,
-                ], excel_format['black']['text'])
+                line.date_deadline or '',
+
+                line.production_mrp_id.name or '',
+
+                line.product_uom_qty,  # OC
+                line.mx_assigned_qty,  # Stock
+                line.product_uom_maked_sync_qty,  # B
+                line.delivered_qty,  # D
+                line.remain_qty,  # Remain
+
+            ], excel_format['black']['text'])
 
         return excel_pool.send_mail_to_group(cr, uid,
             'sale_order_for_shop.group_sale_order_for_shop_mail',
