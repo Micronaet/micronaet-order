@@ -134,7 +134,7 @@ class SaleOrder(orm.Model):
             remain_qty = oc_qty - stock_qty - mrp_qty
 
             if remain_qty <= 0:
-                color_format = excel_format['red']
+                color_format = excel_format['green']
             else:
                 color_format = excel_format['black']
 
@@ -155,7 +155,6 @@ class SaleOrder(orm.Model):
                 mrp_qty,
                 delivered_qty,
                 remain_qty,
-
             ], color_format['text'])
 
         return excel_pool.send_mail_to_group(cr, uid,
