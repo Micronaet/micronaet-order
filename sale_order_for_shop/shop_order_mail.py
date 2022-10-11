@@ -44,7 +44,8 @@ class SaleOrder(orm.Model):
     # -------------------------------------------------------------------------
     # Scheduler:
     # -------------------------------------------------------------------------
-    def scheduled_sale_order_shop_mail(self, cr, uid, context=None):
+    def scheduled_sale_order_shop_mail(
+            self, cr, uid, partner_id, destination_id context=None):
         """ Report for order to the shop
         """
         pdb.set_trace()
