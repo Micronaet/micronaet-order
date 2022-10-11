@@ -138,7 +138,7 @@ class SaleOrder(orm.Model):
                 line.name,
                 line.date_deadline or '',
 
-                line.production_mrp_id.name or '',
+                line.mrp_id.name or '',
 
                 line.product_uom_qty,  # OC
                 line.mx_assigned_qty,  # Stock
