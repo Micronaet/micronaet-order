@@ -18,6 +18,7 @@
 #
 ###############################################################################
 import os
+import pdb
 import sys
 import logging
 import openerp
@@ -46,6 +47,7 @@ class SaleOrder(orm.Model):
     def scheduled_sale_order_shop_mail(self, cr, uid, context=None):
         """ Report for order to the shop
         """
+        pdb.set_trace()
         # ---------------------------------------------------------------------
         # Search data order line:
         # ---------------------------------------------------------------------
