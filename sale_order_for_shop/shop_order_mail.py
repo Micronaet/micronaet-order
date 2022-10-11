@@ -55,10 +55,6 @@ class SaleOrder(orm.Model):
         excel_pool = self.pool.get('excel.writer')
         line_pool = self.pool.get('sale.order.line')
 
-        # todo parameters:
-        partner_id = 30265
-        destination_id = 49099
-
         # Generate domain:
         domain = [
             ('order_id.partner_id', '=', partner_id),
@@ -126,7 +122,7 @@ class SaleOrder(orm.Model):
 
         row += 1
         excel_pool.write_xls_line(ws_name, row, header, excel_format['header'])
-        for line in self.browse(
+        for line in line_pool.browse(
                 cr, uid, line_ids, context=context):
             row += 1
             order = line.order_id
