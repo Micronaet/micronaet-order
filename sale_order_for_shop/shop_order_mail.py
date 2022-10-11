@@ -83,9 +83,9 @@ class SaleOrder(orm.Model):
             'Ordinata', 'Assegnata', 'Prodotta', 'Consegnata', 'Residua',
              ]
         width = [
-            20, 15,
+            18, 15,
             # 20, 20,
-            20, 35, 15,
+            15, 40, 10,
             15,
             10, 10, 10, 10, 10,
             ]
