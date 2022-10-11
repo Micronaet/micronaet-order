@@ -127,6 +127,17 @@ class SaleOrder(orm.Model):
             order = line.order_id
             product = line.product_id
 
+            oc_qty = line.product_uom_qty
+            stock_qty = line.mx_assigned_qty
+            mrp_qty = line.product_uom_maked_sync_qty
+            delivered_qty = line.delivered_qty
+            remain_qty = oc_qty - stock_qty - mrp_qty
+
+            if remain_qty <= 0:
+                color_format = excel_format['red']
+            else:
+                color_format = excel_format['black']
+
             excel_pool.write_xls_line(ws_name, row, [
 
                 order.name,
@@ -139,13 +150,13 @@ class SaleOrder(orm.Model):
 
                 line.mrp_id.name or '',
 
-                line.product_uom_qty,  # OC
-                line.mx_assigned_qty,  # Stock
-                line.product_uom_maked_sync_qty,  # B
-                line.delivered_qty,  # D
-                '',  # line.remain_qty,  # Remain
+                oc_qty,
+                stock_qty,
+                mrp_qty,
+                delivered_qty,
+                remain_qty,
 
-            ], excel_format['black']['text'])
+            ], color_format['text'])
 
         return excel_pool.send_mail_to_group(cr, uid,
             'sale_order_for_shop.group_sale_order_for_shop_mail',
