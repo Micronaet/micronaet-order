@@ -9,13 +9,17 @@
             <field name="arch" type="xml">
                  <xpath expr="//field[@name='order_line']" position="attributes">
                       <attribute name="context">{'default_order_id': active_id}</attribute>
-                 </xpath>                 
+                 </xpath>
+                 <xpath expr="//header/button[1]" position="before">
+                     <button name="export_excel_computation" type="object" string="Esporta computazionale"/>
+                 </xpath>
                  <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="before">
                      <field name="block_id" domain="[('order_id', '=', order_id)]" widget="selection"/>
+                     <field name="computational_id" />
                      <field name="categ_id" on_change="onchange_categ_id(categ_id, pre_filter)"/>
                      <field name="pre_filter" on_change="onchange_categ_id(categ_id, pre_filter)" />
                      <field name="order_id" invisible="1" />
-                 </xpath>                 
+                 </xpath>
                  <xpath expr="//page[1]" position="after">
                      <page string="Block">
                           <group colspan="4" col="4">
@@ -27,9 +31,9 @@
                                         <field name="hide_block" invisible="1" />
                                         <field name="not_confirmed" invisible="1" />
                                         <field name="code" />
-                                        <field name="name" />        
+                                        <field name="name" />
                                         <field name="show_header" string="Intest."/>
-                                        <field name="show_detail" string="Dettaglio"/>                                        
+                                        <field name="show_detail" string="Dettaglio"/>
                                         <field name="show_price" string="Prezzo"/>
                                         <field name="show_code" string="Codice"/>
                                         <field name="show_total" string="Totale"/>
@@ -37,19 +41,19 @@
                                         <field name="real_total" sum="real_sum" string="Tot. calc."/>
                                         <field name="total" sum="total_sum" string="Tot. esposto"/>
                                         <button name="print_only_this" string="Print only this" type="object" icon="gtk-print" />
-                                    </tree>                              
+                                    </tree>
                                     <form string="Block" version="7.0">
                                         <sheet>
                                             <group col="4" colspan="4">
                                                 <field name="code" />
                                                 <field name="name" />
-                                                
+
                                                 <separator string="Pre text:" colspan="2"/>
                                                 <separator string="Post text:" colspan="2"/>
 
                                                 <field name="pre_text" nolabel="1" colspan="2"/>
                                                 <field name="post_text" nolabel="1" colspan="2"/>
-                                                
+
                                                 <separator string="Show / Hide:" colspan="4"/>
                                                 <field name="show_header" />
                                                 <field name="show_detail" />
@@ -59,18 +63,18 @@
 
                                                 <field name="show_total" />
                                                 <field name="block_margin" />
-                                                
+
                                                 <field name="real_total" readonly="1"/>
                                                 <field name="total" />
 
                                                 <separator string="Order:" colspan="4"/>
                                                 <field name="hide_block" />
-                                                <field name="not_confirmed" />                                                
+                                                <field name="not_confirmed" />
                                             </group>
                                         </sheet>
                                     </form>
                               </field>
-                          </group>    
+                          </group>
                      </page>
                  </xpath>
             </field>

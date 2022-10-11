@@ -34,7 +34,7 @@ from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
     DEFAULT_SERVER_DATETIME_FORMAT,
     DATETIME_FORMATS_MAP,
     float_compare)
-
+import pdb
 
 _logger = logging.getLogger(__name__)
 
@@ -126,6 +126,185 @@ class SaleOrder(orm.Model):
     """ Model name: SaleOrder
     """
     _inherit = 'sale.order'
+
+    def export_excel_computation(self, cr, uid, ids, context=None):
+        """ Dummy button to refresh data
+        """
+        xls_pool = self.pool.get('excel.writer')
+
+        column_width = (
+            1,
+            20,
+            40, 7, 7,
+            10, 10, 10,
+        )
+        ws_name = _('Mailing list')
+        xls_pool.create_worksheet(ws_name)
+        xls_pool.column_width(ws_name, column_width)
+        xls_pool.column_hidden(ws_name, [0])
+
+        # Format
+        number_format = '#,##0.#0'
+        xls_pool.set_format(number_format=number_format)
+        excel_format = {
+            'title': xls_pool.get_format('title'),
+            'header': xls_pool.get_format('header'),
+            'total': xls_pool.get_format('number_total'),
+            'center': xls_pool.get_format('text_center_all'),
+            'right': xls_pool.get_format('text_right'),
+            'white': {
+                'text': xls_pool.get_format('bg_white'),
+                'number': xls_pool.get_format('bg_white_number'),
+            },
+            'red': {
+                'text': xls_pool.get_format('bg_red'),
+                'number': xls_pool.get_format('bg_red_number'),
+            },
+            'green': {
+                'text': xls_pool.get_format('bg_green'),
+                'number': xls_pool.get_format('bg_green_number'),
+            },
+        }
+
+        header_0 = (
+            '',
+            'Num. Ord. TARIFFA', 'DESIGNAZIONE DEI LAVORI',
+            'DIMENSIONI', '',
+            u'Quantità',
+            'IMPORTI', '',
+
+        )
+        row = 0
+        xls_pool.write_xls_line(
+            ws_name, row, header_0, default_format=excel_format['header'])
+        xls_pool.merge_cell(ws_name, [row, 1, row + 1, 1])
+        xls_pool.merge_cell(ws_name, [row, 2, row + 1, 2])
+        xls_pool.merge_cell(ws_name, [row, 3, row, 4])
+        xls_pool.merge_cell(ws_name, [row, 5, row + 1, 5])
+        xls_pool.merge_cell(ws_name, [row, 6, row, 7])
+
+        header_1 = (
+            '',
+            '',
+            '',
+            _('par. ug.'), _('lung.'),
+            '',
+            _('Unitario.'), _('Totale'),
+        )
+        row += 1
+        xls_pool.write_xls_line(
+            ws_name, row, header_1, default_format=excel_format['header'])
+
+        # Data loop:
+        old_block = False
+        old_category = False
+        category_total = 0.0
+        sequence = 0
+        for line in self.browse(cr, uid, ids, context=context)[0].order_line:
+            # Close previous
+            category = line.categ_id
+            if category_total and (
+                    line.block_id != old_block or old_category != category):
+                # Yet change block or category, total to write:
+                row += 1
+                data = [
+                    '',
+                    '',
+                    ('SOMMANO cadauno', excel_format['right']),
+                    '', '',
+                    (category_total, excel_format['total']),
+                    '', '',
+                ]
+                xls_pool.write_xls_line(
+                    ws_name, row, data,
+                    default_format=excel_format['white']['text'])
+                # ---------------------------------------------------------
+                # Close category:
+                # ---------------------------------------------------------
+                category_total = 0.0
+
+            if line.block_id != old_block:
+                old_block = line.block_id
+                old_category = False  # Change block, change category
+
+                # -------------------------------------------------------------
+                # Block data:
+                # -------------------------------------------------------------
+                row += 1
+                data = [
+                    '',
+                    '', (old_block.name, excel_format['center']),
+                    '', '', '', '', '',
+                ]
+                xls_pool.write_xls_line(
+                    ws_name, row, data,
+                    default_format=excel_format['white']['text'])
+
+            if old_category != category:
+                # New block:
+                old_category = category
+                sequence += 1
+
+                # -------------------------------------------------------------
+                # Category data:
+                # -------------------------------------------------------------
+                row += 1
+                xls_pool.row_height(ws_name, [row], height=20)
+                data = [
+                    '',
+                    sequence,
+                    line.categ_id.name,
+                    '', '', '', '', '',
+                ]
+                xls_pool.write_xls_line(
+                    ws_name, row, data,
+                    default_format=excel_format['white']['text'])
+
+                row += 1
+                data = [
+                    '',
+                    line.categ_id.id,  # TODO add code
+                    'DESCRIZIONE ' + line.categ_id.name,  # TODO long desc.
+                    '', '', '', '', '',
+                ]
+                xls_pool.write_xls_line(
+                    ws_name, row, data,
+                    default_format=excel_format['white']['text'])
+
+            # -------------------------------------------------------------
+            # Product data:
+            # -------------------------------------------------------------
+            row += 1
+            product = line.product_id
+            category_total += line.product_uom_qty
+            data = [
+                line.id,
+                product.default_code,
+                product.name,
+                '', '',  # TODO
+                (line.product_uom_qty, excel_format['white']['number']),
+                '', '',  # TODO
+            ]
+            xls_pool.write_xls_line(
+                ws_name, row, data,
+                default_format=excel_format['white']['text'])
+
+        # Close category:
+        if category_total:
+            row += 1
+            data = [
+                '',
+                '', ('SOMMANO cadauno', excel_format['right']),
+                '', '',
+                (category_total, excel_format['total']),
+                '', '',
+            ]
+            xls_pool.write_xls_line(
+                ws_name, row, data,
+                default_format=excel_format['white']['text'])
+
+        return xls_pool.return_attachment(
+            cr, uid, 'Offerta', 'offerta.xlsx', context=context)
 
     def dummy_action(self, cr, uid, ids, context=None):
         """ Dummy button to refresh data
@@ -296,6 +475,8 @@ class SaleOrderLine(orm.Model):
             'sale.order.block.group', 'Block',
             ondelete='set null'),
         'categ_id': fields.many2one('product.category', 'Category'),
+        'computational_id': fields.many2one(
+            'product.category', 'Cat. Comput.'),
         }
 
 

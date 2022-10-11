@@ -18,11 +18,11 @@
 ###############################################################################
 
 {
-    'name': 'Order block report',
+    'name': 'Shop Order mail',
     'version': '0.1',
     'category': 'Sale',
     'description': '''        
-        Order with block report level
+        Send shop order mail to group
         ''',
     'author': 'Micronaet S.r.l. - Nicola Riolini',
     'website': 'http://www.micronaet.it',
@@ -30,17 +30,12 @@
     'depends': [
         'base',
         'sale',
-        'report_aeroo',
-        # 'product_search_only_code', # Code search mode
-        'excel_export'
         ],
     'init_xml': [],
     'demo': [],
     'data': [
-        'security/ir.model.access.csv',
-
-        'block_view.xml',
-        'report/order_report.xml',
+        'security/group.xml',
+        'scheduler.xml',
         ],
     'active': False,
     'installable': True,

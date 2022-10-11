@@ -21,15 +21,9 @@ import os
 import sys
 import logging
 import openerp
-import xlsxwriter
-import pickle
-import openerp.netsvc as netsvc
-import openerp.addons.decimal_precision as dp
 from openerp.osv import fields, osv, expression, orm
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-from openerp import SUPERUSER_ID, api
-from openerp import tools
 from openerp.tools.translate import _
 from openerp.tools.float_utils import float_round as round
 from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
@@ -37,52 +31,66 @@ from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
     DATETIME_FORMATS_MAP,
     float_compare)
 
-
 _logger = logging.getLogger(__name__)
 
-class SaleOrderLine(orm.Model):
+
+class SaleOrder(orm.Model):
     """ Model name: SaleOrder
     """
 
-    _inherit = 'sale.order.line'
+    _inherit = 'sale.order'
 
     # -------------------------------------------------------------------------
     # Scheduler:
     # -------------------------------------------------------------------------
-    def sale_order_bom_uncheked(self, cr, uid, context=None):
-        ''' Report for order not BOM checked
-        '''
+    def scheduled_sale_order_shop_mail(self, cr, uid, context=None):
+        """ Report for order to the shop
+        """
         # ---------------------------------------------------------------------
         # Search data order line:
         # ---------------------------------------------------------------------
         excel_pool = self.pool.get('excel.writer')
+        line_pool = self.pool.get('sale.order.line')
+
+        # todo parameters:
+        partner_id = 30265
+        destination_id = 49099
 
         # Generate domain:
         domain = [
-            ('order_id.state', 'not in', ('draft', 'cancel', 'sent')),
+            ('order_id.partner_id', '=', partner_id),
+            ('order_id.destination_partner_id', '=', destination_id),
+            ('order_id.state', 'not in', ('draft', 'sent', 'cancel')),
             ('order_id.mx_closed', '=', False),
             ('mx_closed', '=', False),
-            ('product_id.dynamic_bom_checked', '=', False),
+            # ('order_id.pricelist_order', '=', False)
+            # ('order_id.forecasted_production_id', '=', False)
             ]
 
-        if 'pricelist_order' in self._columns:
-            domain.append(('order_id.pricelist_order', '=', False))
-
-        if 'forecasted_production_id' in self._columns:
-            domain.append(('order_id.forecasted_production_id', '=', False))
-
         _logger.info('Domain: %s' % (domain, ))
-        line_ids = self.search(cr, uid, domain, context=None)
+        line_ids = line_pool.search(cr, uid, domain, context=None)
 
         # ---------------------------------------------------------------------
         #                              Excel:
         # ---------------------------------------------------------------------
-        ws_name = 'Righe ordine'
+        ws_name = 'Dettaglio ordini negozio'
         excel_pool.create_worksheet(ws_name)
 
         # Write header:
-        header = ['Ordine', 'Partner', 'Prodotto']
-        width = [20, 40, 20]
+        header = [
+            'Ordine', 'Data',
+            # 'Partner', 'Destinazione',
+            'Prodotto', 'Descrizione', 'Scadenza',
+            'Produzione',
+            'Ordinata', 'Prootta', 'Consegnata', 'Residua',
+             ]
+        width = [
+            20, 15,
+            # 20, 20,
+            20, 35, 15,
+            15,
+            10, 10, 10, 10,
+            ]
         excel_pool.column_width(ws_name, width)
 
         # Format:
@@ -90,62 +98,48 @@ class SaleOrderLine(orm.Model):
         excel_format = {
             'title': excel_pool.get_format('title'),
             'header': excel_pool.get_format('header'),
-            'text': excel_pool.get_format('text'),
-            }
+            'black': {
+                'text': excel_pool.get_format('text'),
+                'number': excel_pool.get_format('number'),
+            },
+            'red': {
+                'text': excel_pool.get_format('bg_red'),
+                'number': excel_pool.get_format('bg_red_number'),
+            },
+            'yellow': {
+                'text': excel_pool.get_format('bg_yellow'),
+                'number': excel_pool.get_format('bg_yellow_number'),
+            },
+            'green': {
+                'text': excel_pool.get_format('bg_green'),
+                'number': excel_pool.get_format('bg_green_number'),
+            },
+        }
 
         row = 0
         excel_pool.write_xls_line(ws_name, row, [
-            'Dettaglio ordini con distinte non controllate',
+            'Dettaglio ordini per negozio (attivi)',
             ], excel_format['title'])
 
         row += 1
         excel_pool.write_xls_line(ws_name, row, header, excel_format['header'])
-        product_list = {}
         for line in self.browse(
                 cr, uid, line_ids, context=context):
             row += 1
+            order = line.order_id
             product = line.product_id
-            if product in product_list:
-                product_list[product] += 1
-            else:
-                product_list[product] = 1
 
             excel_pool.write_xls_line(ws_name, row, [
-                line.order_id.name,
-                line.order_id.partner_id.name,
+                order.name,
+                order.date_order,
+                # order.partner_id.name,
                 product.default_code,
-                ], excel_format['text'])
-
-        # ---------------------------------------------------------------------
-        ws_name = 'Prodotti'
-        excel_pool.create_worksheet(ws_name)
-
-        # Write header:
-        header = ['Codice', 'Nome', 'Ricorrenze', 'Controllata']
-        width = [20, 40, 10, 5]
-        excel_pool.column_width(ws_name, width)
-
-        row = 0
-        excel_pool.write_xls_line(ws_name, row, [
-            'Elenco prodotti con ricorrenze',
-            ], excel_format['title'])
-
-        row += 1
-        excel_pool.write_xls_line(ws_name, row, header, excel_format['header'])
-        for product in sorted(product_list, key=lambda x: x.default_code):
-            row += 1
-            total = product_list[product]
-
-            excel_pool.write_xls_line(ws_name, row, [
-                product.default_code or '',
-                product.name or '',
-                total,
-                '', # Checked!
+                line.name,
                 ], excel_format['text'])
 
         return excel_pool.send_mail_to_group(cr, uid,
-            'sale_order_bom_problem.group_order_bom_check_mail',
-            'Distinte non controllate negli ordini',
-            'In allegato gli ordini aperti senza DB controllate',
-            'controllo.xlsx',
+            'sale_order_for_shop.group_sale_order_for_shop_mail',
+            'Ordini per negozio',
+            'In allegato gli ordini del negozio',
+            'ordini_negozio.xlsx',
             context=context)

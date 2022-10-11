@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ###############################################################################
 #
 #    Copyright (C) 2001-2014 Micronaet SRL (<http://www.micronaet.it>).
@@ -16,33 +17,4 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ###############################################################################
-
-{
-    'name': 'Order block report',
-    'version': '0.1',
-    'category': 'Sale',
-    'description': '''        
-        Order with block report level
-        ''',
-    'author': 'Micronaet S.r.l. - Nicola Riolini',
-    'website': 'http://www.micronaet.it',
-    'license': 'AGPL-3',
-    'depends': [
-        'base',
-        'sale',
-        'report_aeroo',
-        # 'product_search_only_code', # Code search mode
-        'excel_export'
-        ],
-    'init_xml': [],
-    'demo': [],
-    'data': [
-        'security/ir.model.access.csv',
-
-        'block_view.xml',
-        'report/order_report.xml',
-        ],
-    'active': False,
-    'installable': True,
-    'auto_install': False,
-    }
+from . import shop_order_mail
