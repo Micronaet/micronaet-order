@@ -134,7 +134,7 @@ class SaleOrder(orm.Model):
                 # order.partner_id.name,
                 product.default_code,
                 line.name,
-                ], excel_format['text'])
+                ], excel_format['black']['text'])
 
         return excel_pool.send_mail_to_group(cr, uid,
             'sale_order_for_shop.group_sale_order_for_shop_mail',
