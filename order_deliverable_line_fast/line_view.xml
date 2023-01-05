@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
+        <!--DA ERRORE!-->
         <record model="ir.ui.view" id="view_sale_order_extract_line_form">
             <field name="name">sale.order.form</field>
             <field name="model">sale.order</field>
