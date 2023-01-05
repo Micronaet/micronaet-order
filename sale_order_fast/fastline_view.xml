@@ -316,7 +316,9 @@
                 <xpath expr="//field[@name='pricelist_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <button name="go_normal_view" position="replace"/>
+                <button name="go_normal_view" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </button>
 
                 <!--DETAILS:-->
                 <!--attribute name="options">{'create': false, 'create_edit': false}</attribute
