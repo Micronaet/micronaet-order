@@ -2,7 +2,7 @@
 <openerp>
     <data>
         <!--DA ERRORE!-->
-        <record model="ir.ui.view" id="view_sale_order_extract_line_form">
+        <!--<record model="ir.ui.view" id="view_sale_order_extract_line_form">
             <field name="name">sale.order.form</field>
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale_order_fast.view_sale_order_form_fast_form"/>
@@ -11,7 +11,7 @@
                      <button name="extract_sale_order_line" string="Righe in lista" type="object" icon="gtk-find"/>
                 </button>
             </field>
-        </record>
+        </record>-->
     </data>
 </openerp>
 
