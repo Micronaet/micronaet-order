@@ -32,9 +32,9 @@ from openerp import SUPERUSER_ID, api
 from openerp import tools
 from openerp.tools.translate import _
 from openerp.tools.float_utils import float_round as round
-from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT, 
-    DEFAULT_SERVER_DATETIME_FORMAT, 
-    DATETIME_FORMATS_MAP, 
+from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
+    DEFAULT_SERVER_DATETIME_FORMAT,
+    DATETIME_FORMATS_MAP,
     float_compare)
 
 
@@ -43,11 +43,11 @@ _logger = logging.getLogger(__name__)
 class SaleOrder(orm.Model):
     """ Model name: SaleOrder
     """
-    
+
     _inherit = 'sale.order'
-    
+
     _pickle_order_line = '~/pickle_order_line_discount_check.dmp'
-    
+
     # -------------------------------------------------------------------------
     # Scheduler:
     # -------------------------------------------------------------------------
@@ -59,25 +59,25 @@ class SaleOrder(orm.Model):
         # ---------------------------------------------------------------------
         def get_yet_used():
             ''' Read store file
-            '''       
+            '''
             filename = os.path.expanduser(self._pickle_order_line)
             try:
                 f = open(filename, 'rb')
-                res = pickle.load(f)                
+                res = pickle.load(f)
                 f.close()
                 return res
             except:
-                return []    
-            
+                return []
+
         def set_yet_used(yet_used):
             ''' Save store file
-            '''            
+            '''
             filename = os.path.expanduser(self._pickle_order_line)
             f = open(filename, 'wb')
             pickle.dump(yet_used, f)
             f.close()
             return True
-            
+
         def write_xls_mrp_line(WS, row, line):
             ''' Write line in excel file
             '''
@@ -98,7 +98,7 @@ class SaleOrder(orm.Model):
         num_format = '0.#0'
         #num_format_0 = '0.#0'
 
-        filename = '/tmp/check_discount_rate.xlsx'        
+        filename = '/tmp/check_discount_rate.xlsx'
         _logger.info('Start create file %s' % filename)
         WB = xlsxwriter.Workbook(filename)
         WS = WB.add_worksheet('Sconti')
@@ -116,7 +116,7 @@ class SaleOrder(orm.Model):
 
         xls_format_db = {
             'header': WB.add_format({
-                'bold': True, 
+                'bold': True,
                 'font_color': 'black',
                 'font_name': 'Courier 10 pitch', # 'Arial'
                 'font_size': 9,
@@ -131,7 +131,7 @@ class SaleOrder(orm.Model):
                 'font_size': 9,
                 'align': 'left',
                 'border': 1,
-                }),                    
+                }),
             'number': WB.add_format({
                 'font_name': 'Courier 10 pitch',
                 'font_size': 9,
@@ -139,7 +139,7 @@ class SaleOrder(orm.Model):
                 'border': 1,
                 'num_format': num_format,
                 }),
-                
+
             # -------------------------------------------------------------
             # With text color:
             # -------------------------------------------------------------
@@ -193,7 +193,7 @@ class SaleOrder(orm.Model):
         # Search data order line:
         # ---------------------------------------------------------------------
         line_pool = self.pool.get('sale.order.line')
-        
+
         # Generate domain:
         domain = [
             ('order_id.state', 'not in', ('draft', 'cancel', 'sent')),
@@ -204,7 +204,7 @@ class SaleOrder(orm.Model):
             domain.append(('order_id.pricelist_order', '=', False))
         if 'forecasted_production_id' in self._columns:
             domain.append(('order_id.forecasted_production_id', '=', False))
-        _logger.info('Domain: %s' % (domain, ))    
+        _logger.info('Domain: %s' % (domain, ))
         line_ids = line_pool.search(cr, uid, domain, context=None)
 
         # Write header:
@@ -215,43 +215,43 @@ class SaleOrder(orm.Model):
             ('Netto vend.', xls_format_db['header']),
             ('Netto part.', xls_format_db['header']),
             ('% Delta', xls_format_db['header']),
-            ('Delta', xls_format_db['header']),
-            ]   
+            (u'Delta €', xls_format_db['header']),
+            ]
         write_xls_mrp_line(WS, 0, header)
         write_xls_mrp_line(WS1, 0, header)
-        
+
         yet_used = get_yet_used() or []
         _logger.info('Pickle previous list: %s' % len(yet_used))
         over_ids = []
-        row = 0        
-        row1 = 0        
+        row = 0
+        row1 = 0
         for line in line_pool.browse(
                 cr, uid, line_ids, context=context):
             partner_discount_rate = line.order_id.partner_id.discount_value
-            
-            total = line.product_uom_qty * line.price_unit 
+
+            total = line.product_uom_qty * line.price_unit
             net_partner = round(
-                total * (100.0 - partner_discount_rate) / 100.0, 3)            
+                total * (100.0 - partner_discount_rate) / 100.0, 3)
             net_sale = round(line.price_subtotal, 3)
             delta = round(net_partner - net_sale, 3)
             if total:
                 delta_rate = 100.0 * (
                     (total - net_sale) / total) - partner_discount_rate
             else:
-                delta_rata = 'ERR'    
-            
+                delta_rata = 'ERR'
+
             if delta <= error_range: # sale < partner
                 continue
-            
+
             if line.id in yet_used:
                 WS_use = WS1
                 row1 += 1
                 position = row1
-            else:    
+            else:
                 WS_use = WS
                 row += 1
                 position = row
-                
+
             over_ids.append(line.id)
             if delta >= 200:
                 format_heat = xls_format_db['heat1']
@@ -263,7 +263,7 @@ class SaleOrder(orm.Model):
                 format_heat = xls_format_db['heat4']
             else:
                 format_heat = xls_format_db['heat5']
-                
+
             data = [
                 (line.order_id.name, xls_format_db['text']),
                 (line.order_id.partner_id.name, xls_format_db['text']),
@@ -274,8 +274,8 @@ class SaleOrder(orm.Model):
                 (net_partner, xls_format_db['number']),
                 (delta_rate, xls_format_db['number']),
                 (delta, format_heat),
-                ]    
-            write_xls_mrp_line(WS_use, position, data)            
+                ]
+            write_xls_mrp_line(WS_use, position, data)
 
         # Write pickle for current selection:
         set_yet_used(over_ids)
@@ -288,7 +288,7 @@ class SaleOrder(orm.Model):
         xlsx_raw = open(filename, 'rb').read()
         #b64 = xlsx_raw.encode('base64')
         attachments = [('Extra_sconti.xlsx', xlsx_raw)]
-        
+
         _logger.info('Sending status via mail: %s' % filename)
 
         # Send mail with attachment:
@@ -296,11 +296,11 @@ class SaleOrder(orm.Model):
         model_pool = self.pool.get('ir.model.data')
         thread_pool = self.pool.get('mail.thread')
         server_pool = self.pool.get('ir.mail_server')
-        
+
         group_id = model_pool.get_object_reference(
-            cr, uid, 
-            'sale_order_over_discount_check', 
-            'group_over_discount_mail')[1]    
+            cr, uid,
+            'sale_order_over_discount_check',
+            'group_over_discount_mail')[1]
         partner_ids = []
         for user in group_pool.browse(
                 cr, uid, group_id, context=context).users:
@@ -315,16 +315,16 @@ class SaleOrder(orm.Model):
             _logger.info('No mail: empty sheet 1')
             subject = 'NESSUNA VARIAZIONE EXTRA SCONTO: %s' % (
                 datetime.now().strftime(DEFAULT_SERVER_DATE_FORMAT),
-                )            
+                )
         thread_pool = self.pool.get('mail.thread')
-        thread_pool.message_post(cr, uid, False, 
-            type='email', 
-            body=_('Notifica extra sconti ordini attivi'), 
+        thread_pool.message_post(cr, uid, False,
+            type='email',
+            body=_('Notifica extra sconti ordini attivi'),
             subject=subject,
             partner_ids=[(6, 0, partner_ids)],
-            attachments=attachments, 
+            attachments=attachments,
             context=context,
             )
         return True
-        
+
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
