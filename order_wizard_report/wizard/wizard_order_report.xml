@@ -8,7 +8,7 @@
             <field name="arch" type="xml">
                 <form string="Analytic report" version="7.0">
                     <head>
-                        <button string="Cancel" special="cancel" colspan="2" />                   
+                        <button string="Cancel" special="cancel" colspan="2" />
                         <button name="print_report" type="object" string="Print" icon="gtk-print" colspan="2" class="oe_highlight"/>
                     </head>
                     <sheet>
@@ -20,7 +20,10 @@
                             <newline />
 
                             <field name="fiscal_position" />
+                            <field name="statistic_category" />
+
                             <field name="partner_id" domain="[('customer','=',True),('is_company','=',True),('is_address','=',False)]"/>
+                            <newline />
 
                             <separator string="Date filter:" colspan="4" />
                             <field name="from_date" />
@@ -31,7 +34,7 @@
 
                             <separator string="Discount limit >=:" colspan="4" attrs="{'invisible':[('report_type','!=','discount')]}" />
                             <field name="discount_limit" attrs="{'invisible':[('report_type','!=','discount')]}" />
-                            <newline />                            
+                            <newline />
 
                             <separator string="Date sort:" colspan="4" attrs="{'invisible':[('report_type','!=','extract')]}" />
                             <field name="data_sort" attrs="{'invisible':[('report_type','!=','extract')]}" />
@@ -40,7 +43,7 @@
                 </form>
             </field>
       </record>
-      
+
       <record id="action_sale_order_general_report_wizard" model="ir.actions.act_window">
         <field name="name">General report wizard</field>
         <field name="type">ir.actions.act_window</field>
@@ -51,10 +54,10 @@
       </record>
 
    <menuitem name="Order report"
-          parent="sale.menu_sale_order" 
-          id="menu_sale_order_general_report" 
-          action="action_sale_order_general_report_wizard" 
-          sequence="20" 
+          parent="sale.menu_sale_order"
+          id="menu_sale_order_general_report"
+          action="action_sale_order_general_report_wizard"
+          sequence="20"
           />
   </data>
 </openerp>
