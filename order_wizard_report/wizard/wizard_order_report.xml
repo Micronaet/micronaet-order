@@ -20,7 +20,7 @@
                             <newline />
 
                             <field name="fiscal_position" />
-                            <field name="statistic_category" />
+                            <field name="statistic_category_id" />
 
                             <field name="partner_id" domain="[('customer','=',True),('is_company','=',True),('is_address','=',False)]"/>
                             <newline />
