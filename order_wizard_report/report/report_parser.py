@@ -81,7 +81,8 @@ class Parser(report_sxw.rml_parse):
 
         fiscal_position = data.get('fiscal_position', 'all')
         partner_id = data.get('partner_id', False)
-        statistic_category = data.get('statistic_category', False)
+        statistic_category_id = data.get('statistic_category_id', False)
+        statistic_category_name = data.get('statistic_category_name', False)
         from_date = data.get('from_date', False)
         to_date = data.get('to_date', False)
         from_deadline = data.get('from_deadline', False)
@@ -117,11 +118,11 @@ class Parser(report_sxw.rml_parse):
         else: # all
             self.filter_description += _(', tutti gli ordini')
 
-        if statistic_category:
+        if statistic_category_id:
             domain.append(
                 ('partner_id.statistic_category_id', '=',
-                 statistic_category.id))
-            self.filter_description += ', %s' % statistic_category.name
+                 statistic_category_id))
+            self.filter_description += ', %s' % statistic_category_name
 
         if fiscal_position == 'italy':
             # TODO not all!!!!!

@@ -81,7 +81,16 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
         else:  # 'line'
             report_name = 'mx_order_list_line_report'
 
-        datas['statistic_category'] = wiz_proxy.statistic_category_id or False
+        statistic_category = wiz_proxy.statistic_category_id
+        if statistic_category:
+            datas['statistic_category_id'] = \
+                wiz_proxy.statistic_category_id.id
+            datas['statistic_category_name'] = \
+                wiz_proxy.statistic_category_id.name
+        else:
+            datas['statistic_category_id'] = False
+            datas['statistic_category_name'] = ''
+
         datas['partner_id'] = wiz_proxy.partner_id.id or False
         datas['fiscal_position'] = wiz_proxy.fiscal_position
         datas['from_date'] = wiz_proxy.from_date or False
@@ -120,10 +129,10 @@ class SaleOrderGeneralReportWizard(orm.TransientModel):
             'Only remain',
             help='Show only element to produce'),
 
-        'from_date': fields.date('From', help='Date >='),
-        'to_date': fields.date('To', help='Date <'),
-        'from_deadline': fields.date('From deadline', help='Date deadline >='),
-        'to_deadline': fields.date('To deadline', help='Date deadline <'),
+        'from_date': fields.date('Dalla data', help='Date >='),
+        'to_date': fields.date('Alla data', help='Date <'),
+        'from_deadline': fields.date('Dalla scadenza', help='Date deadline >='),
+        'to_deadline': fields.date('alla scadenza', help='Date deadline <'),
 
         'discount_limit': fields.char('Discount', size=64),
         'order_status': fields.selection([
