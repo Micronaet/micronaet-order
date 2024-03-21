@@ -32,16 +32,16 @@ from openerp import SUPERUSER_ID, api
 from openerp import tools
 from openerp.tools.translate import _
 from openerp.tools.float_utils import float_round as round
-from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT, 
-    DEFAULT_SERVER_DATETIME_FORMAT, 
-    DATETIME_FORMATS_MAP, 
+from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
+    DEFAULT_SERVER_DATETIME_FORMAT,
+    DATETIME_FORMATS_MAP,
     float_compare)
 
 _logger = logging.getLogger(__name__)
 
 class SaleOrderLineMaster(orm.Model):
     ''' Master element for create a grouped quotation
-    '''    
+    '''
     _name = 'sale.order.line.master'
     _description = 'Master order line'
     _order = 'order_id desc, sequence, id'
@@ -60,7 +60,7 @@ class SaleOrderLineMaster(orm.Model):
 
     _columns = {
         'sequence': fields.integer(
-            'Sequence', 
+            'Sequence',
             help="Gives the sequence order when displaying master fields."),
         'name': fields.text(
             'Description', required=True,
@@ -72,67 +72,71 @@ class SaleOrderLineMaster(orm.Model):
             'order_id',
             'pricelist_id',
             type='many2one',
-            relation='product.pricelist', 
+            relation='product.pricelist',
             string='Pricelist'),
         'date_order': fields.related(
             'order_id',
             'date_order',
-            type='datetime', 
+            type='datetime',
             string='Date order'),
         'partner_id': fields.related(
             'order_id',
             'partner_id',
             type='many2one',
-            relation='res.partner', 
+            relation='res.partner',
             string='Partner'),
         'fiscal_position': fields.related(
             'order_id',
             'fiscal_position',
             type='many2one',
-            relation='account.fiscal.position', 
+            relation='account.fiscal.position',
             string='Fiscal position'),
         'master_title': fields.text('Master title'),
         'master_note': fields.text('Master note'),
         'with_sub': fields.boolean('With subtotal'),
         'master_subtotal': fields.float(
-            'Master subtotal', 
+            'Master subtotal',
             digits=(16, 2)),
         'show_mode': fields.selection([
             ('none', 'Only master'),
             ('list', 'Master with element'),
             ('price', 'Master with element and price'),
             ], 'Show mode', required=True),
-            
+
         # Not used for now:
         'product_id': fields.many2one(
-            'product.product', 'Product', domain=[('sale_ok', '=', True)], 
-            change_default=True, 
+            'product.product', 'Product', domain=[('sale_ok', '=', True)],
+            change_default=True,
             ondelete='restrict'),
 
-        #'invoice_lines': fields.many2many('account.invoice.line', 'sale_order_line_invoice_rel', 'order_line_id', 'invoice_id', 'Invoice Lines', readonly=True, copy=False),
-        #'invoiced': fields.function(_fnct_line_invoiced, string='Invoiced', type='boolean',
+        # 'invoice_lines': fields.many2many('account.invoice.line',
+        # 'sale_order_line_invoice_rel', 'order_line_id', 'invoice_id',
+        # 'Invoice Lines', readonly=True, copy=False),
+        # 'invoiced': fields.function(_fnct_line_invoiced, string='Invoiced',
+        # type='boolean',
         #    store={
         #        'account.invoice': (_order_lines_from_invoice, ['state'], 10),
-        #        'sale.order.line': (lambda self,cr,uid,ids,ctx=None: ids, ['invoice_lines'], 10)
+        #        'sale.order.line': (lambda self,cr,uid,ids,ctx=None: ids,
+        #        ['invoice_lines'], 10)
         #    }),
         'price_unit': fields.float(
             'Unit Price',
-            digits_compute= dp.get_precision('Product Price'), 
+            digits_compute= dp.get_precision('Product Price'),
             states={'draft': [('readonly', False)]}),
         'price_subtotal': fields.float(
             'Subtotal',
-            digits_compute=dp.get_precision('Product Price'), 
+            digits_compute=dp.get_precision('Product Price'),
             states={'draft': [('readonly', False)]}),
         #'price_subtotal': fields.function(
-        #    _amount_line, string='Subtotal', 
+        #    _amount_line, string='Subtotal',
         #    digits_compute= dp.get_precision('Account')),
-        #'price_reduce': fields.function(_get_price_reduce, type='float', 
-        #    string='Price Reduce', 
+        #'price_reduce': fields.function(_get_price_reduce, type='float',
+        #    string='Price Reduce',
         #    digits_compute=dp.get_precision('Product Price')),
         'tax_id': fields.many2many(
-            'account.tax', 'sale_order_tax', 'order_line_id', 'tax_id', 
+            'account.tax', 'sale_order_tax', 'order_line_id', 'tax_id',
             'Taxes', states={'draft': [('readonly', False)]}),
-        #'address_allotment_id': fields.many2one('res.partner', 
+        #'address_allotment_id': fields.many2one('res.partner',
         #    'Allotment Partner',
         #    help="A partner to whom the particular product was allotment."),
         'product_uom_qty': fields.float(
@@ -146,9 +150,9 @@ class SaleOrderLineMaster(orm.Model):
             states={'draft': [('readonly', False)]}),
         'product_uos': fields.many2one('product.uom', 'Product UoS'),
         'discount': fields.float(
-            'Discount (%)', digits_compute= dp.get_precision('Discount'), 
+            'Discount (%)', digits_compute= dp.get_precision('Discount'),
             states={'draft': [('readonly', False)]}),
-        #'th_weight': fields.float('Weight', readonly=True, 
+        #'th_weight': fields.float('Weight', readonly=True,
         #    states={'draft': [('readonly', False)]}),
         #'state': fields.selection(
         #    [('cancel', 'Cancelled'),('draft', 'Draft'),
@@ -158,12 +162,12 @@ class SaleOrderLineMaster(orm.Model):
         #'order_partner_id': fields.related(
         #    'order_id', 'partner_id', type='many2one', relation='res.partner',
         #    store=True, string='Customer'),
-        #'salesman_id':fields.related('order_id', 'user_id', type='many2one', 
+        #'salesman_id':fields.related('order_id', 'user_id', type='many2one',
         #    relation='res.users', store=True, string='Salesperson'),
-        #'company_id': fields.related('order_id', 'company_id', 
-        #    type='many2one', relation='res.company', string='Company', 
+        #'company_id': fields.related('order_id', 'company_id',
+        #    type='many2one', relation='res.company', string='Company',
         #    store=True, readonly=True),
-        #'delay': fields.float('Delivery Lead Time', required=True, 
+        #'delay': fields.float('Delivery Lead Time', required=True,
         #    readonly=True, states={'draft': [('readonly', False)]}),
         #'procurement_ids': fields.one2many(
         #    'procurement.order', 'sale_line_id', 'Procurements'),
@@ -182,7 +186,7 @@ class SaleOrderLineMaster(orm.Model):
         #'delay': 0.0,
         'state': 'draft',
         }
-    
+
     def product_uom_change(self, cursor, user, ids, pricelist, product, qty=0,
             uom=False, qty_uos=0, uos=False, name='', partner_id=False,
             lang=False, update_tax=True, date_order=False, context=None):
@@ -194,7 +198,7 @@ class SaleOrderLineMaster(orm.Model):
                 qty=qty, uom=uom, qty_uos=qty_uos, uos=uos, name=name,
                 partner_id=partner_id, lang=lang, update_tax=update_tax,
                 date_order=date_order, context=context)
-    
+
     def product_id_change(self, cr, uid, ids, pricelist, product, qty=0, uom=False, qty_uos=0, uos=False, name='', partner_id=False, lang=False, update_tax=True, date_order=False, packaging=False, fiscal_position=False, flag=False, context=None):
         '''
         '''
@@ -305,24 +309,24 @@ class SaleOrderLineMaster(orm.Model):
                        'message' : warning_msgs
                     }
         return {'value': result, 'domain': domain, 'warning': warning}
-    
+
 
 class SaleOrderLine(orm.Model):
     ''' Master element for create a grouped quotation
-    '''    
+    '''
     _inherit = 'sale.order.line'
-    
+
     _columns = {
         'master_line_id': fields.many2one(
             'sale.order.line.master', 'Master parent', ondelete='set null'),
-            
+
         }
 
 class SaleOrderLineMaster(orm.Model):
     ''' For *many relations
-    '''    
+    '''
     _inherit = 'sale.order.line.master'
-    
+
     _columns = {
         'order_line_ids': fields.one2many(
             'sale.order.line', 'master_line_id', 'Sub line'),
@@ -330,19 +334,19 @@ class SaleOrderLineMaster(orm.Model):
 
 class SaleOrder(orm.Model):
     ''' Add extra field for manage master orders
-    '''    
+    '''
     _inherit = 'sale.order'
-    
+
     # Button event:
     def set_master_quotation(self, cr, uid, ids, context=None):
-       ''' Set boolean 
+       ''' Set boolean
        '''
        return self.write(cr, uid, ids, {
            'master_order': True
            }, context=context)
 
     def set_normal_quotation(self, cr, uid, ids, context=None):
-       ''' Set boolean 
+       ''' Set boolean
        '''
        return self.write(cr, uid, ids, {
            'master_order': False
@@ -362,7 +366,7 @@ class SaleOrder(orm.Model):
         'master_line_ids': fields.one2many('sale.order.line.master',
             'order_id', 'Master line'),
         'master_subtotal': fields.function(
-            _get_master_order, digits_compute=dp.get_precision('Account'), 
+            _get_master_order, digits_compute=dp.get_precision('Account'),
             string='Master subtotal',
             store=False,
             help="The subtotal line"),
