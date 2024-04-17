@@ -173,14 +173,25 @@ class SaleOrder(orm.Model):
             row += 1
             forecast_qty, oc_qty, available_qty = data[product]
             if forecast_qty:  # Over ordered
-                if oc_qty > forecast_qty:
-                    color = excel_format['blue']
-                elif oc_qty > 0:  # Ordered
-                    color = excel_format['white']
-                else:  # Not ordered
+
+                # Not order:
+                if oc_qty <= 0:
                     color = excel_format['yellow']
 
+                # Order:
+                elif oc_qty < forecast_qty:  # Ordered
+                    color = excel_format['white']
+
+                # Exact order
+                elif oc_qty == forecast_qty:
+                    color = excel_format['green']
+
+                # Over order:
+                else:  # if oc_qty > forecast_qty:
+                    color = excel_format['blue']
+
             else:
+                # Not forecasted:
                 color = excel_format['red']
 
             xls_pool.write_xls_line(
