@@ -36,9 +36,9 @@ from openerp.report import report_sxw
 from openerp.report.report_sxw import rml_parse
 from openerp.tools.translate import _
 from openerp.tools.float_utils import float_round as round
-from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT, 
-    DEFAULT_SERVER_DATETIME_FORMAT, 
-    DATETIME_FORMATS_MAP, 
+from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
+    DEFAULT_SERVER_DATETIME_FORMAT,
+    DATETIME_FORMATS_MAP,
     float_compare)
 
 
@@ -46,7 +46,7 @@ _logger = logging.getLogger(__name__)
 
 
 class Parser(report_sxw.rml_parse):
-    def __init__(self, cr, uid, name, context):        
+    def __init__(self, cr, uid, name, context):
         super(Parser, self).__init__(cr, uid, name, context)
         self.localcontext.update({
             'clean_name': self.clean_name,
@@ -54,22 +54,21 @@ class Parser(report_sxw.rml_parse):
             })
 
     def show_the_block(self, block, data):
-        ''' Check if the block need to be showed
-        '''
+        """ Check if the block need to be showed
+        """
         only_this_block = data.get('only_this_block')
         if only_this_block:
             return only_this_block == block.id
-    
+
         return not block.hide_block
-            
-        
+
+
     def clean_name(self, line):
-        ''' Clean line product name depend on block setup
-        '''        
+        """ Clean line product name depend on block setup
+        """
         name = line.name
         if line.block_id.show_code:
             return name
-            
-        name = name.split('] ')[-1]        
+
+        name = name.split('] ')[-1]
         return name
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

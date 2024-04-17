@@ -30,7 +30,9 @@
     'depends': [
         'base',
         'sale',
-        ],
+
+        'excel_export',
+    ],
     'init_xml': [],
     'demo': [],
     'data': [

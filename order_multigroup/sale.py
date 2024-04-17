@@ -121,7 +121,7 @@ class SaleOrderLineMaster(orm.Model):
         #    }),
         'price_unit': fields.float(
             'Unit Price',
-            digits_compute= dp.get_precision('Product Price'),
+            digits_compute= dp.get_precision('Product Price'),pre
             states={'draft': [('readonly', False)]}),
         'price_subtotal': fields.float(
             'Subtotal',

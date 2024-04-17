@@ -32,7 +32,7 @@
         'sale',
         'report_aeroo',
         # 'product_search_only_code', # Code search mode
-        'excel_export'
+        'excel_export',
         ],
     'init_xml': [],
     'demo': [],

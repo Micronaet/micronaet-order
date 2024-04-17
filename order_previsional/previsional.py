@@ -30,9 +30,9 @@ from openerp import SUPERUSER_ID, api
 from openerp import tools
 from openerp.tools.translate import _
 from openerp.tools.float_utils import float_round as round
-from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT, 
-    DEFAULT_SERVER_DATETIME_FORMAT, 
-    DATETIME_FORMATS_MAP, 
+from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
+    DEFAULT_SERVER_DATETIME_FORMAT,
+    DATETIME_FORMATS_MAP,
     float_compare)
 
 
@@ -41,21 +41,21 @@ _logger = logging.getLogger(__name__)
 
 class SaleOrder(orm.Model):
     """ Model name: SaleOrder
-    """    
+    """
     _inherit = 'sale.order'
-    
+
     _columns = {
         'previsional': fields.boolean('Previsionale'),
-        }    
-    
+        }
+
+
 class SaleOrderLine(orm.Model):
     """ Model name: SaleOrderLine
-    """    
+    """
     _inherit = 'sale.order.line'
-    
+
     _columns = {
         'previsional': fields.related(
-            'order_id', 'previsional', 
+            'order_id', 'previsional',
             type='boolean', string='Previsionale', store=False),
-        }    
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
+        }
