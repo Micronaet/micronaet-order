@@ -63,6 +63,9 @@ class SaleOrder(orm.Model):
         xls_pool = self.pool.get('excel.writer')
 
         params = context.get('force', {})
+        if not params:
+            _logger.error('No context parameter "force" to setup data')
+            return False
 
         # ---------------------------------------------------------------------
         # Collect data:
@@ -81,6 +84,7 @@ class SaleOrder(orm.Model):
             ('state', 'not in', ('draft', 'sent', 'cancel')),
             ], context=context)
 
+        pdb.set_trace()
         data = {}
         for order in order_pool.browse(cr, uid, order_ids, context=context):
             forecast = order.previsional
