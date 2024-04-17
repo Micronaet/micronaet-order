@@ -66,6 +66,7 @@ odoo = erppeek.Client(
 order_pool = odoo.model('sale.order')
 
 odoo.context = {
+    'lang': 'it_IT',
     'force': {
         'fullname': fullname,
         'partner_id': partner_id,
@@ -73,4 +74,5 @@ odoo.context = {
         'to_date': to_date,
     }}
 pdb.set_trace()
+
 order_pool.extract_report_rpc_call()

@@ -18,6 +18,7 @@
 #
 ###############################################################################
 import os
+import pdb
 import sys
 import logging
 import openerp
@@ -55,6 +56,7 @@ class SaleOrder(orm.Model):
                 'to_date': to_date,
                 }
         """
+        pdb.set_trace()
         if not context:
             context = {}
 
