@@ -148,6 +148,14 @@ class SaleOrder(orm.Model):
                 'text': xls_pool.get_format('bg_green'),
                 'number': xls_pool.get_format('bg_green_number'),
             },
+            'blue': {
+                'text': xls_pool.get_format('bg_blue'),
+                'number': xls_pool.get_format('bg_blue_number'),
+            },
+            'yellow': {
+                'text': xls_pool.get_format('bg_yellow'),
+                'number': xls_pool.get_format('bg_yellow_number'),
+            },
         }
 
         header = (
@@ -164,8 +172,14 @@ class SaleOrder(orm.Model):
         for product in sorted(data, key=lambda p: (p.default_code or '')):
             row += 1
             forecast_qty, oc_qty, available_qty = data[product]
-            if forecast_qty:
-                color = excel_format['white']
+            if forecast_qty:  # Over ordered
+                if oc_qty > forecast_qty:
+                    color = excel_format['blue']
+                elif oc_qty > 0:  # Ordered
+                    color = excel_format['white']
+                else:  # Not ordered
+                    color = excel_format['yellow']
+
             else:
                 color = excel_format['red']
 
