@@ -51,7 +51,7 @@ else:
     ref_year = year - 1
 
 from_date = '%s-09-01' % ref_year
-to_date = '%s-08-31' % ref_year
+to_date = '%s-08-31' % (ref_year + 1)
 
 # -----------------------------------------------------------------------------
 # Connect to ODOO:
