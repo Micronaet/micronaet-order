@@ -20,6 +20,8 @@
 #
 ###############################################################################
 import os
+import pdb
+
 import erppeek
 import ConfigParser
 from datetime import datetime
@@ -69,4 +71,5 @@ odoo.context = {
     'from_date': from_date,
     'to_date': to_date,
 }
+pdb.set_trace()
 order_pool.extract_report_rpc_call()
