@@ -46,7 +46,7 @@ class SaleOrder(orm.Model):
 
     _inherit = 'sale.order'
 
-    def extract_report_rpc_call(self, cr, uid, ids, context=None):
+    def extract_report_rpc_call(self, cr, uid, context=None):
         """ Extract report with force parameters:
             context['force'] = {
                 'partner_id': partner_id,  # Partner reference
