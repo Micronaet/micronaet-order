@@ -114,7 +114,7 @@ class SaleOrder(orm.Model):
         ws_name = _('Ordini previsionali')
         xls_pool.create_worksheet(ws_name)
         xls_pool.column_width(ws_name, column_width)
-        xls_pool.column_hidden(ws_name, [0])
+        # xls_pool.column_hidden(ws_name, [0])
 
         # Format
         number_format = '#,##0.#0'
