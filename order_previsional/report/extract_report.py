@@ -75,14 +75,21 @@ class SaleOrder(orm.Model):
         to_date = params.get('to_date')
         fullname = params.get('fullname')
 
-        order_ids = order_pool.search(cr, uid, [
+        domain = [
             ('partner_id', '=', partner_id),
 
             ('date_order', '>=', '%s 00:00:00' % from_date),
             ('date_order', '<=', '%s 23:59:59' % to_date),
 
             ('state', 'not in', ('draft', 'sent', 'cancel')),
-            ], context=context)
+            ]
+        order_ids = order_pool.search(cr, uid, domain, context=context)
+
+        if not order_ids:
+            _logger.error('No order found with parameters passed:\n%s' % (
+                domain,
+            ))
+            return False
 
         pdb.set_trace()
         data = {}
