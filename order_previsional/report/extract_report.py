@@ -74,6 +74,7 @@ class SaleOrder(orm.Model):
         from_date = params.get('from_date')
         to_date = params.get('to_date')
         fullname = params.get('fullname')
+        _logger.info('Exporting forecast order:\n%s' % fullname)
 
         domain = [
             ('partner_id', '=', partner_id),
@@ -91,7 +92,6 @@ class SaleOrder(orm.Model):
             ))
             return False
 
-        pdb.set_trace()
         data = {}
         for order in order_pool.browse(cr, uid, order_ids, context=context):
             forecast = order.previsional
@@ -118,7 +118,7 @@ class SaleOrder(orm.Model):
         # Excel
         # ---------------------------------------------------------------------
         column_width = (
-            15, 40,
+            15, 50,
             10, 10, 10,
             # 20,
         )
