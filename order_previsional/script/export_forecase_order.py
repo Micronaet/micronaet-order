@@ -50,8 +50,8 @@ if month >= 9:
 else:
     ref_year = year - 1
 
-from_date = '%s-%02d-01' % (ref_year, month)
-to_date = '%s-%02d-01' % (ref_year, month)
+from_date = '%s-09-01' % (ref_year, month)
+to_date = '%s-08-31' % (ref_year, month)
 
 # -----------------------------------------------------------------------------
 # Connect to ODOO:
