@@ -86,7 +86,53 @@ def write_log(event, mode='INFO', verbose=False):
 
 
 # -----------------------------------------------------------------------------
-# Paese - Zona - NAzione - Regione:
+# Paese - Zona - Nazione - Regione:
+# Invoice date:
+# -----------------------------------------------------------------------------
+# <field name="zone_id" filter_domain="[('zone_id.name','ilike',self)]"/>
+# <field name="state_id" filter_domain="[('state_id.name','ilike',self)]"/>
+# <field name="region_id" filter_domain="[('region_id.name','ilike',self)]"/>
+# <field name="country_id" filter_domain="[('country_id.name','ilike',self)]"/>
+query_file = './sql/invoice_country.sql'
+line_ids = invoice_line_pool.search([
+    ('country_id', '=', False),
+    ('type', '=', 'out_invoice')
+    ])
+counter = 0
+total = len(line_ids)
+query_f = open(query_file, 'w')
+write_log('Start update %s: Tot. %s' % (query_file, total))
+update[query_file] = [0, 0]
+if line_ids:
+    for line in invoice_line_pool.browse(line_ids):
+        counter += 1
+        try:
+            line_id = line.id
+            partner = line.invoice_id.partner_id
+            country_id = partner.country_id.id
+            print('Update %s of %s: %s' % (counter, total, country_id))
+            query = \
+                'UPDATE account_invoice_line SET country_id=\'%s\' ' \
+                'WHERE id=%s;\n' % (
+                    country_id, line_id,
+                )
+            query_f.write(query)  # Not work ORM with function fields
+            update[query_file][0] += 1
+        except:
+            update[query_file][1] += 1
+            print('%s. %s: Error updating line %s' % (
+                counter, total, line_id))
+query_f.close()
+command = 'psql -d %s -a -f %s' % (
+    dbname,
+    query_file,
+)
+write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+    query_file, total, update[query_file][0], update[query_file][1]))
+os.system(command)
+pdb.set_trace()
+
+# -----------------------------------------------------------------------------
 # Invoice date:
 # -----------------------------------------------------------------------------
 query_file = './sql/invoice_date.sql'
@@ -125,7 +171,6 @@ command = 'psql -d %s -a -f %s' % (
 write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
     query_file, total, update[query_file][0], update[query_file][1]))
 os.system(command)
-sys.exit()
 
 # -----------------------------------------------------------------------------
 # Agente:
