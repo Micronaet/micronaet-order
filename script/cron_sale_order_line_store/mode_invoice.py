@@ -98,7 +98,6 @@ total = len(line_ids)
 query_f = open(query_file, 'w')
 write_log('Start update %s: Tot. %s' % (query_file, total))
 update[query_file] = [0, 0]
-pdb.set_trace()
 if line_ids:
     for line in invoice_line_pool.browse(line_ids):
         counter += 1
@@ -124,9 +123,7 @@ command = 'psql -d %s -a -f %s' % (
 )
 write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
     query_file, total, update[query_file][0], update[query_file][1]))
-pdb.set_trace()
 os.system(command)
-pdb.set_trace()
 
 # -----------------------------------------------------------------------------
 # Regione:
@@ -141,7 +138,6 @@ total = len(line_ids)
 query_f = open(query_file, 'w')
 write_log('Start update %s: Tot. %s' % (query_file, total))
 update[query_file] = [0, 0]
-pdb.set_trace()
 if line_ids:
     for line in invoice_line_pool.browse(line_ids):
         counter += 1
@@ -167,10 +163,7 @@ command = 'psql -d %s -a -f %s' % (
 )
 write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
     query_file, total, update[query_file][0], update[query_file][1]))
-pdb.set_trace()
 os.system(command)
-pdb.set_trace()
-
 
 # -----------------------------------------------------------------------------
 # Città (state_id):
