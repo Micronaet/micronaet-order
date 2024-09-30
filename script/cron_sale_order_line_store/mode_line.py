@@ -99,7 +99,6 @@ command = 'psql -d %s -a -f %s' % (
     dbname,
     query_file,
 )
-pdb.set_trace()
 os.system(command)
 
 # -----------------------------------------------------------------------------
