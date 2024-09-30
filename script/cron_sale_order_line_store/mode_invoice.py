@@ -86,6 +86,48 @@ def write_log(event, mode='INFO', verbose=False):
 
 
 # -----------------------------------------------------------------------------
+# Paese - Zona - NAzione - Regione:
+# Invoice date:
+# -----------------------------------------------------------------------------
+query_file = './sql/invoice_date.sql'
+line_ids = invoice_line_pool.search([
+    ('date_invoice', '=', False),
+    ('type', '=', 'out_invoice')
+    ])
+counter = 0
+total = len(line_ids)
+query_f = open(query_file, 'w')
+write_log('Start update %s: Tot. %s' % (query_file, total))
+update[query_file] = [0, 0]
+if line_ids:
+    for line in invoice_line_pool.browse(line_ids):
+        counter += 1
+        try:
+            line_id = line.id
+            date_invoice = line.invoice_id.date_invoice
+            print('Update %s of %s: %s' % (counter, total, date_invoice))
+            query = \
+                'UPDATE account_invoice_line SET date_invoice=\'%s\' ' \
+                'WHERE id=%s;\n' % (
+                    date_invoice, line_id,
+                )
+            query_f.write(query)  # Not work ORM with function fields
+            update[query_file][0] += 1
+        except:
+            update[query_file][1] += 1
+            print('%s. %s: Error updating line %s' % (
+                counter, total, line_id))
+query_f.close()
+command = 'psql -d %s -a -f %s' % (
+    dbname,
+    query_file,
+)
+write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+    query_file, total, update[query_file][0], update[query_file][1]))
+os.system(command)
+sys.exit()
+
+# -----------------------------------------------------------------------------
 # Agente:
 # -----------------------------------------------------------------------------
 query_file = './sql/invoice_agent.sql'
