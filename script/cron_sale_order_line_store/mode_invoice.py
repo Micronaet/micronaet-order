@@ -70,7 +70,7 @@ odoo = erppeek.Client(
 invoice_line_pool = odoo.model('account.invoice.line')
 
 # Log file:
-log_file = 'log.sql'
+log_file = 'invoice_activity.log'
 log_f = open(log_file, 'a')
 update = {}
 
@@ -88,7 +88,7 @@ def write_log(event, mode='INFO', verbose=False):
 # -----------------------------------------------------------------------------
 # Agente:
 # -----------------------------------------------------------------------------
-query_file = 'invoice_agent.sql'
+query_file = './sql/invoice_agent.sql'
 line_ids = invoice_line_pool.search([
     ('mx_agent_id', '=', False),
     ('type', '=', 'out_invoice')
@@ -120,14 +120,15 @@ command = 'psql -d %s -a -f %s' % (
     dbname,
     query_file,
 )
-os.system(command)
 write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
     query_file, total, update[query_file][0], update[query_file][1]))
+pdb.set_trace()
+os.system(command)
 
 # -----------------------------------------------------------------------------
 # Famiglia:
 # -----------------------------------------------------------------------------
-query_file = 'invoice_family.sql'
+query_file = './sql/invoice_family.sql'
 
 line_ids = invoice_line_pool.search([
     ('family_id', '=', False),
@@ -165,14 +166,15 @@ command = 'psql -d %s -a -f %s' % (
     dbname,
     query_file,
 )
-os.system(command)
 write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
     query_file, total, update[query_file][0], update[query_file][1]))
+pdb.set_trace()
+os.system(command)
 
 # -----------------------------------------------------------------------------
 # Update season:
 # -----------------------------------------------------------------------------
-query_file = 'invoice_season.sql'
+query_file = './sql/invoice_season.sql'
 line_ids = invoice_line_pool.search([
     ('type', '=', 'out_invoice'),
     ('season_period', '=', False),
@@ -203,7 +205,8 @@ command = 'psql -d %s -a -f %s' % (
     dbname,
     query_file,
 )
-os.system(command)
 write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
     query_file, total, update[query_file][0], update[query_file][1]))
+pdb.set_trace()
+os.system(command)
 

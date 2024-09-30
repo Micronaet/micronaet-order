@@ -42,7 +42,7 @@ port = config.get('dbaccess', 'port')   # verify if it's necessary: getint
 
 
 # Log file:
-log_file = 'log.sql'
+log_file = 'sale_activity.log'
 log_f = open(log_file, 'a')
 update = {}
 
@@ -88,7 +88,7 @@ line_pool = odoo.model('sale.order.line')
 # -----------------------------------------------------------------------------
 # Agente:
 # -----------------------------------------------------------------------------
-query_file = 'order_agent.sql'
+query_file = './sql/order_agent.sql'
 
 line_ids = line_pool.search([
     ('state', 'not in', ('cancel', 'draft', 'sent')),
@@ -128,7 +128,7 @@ write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
 # -----------------------------------------------------------------------------
 # Famiglia:
 # -----------------------------------------------------------------------------
-query_file = 'order_family.sql'
+query_file = './sql/order_family.sql'
 
 line_ids = line_pool.search([
     ('state', 'not in', ('cancel', 'draft', 'sent')),
@@ -174,7 +174,7 @@ write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
 # -----------------------------------------------------------------------------
 # Update season:
 # -----------------------------------------------------------------------------
-query_file = 'order_season.sql'
+query_file = './sql/order_season.sql'
 line_ids = line_pool.search([
     ('state', 'not in', ('cancel', 'draft', 'sent')),
     ('season_period', '=', False),
