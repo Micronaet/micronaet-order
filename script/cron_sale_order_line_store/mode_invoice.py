@@ -84,11 +84,55 @@ def write_log(event, mode='INFO', verbose=False):
         event,
     ))
 
+
 # -----------------------------------------------------------------------------
-# Città - Zona - Regione:
+# Regione - Zona:
 # -----------------------------------------------------------------------------
 # <field name="zone_id" filter_domain="[('zone_id.name','ilike',self)]"/>
-# <field name="region_id" filter_domain="[('region_id.name','ilike',self)]"/>
+query_file = './sql/region_state.sql'
+line_ids = invoice_line_pool.search([
+    ('region_id', '=', False),
+    ('type', '=', 'out_invoice')
+    ])
+counter = 0
+total = len(line_ids)
+query_f = open(query_file, 'w')
+write_log('Start update %s: Tot. %s' % (query_file, total))
+update[query_file] = [0, 0]
+pdb.set_trace()
+if line_ids:
+    for line in invoice_line_pool.browse(line_ids):
+        counter += 1
+        try:
+            line_id = line.id
+            region_id = line.invoice_id.partner_id.state_id.region_id.id
+            print('Update %s of %s: %s' % (counter, total, region_id))
+            query = \
+                'UPDATE account_invoice_line SET region_id=\'%s\' ' \
+                'WHERE id=%s;\n' % (
+                    region_id, line_id,
+                )
+            query_f.write(query)  # Not work ORM with function fields
+            update[query_file][0] += 1
+        except:
+            update[query_file][1] += 1
+            print('%s. %s: Error updating line %s' % (
+                counter, total, line_id))
+query_f.close()
+command = 'psql -d %s -a -f %s' % (
+    dbname,
+    query_file,
+)
+write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+    query_file, total, update[query_file][0], update[query_file][1]))
+pdb.set_trace()
+os.system(command)
+pdb.set_trace()
+
+
+# -----------------------------------------------------------------------------
+# Città (state_id):
+# -----------------------------------------------------------------------------
 query_file = './sql/invoice_state.sql'
 line_ids = invoice_line_pool.search([
     ('state_id', '=', False),
@@ -99,7 +143,6 @@ total = len(line_ids)
 query_f = open(query_file, 'w')
 write_log('Start update %s: Tot. %s' % (query_file, total))
 update[query_file] = [0, 0]
-pdb.set_trace()
 if line_ids:
     for line in invoice_line_pool.browse(line_ids):
         counter += 1
@@ -127,7 +170,6 @@ command = 'psql -d %s -a -f %s' % (
 write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
     query_file, total, update[query_file][0], update[query_file][1]))
 os.system(command)
-pdb.set_trace()
 
 # -----------------------------------------------------------------------------
 # Nazione:
