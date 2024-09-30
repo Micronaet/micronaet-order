@@ -85,7 +85,9 @@ for line in line_pool.browse(line_ids):
     counter += 1
     try:
         line_id = line.id
+        product_name = 'Non trovato'
         product = line.product_id
+        product_name = product.name
         product_family_id = product.product_family_id.id
         print('Update %s of %s: %s' % (counter, total, product_family_id))
 
@@ -95,7 +97,7 @@ for line in line_pool.browse(line_ids):
             )
         query_f.write(query)  # Not work ORM with function fields
     except:
-        print('Error updating line %s' % line_id)
+        print('Error updating line %s >> %s' % (line_id, product_name))
 
 query_f.close()
 
