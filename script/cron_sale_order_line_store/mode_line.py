@@ -42,7 +42,8 @@ port = config.get('dbaccess', 'port')   # verify if it's necessary: getint
 
 
 # Log file:
-log_file = './log/sale_activity.log'
+object = 'SALE'
+log_file = './log/%s_activity.log' % object
 log_f = open(log_file, 'a')
 update = {}
 
@@ -99,6 +100,7 @@ total = len(line_ids)
 query_f = open(query_file, 'w')
 write_log('Start update %s: Tot. %s' % (query_file, total))
 update[query_file] = [0, 0]
+pdb.set_trace()
 for line in line_pool.browse(line_ids):
     counter += 1
     try:
@@ -121,9 +123,10 @@ command = 'psql -d %s -a -f %s' % (
     dbname,
     query_file,
 )
-os.system(command)
 write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
     query_file, total, update[query_file][0], update[query_file][1]))
+pdb.set_trace()
+os.system(command)
 
 # -----------------------------------------------------------------------------
 # Famiglia:
@@ -139,6 +142,7 @@ total = len(line_ids)
 query_f = open(query_file, 'w')
 write_log('Start update %s: Tot. %s' % (query_file, total))
 update[query_file] = [0, 0]
+pdb.set_trace()
 for line in line_pool.browse(line_ids):
     counter += 1
     try:
@@ -160,16 +164,15 @@ for line in line_pool.browse(line_ids):
         print('%s. %s: Error updating line %s >> %s' % (
             counter, total, line_id, product_name))
         update[query_file][1] += 1
-
 query_f.close()
-
 command = 'psql -d %s -a -f %s' % (
     dbname,
     query_file,
 )
-os.system(command)
 write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
     query_file, total, update[query_file][0], update[query_file][1]))
+pdb.set_trace()
+os.system(command)
 
 # -----------------------------------------------------------------------------
 # Update season:
@@ -184,6 +187,7 @@ total = len(line_ids)
 query_f = open(query_file, 'w')
 write_log('Start update %s: Tot. %s' % (query_file, total))
 update[query_file] = [0, 0]
+pdb.set_trace()
 for line in line_pool.browse(line_ids):
     counter += 1
     order = line.order_id
@@ -204,7 +208,8 @@ command = 'psql -d %s -a -f %s' % (
     dbname,
     query_file,
 )
-os.system(command)
 write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
     query_file, total, update[query_file][0], update[query_file][1]))
+pdb.set_trace()
+os.system(command)
 
