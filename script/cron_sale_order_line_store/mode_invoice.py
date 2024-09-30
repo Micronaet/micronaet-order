@@ -41,14 +41,14 @@ server = config.get('dbaccess', 'server')
 port = config.get('dbaccess', 'port')   # verify if it's necessary: getint
 
 
-def get_season_from_date(date_order):
+def get_season_from_date(date_invoice):
     """ Return season from date
     """
     start_month = '09'
-    if not date_order:
+    if not date_invoice:
         return False
-    current_month = date_order[5:7]
-    year = int(date_order[2:4])
+    current_month = date_invoice[5:7]
+    year = int(date_invoice[2:4])
     if current_month >= start_month:  # [09 : 12]
         return '%02d-%02d' % (year, year + 1)
     else:  # [01 : 08]
@@ -122,7 +122,6 @@ command = 'psql -d %s -a -f %s' % (
 )
 write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
     query_file, total, update[query_file][0], update[query_file][1]))
-pdb.set_trace()
 os.system(command)
 
 # -----------------------------------------------------------------------------
@@ -168,7 +167,6 @@ command = 'psql -d %s -a -f %s' % (
 )
 write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
     query_file, total, update[query_file][0], update[query_file][1]))
-pdb.set_trace()
 os.system(command)
 
 # -----------------------------------------------------------------------------
@@ -187,7 +185,7 @@ update[query_file] = [0, 0]
 for line in invoice_line_pool.browse(line_ids):
     counter += 1
     invoice = line.invoice_id
-    date_invoice = invoice.date_order
+    date_invoice = invoice.date_invoice
     season_period = get_season_from_date(date_invoice)
     print('Update %s of %s: %s >> %s' % (
         counter, total, date_invoice, season_period))
@@ -207,6 +205,5 @@ command = 'psql -d %s -a -f %s' % (
 )
 write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
     query_file, total, update[query_file][0], update[query_file][1]))
-pdb.set_trace()
 os.system(command)
 
