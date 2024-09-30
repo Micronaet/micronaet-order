@@ -85,10 +85,9 @@ def write_log(event, mode='INFO', verbose=False):
     ))
 
 # -----------------------------------------------------------------------------
-# Paese - Zona - Regione:
+# Città - Zona - Regione:
 # -----------------------------------------------------------------------------
 # <field name="zone_id" filter_domain="[('zone_id.name','ilike',self)]"/>
-# <field name="state_id" filter_domain="[('state_id.name','ilike',self)]"/>
 # <field name="region_id" filter_domain="[('region_id.name','ilike',self)]"/>
 query_file = './sql/invoice_state.sql'
 line_ids = invoice_line_pool.search([
