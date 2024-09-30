@@ -77,13 +77,35 @@ line_ids = line_pool.search([
 counter = 0
 import pdb; pdb.set_trace()
 total = len(line_ids)
+query_file = 'order_season.sql'
+query_f = open(query_file, 'w')
 for line in line_pool.browse(line_ids):
     counter += 1
     order = line.order_id
     date_order = order.date_order
     season_period = get_season_from_date(date_order)
-    line_pool.write([line.id], {
-        'season_period': season_period,
-    })
     print('Update %s of %s: %s >> %s' % (
         counter, total, date_order, season_period))
+
+    query = \
+        'UPDATE sale_order_line set season_period=\'%s\' WHERE id=%s;\n' % (
+            season_period, line.id,
+        )
+    print(query)
+    query_f.write(query)
+    break
+
+    # Non scrive
+    # line_pool.write([line.id], {
+    #    'season_period': season_period,
+    # })
+query_f.close()
+
+command = 'psql -h %s -U %s -d %s -a -f %s' % (
+    server,
+    user,
+    dbname,
+    query_file,
+)
+pdb.set_trace()
+os.system(command)
