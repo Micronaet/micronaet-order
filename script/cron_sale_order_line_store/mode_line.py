@@ -69,15 +69,51 @@ odoo = erppeek.Client(
 line_pool = odoo.model('sale.order.line')
 
 # -----------------------------------------------------------------------------
-# 1. Update season:
+# Famiglia:
 # -----------------------------------------------------------------------------
+query_file = 'order_family.sql'
+
+line_ids = line_pool.search([
+    ('state', 'not in', ('cancel', 'draft', 'sent')),
+    ('family_id', '=', False),
+    ])
+counter = 0
+total = len(line_ids)
+query_f = open(query_file, 'w')
+pdb.set_trace()
+for line in line_pool.browse(line_ids):
+    counter += 1
+    try:
+        product = line.product_id
+        product_family_id = product.product_family_id.id
+        print('Update %s of %s: %s' % (counter, total, product_family_id))
+
+    query = \
+        'UPDATE sale_order_line set family_id=\'%s\' WHERE id=%s;\n' % (
+            product_family_id, line.id,
+        )
+    query_f.write(query)  # Not work ORM with function fields
+
+query_f.close()
+
+command = 'psql -d %s -a -f %s' % (
+    dbname,
+    query_file,
+)
+pdb.set_trace()
+os.system(command)
+
+# -----------------------------------------------------------------------------
+# Update season:
+# -----------------------------------------------------------------------------
+query_file = 'order_season.sql'
+
 line_ids = line_pool.search([
     ('state', 'not in', ('cancel', 'draft', 'sent')),
     ('season_period', '=', False),
     ])
 counter = 0
 total = len(line_ids)
-query_file = 'order_season.sql'
 query_f = open(query_file, 'w')
 for line in line_pool.browse(line_ids):
     counter += 1
@@ -99,5 +135,5 @@ command = 'psql -d %s -a -f %s' % (
     dbname,
     query_file,
 )
-pdb.set_trace()
 os.system(command)
+
