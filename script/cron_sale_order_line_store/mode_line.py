@@ -101,23 +101,24 @@ query_f = open(query_file, 'w')
 write_log('Start update %s: Tot. %s' % (query_file, total))
 update[query_file] = [0, 0]
 pdb.set_trace()
-for line in line_pool.browse(line_ids):
-    counter += 1
-    try:
-        line_id = line.id
-        mx_agent_id = line.order_id.partner_id.agent_id.id
-        print('Update %s of %s: %s' % (counter, total, mx_agent_id))
-        query = \
-            'UPDATE sale_order_line set mx_agent_id=\'%s\' WHERE id=%s;\n' % (
-                mx_agent_id, line_id,
-            )
-        query_f.write(query)  # Not work ORM with function fields
-        update[query_file][0] += 1
+if line_ids:
+    for line in line_pool.browse(line_ids):
+        counter += 1
+        try:
+            line_id = line.id
+            mx_agent_id = line.order_id.partner_id.agent_id.id
+            print('Update %s of %s: %s' % (counter, total, mx_agent_id))
+            query = \
+                'UPDATE sale_order_line set mx_agent_id=\'%s\' WHERE id=%s;\n' % (
+                    mx_agent_id, line_id,
+                )
+            query_f.write(query)  # Not work ORM with function fields
+            update[query_file][0] += 1
 
-    except:
-        print('%s. %s: Error updating line %s' % (
-            counter, total, line_id))
-        update[query_file][1] += 1
+        except:
+            print('%s. %s: Error updating line %s' % (
+                counter, total, line_id))
+            update[query_file][1] += 1
 query_f.close()
 command = 'psql -d %s -a -f %s' % (
     dbname,
@@ -143,27 +144,28 @@ query_f = open(query_file, 'w')
 write_log('Start update %s: Tot. %s' % (query_file, total))
 update[query_file] = [0, 0]
 pdb.set_trace()
-for line in line_pool.browse(line_ids):
-    counter += 1
-    try:
-        line_id = line.id
-        product_name = 'Non trovato'
-        product = line.product_id
-        product_name = product.name
-        product_family_id = product.family_id.id
-        print('Update %s of %s: %s' % (counter, total, product_family_id))
+if line_ids:
+    for line in line_pool.browse(line_ids):
+        counter += 1
+        try:
+            line_id = line.id
+            product_name = 'Non trovato'
+            product = line.product_id
+            product_name = product.name
+            product_family_id = product.family_id.id
+            print('Update %s of %s: %s' % (counter, total, product_family_id))
 
-        query = \
-            'UPDATE sale_order_line set family_id=\'%s\' WHERE id=%s;\n' % (
-                product_family_id, line_id,
-            )
-        query_f.write(query)  # Not work ORM with function fields
-        update[query_file][0] += 1
+            query = \
+                'UPDATE sale_order_line set family_id=\'%s\' WHERE id=%s;\n' % (
+                    product_family_id, line_id,
+                )
+            query_f.write(query)  # Not work ORM with function fields
+            update[query_file][0] += 1
 
-    except:
-        print('%s. %s: Error updating line %s >> %s' % (
-            counter, total, line_id, product_name))
-        update[query_file][1] += 1
+        except:
+            print('%s. %s: Error updating line %s >> %s' % (
+                counter, total, line_id, product_name))
+            update[query_file][1] += 1
 query_f.close()
 command = 'psql -d %s -a -f %s' % (
     dbname,
@@ -188,20 +190,21 @@ query_f = open(query_file, 'w')
 write_log('Start update %s: Tot. %s' % (query_file, total))
 update[query_file] = [0, 0]
 pdb.set_trace()
-for line in line_pool.browse(line_ids):
-    counter += 1
-    order = line.order_id
-    date_order = order.date_order
-    season_period = get_season_from_date(date_order)
-    print('Update %s of %s: %s >> %s' % (
-        counter, total, date_order, season_period))
+if line_ids:
+    for line in line_pool.browse(line_ids):
+        counter += 1
+        order = line.order_id
+        date_order = order.date_order
+        season_period = get_season_from_date(date_order)
+        print('Update %s of %s: %s >> %s' % (
+            counter, total, date_order, season_period))
 
-    query = \
-        'UPDATE sale_order_line set season_period=\'%s\' WHERE id=%s;\n' % (
-            season_period, line.id,
-        )
-    query_f.write(query)  # Not work ORM with function fields
-    update[query_file][0] += 1
+        query = \
+            'UPDATE sale_order_line set season_period=\'%s\' WHERE id=%s;\n' % (
+                season_period, line.id,
+            )
+        query_f.write(query)  # Not work ORM with function fields
+        update[query_file][0] += 1
 
 query_f.close()
 command = 'psql -d %s -a -f %s' % (
