@@ -98,7 +98,6 @@ total = len(line_ids)
 query_f = open(query_file, 'w')
 write_log('Start update %s: Tot. %s' % (query_file, total))
 update[query_file] = [0, 0]
-pdb.set_trace()
 for line in invoice_line_pool.browse(line_ids):
     counter += 1
     try:
@@ -148,7 +147,7 @@ for line in invoice_line_pool.browse(line_ids):
         product_name = 'Non trovato'
         product = line.product_id
         product_name = product.name
-        product_family_id = product.product_family_id.id
+        product_family_id = product.family_id.id
         print('Update %s of %s: %s' % (counter, total, product_family_id))
 
         query = \
