@@ -24,6 +24,7 @@ import pdb
 import sys
 import erppeek
 import ConfigParser
+from datetime import datetime
 
 # -----------------------------------------------------------------------------
 # Read configuration parameter:
@@ -38,6 +39,22 @@ user = config.get('dbaccess', 'user')
 pwd = config.get('dbaccess', 'pwd')
 server = config.get('dbaccess', 'server')
 port = config.get('dbaccess', 'port')   # verify if it's necessary: getint
+
+
+# Log file:
+log_file = 'log.sql'
+log_f = open(log_file, 'a')
+update = {}
+
+
+def write_log(event, mode='INFO', verbose=False):
+    """ Write log
+    """
+    log_f.write('%s. [%s] %s\n' % (
+        datetime.now(),
+        mode,
+        event,
+    ))
 
 
 def get_season_from_date(date_order):
@@ -80,6 +97,8 @@ line_ids = line_pool.search([
 counter = 0
 total = len(line_ids)
 query_f = open(query_file, 'w')
+write_log('Start update %s: Tot. %s' % (query_file, total))
+update[query_file] = [0, 0]
 for line in line_pool.browse(line_ids):
     counter += 1
     try:
@@ -91,15 +110,20 @@ for line in line_pool.browse(line_ids):
                 mx_agent_id, line_id,
             )
         query_f.write(query)  # Not work ORM with function fields
+        update[query_file][0] += 1
+
     except:
         print('%s. %s: Error updating line %s' % (
             counter, total, line_id))
+        update[query_file][1] += 1
 query_f.close()
 command = 'psql -d %s -a -f %s' % (
     dbname,
     query_file,
 )
 os.system(command)
+write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+    query_file, total, update[query_file][0], update[query_file][1]))
 
 # -----------------------------------------------------------------------------
 # Famiglia:
@@ -113,6 +137,8 @@ line_ids = line_pool.search([
 counter = 0
 total = len(line_ids)
 query_f = open(query_file, 'w')
+write_log('Start update %s: Tot. %s' % (query_file, total))
+update[query_file] = [0, 0]
 for line in line_pool.browse(line_ids):
     counter += 1
     try:
@@ -128,9 +154,12 @@ for line in line_pool.browse(line_ids):
                 product_family_id, line_id,
             )
         query_f.write(query)  # Not work ORM with function fields
+        update[query_file][0] += 1
+
     except:
         print('%s. %s: Error updating line %s >> %s' % (
             counter, total, line_id, product_name))
+        update[query_file][1] += 1
 
 query_f.close()
 
@@ -139,6 +168,8 @@ command = 'psql -d %s -a -f %s' % (
     query_file,
 )
 os.system(command)
+write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+    query_file, total, update[query_file][0], update[query_file][1]))
 
 # -----------------------------------------------------------------------------
 # Update season:
@@ -151,6 +182,8 @@ line_ids = line_pool.search([
 counter = 0
 total = len(line_ids)
 query_f = open(query_file, 'w')
+write_log('Start update %s: Tot. %s' % (query_file, total))
+update[query_file] = [0, 0]
 for line in line_pool.browse(line_ids):
     counter += 1
     order = line.order_id
@@ -164,6 +197,7 @@ for line in line_pool.browse(line_ids):
             season_period, line.id,
         )
     query_f.write(query)  # Not work ORM with function fields
+    update[query_file][0] += 1
 
 query_f.close()
 command = 'psql -d %s -a -f %s' % (
@@ -171,4 +205,6 @@ command = 'psql -d %s -a -f %s' % (
     query_file,
 )
 os.system(command)
+write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+    query_file, total, update[query_file][0], update[query_file][1]))
 

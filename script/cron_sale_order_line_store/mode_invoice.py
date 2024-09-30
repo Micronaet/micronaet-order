@@ -24,6 +24,7 @@ import pdb
 import sys
 import erppeek
 import ConfigParser
+from datetime import datetime
 
 # -----------------------------------------------------------------------------
 # Read configuration parameter:
@@ -68,19 +69,35 @@ odoo = erppeek.Client(
 # Pool used:
 invoice_line_pool = odoo.model('account.invoice.line')
 
+# Log file:
+log_file = 'log.sql'
+log_f = open(log_file, 'a')
+update = {}
+
+
+def write_log(event, mode='INFO', verbose=False):
+    """ Write log
+    """
+    log_f.write('%s. [%s] %s\n' % (
+        datetime.now(),
+        mode,
+        event,
+    ))
+
+
 # -----------------------------------------------------------------------------
 # Agente:
 # -----------------------------------------------------------------------------
 query_file = 'invoice_agent.sql'
-
 line_ids = invoice_line_pool.search([
     ('mx_agent_id', '=', False),
-    # ('type','=','out_invoice')
+    ('type', '=', 'out_invoice')
     ])
 counter = 0
 total = len(line_ids)
 query_f = open(query_file, 'w')
-pdb.set_trace()
+write_log('Start update %s: Tot. %s' % (query_file, total))
+update[query_file] = [0, 0]
 for line in invoice_line_pool.browse(line_ids):
     counter += 1
     try:
@@ -93,7 +110,9 @@ for line in invoice_line_pool.browse(line_ids):
                 mx_agent_id, line_id,
             )
         query_f.write(query)  # Not work ORM with function fields
+        update[query_file][0] += 1
     except:
+        update[query_file][1] += 1
         print('%s. %s: Error updating line %s' % (
             counter, total, line_id))
 query_f.close()
@@ -101,8 +120,9 @@ command = 'psql -d %s -a -f %s' % (
     dbname,
     query_file,
 )
-pdb.set_trace()
 os.system(command)
+write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+    query_file, total, update[query_file][0], update[query_file][1]))
 
 # -----------------------------------------------------------------------------
 # Famiglia:
@@ -111,11 +131,13 @@ query_file = 'invoice_family.sql'
 
 line_ids = invoice_line_pool.search([
     ('family_id', '=', False),
+    ('type', '=', 'out_invoice'),
     ])
 counter = 0
 total = len(line_ids)
 query_f = open(query_file, 'w')
-pdb.set_trace()
+write_log('Start update %s: Tot. %s' % (query_file, total))
+update[query_file] = [0, 0]
 for line in invoice_line_pool.browse(line_ids):
     counter += 1
     try:
@@ -132,31 +154,34 @@ for line in invoice_line_pool.browse(line_ids):
                 product_family_id, line_id,
             )
         query_f.write(query)  # Not work ORM with function fields
+        update[query_file][0] += 1
     except:
         print('%s. %s: Error updating line %s >> %s' % (
             counter, total, line_id, product_name))
-
+        update[query_file][1] += 1
 query_f.close()
 
 command = 'psql -d %s -a -f %s' % (
     dbname,
     query_file,
 )
-pdb.set_trace()
 os.system(command)
+write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+    query_file, total, update[query_file][0], update[query_file][1]))
 
 # -----------------------------------------------------------------------------
 # Update season:
 # -----------------------------------------------------------------------------
 query_file = 'invoice_season.sql'
 line_ids = invoice_line_pool.search([
-    ('state', 'not in', ('cancel', 'draft', 'sent')),
+    ('type', '=', 'out_invoice'),
     ('season_period', '=', False),
     ])
 counter = 0
 total = len(line_ids)
 query_f = open(query_file, 'w')
-pdb.set_trace()
+write_log('Start update %s: Tot. %s' % (query_file, total))
+update[query_file] = [0, 0]
 for line in invoice_line_pool.browse(line_ids):
     counter += 1
     invoice = line.invoice_id
@@ -166,16 +191,19 @@ for line in invoice_line_pool.browse(line_ids):
         counter, total, date_invoice, season_period))
 
     query = \
-        'UPDATE account_invoice_line set season_period=\'%s\' WHERE id=%s;\n' % (
+        'UPDATE account_invoice_line set season_period=\'%s\' ' \
+        'WHERE id=%s;\n' % (
             season_period, line.id,
         )
     query_f.write(query)  # Not work ORM with function fields
+    update[query_file][0] += 1
 
 query_f.close()
 command = 'psql -d %s -a -f %s' % (
     dbname,
     query_file,
 )
-pdb.set_trace()
 os.system(command)
+write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+    query_file, total, update[query_file][0], update[query_file][1]))
 
