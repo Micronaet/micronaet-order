@@ -86,9 +86,51 @@ def write_log(event, mode='INFO', verbose=False):
 
 
 # -----------------------------------------------------------------------------
-# Regione - Zona:
+# Zona:
 # -----------------------------------------------------------------------------
-# <field name="zone_id" filter_domain="[('zone_id.name','ilike',self)]"/>
+query_file = './sql/zone_state.sql'
+line_ids = invoice_line_pool.search([
+    ('zone_id', '=', False),
+    ('type', '=', 'out_invoice')
+    ])
+counter = 0
+total = len(line_ids)
+query_f = open(query_file, 'w')
+write_log('Start update %s: Tot. %s' % (query_file, total))
+update[query_file] = [0, 0]
+pdb.set_trace()
+if line_ids:
+    for line in invoice_line_pool.browse(line_ids):
+        counter += 1
+        try:
+            line_id = line.id
+            zone_id = line.invoice_id.partner_id.zone_id.id
+            print('Update %s of %s: %s' % (counter, total, zone_id))
+            query = \
+                'UPDATE account_invoice_line SET zone_id=\'%s\' ' \
+                'WHERE id=%s;\n' % (
+                    zone_id, line_id,
+                )
+            query_f.write(query)  # Not work ORM with function fields
+            update[query_file][0] += 1
+        except:
+            update[query_file][1] += 1
+            print('%s. %s: Error updating line %s' % (
+                counter, total, line_id))
+query_f.close()
+command = 'psql -d %s -a -f %s' % (
+    dbname,
+    query_file,
+)
+write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+    query_file, total, update[query_file][0], update[query_file][1]))
+pdb.set_trace()
+os.system(command)
+pdb.set_trace()
+
+# -----------------------------------------------------------------------------
+# Regione:
+# -----------------------------------------------------------------------------
 query_file = './sql/region_state.sql'
 line_ids = invoice_line_pool.search([
     ('region_id', '=', False),
@@ -148,8 +190,7 @@ if line_ids:
         counter += 1
         try:
             line_id = line.id
-            partner = line.invoice_id.partner_id
-            state_id = partner.state_id.id
+            state_id = line.invoice_id.partner_id.state_id.id
             print('Update %s of %s: %s' % (counter, total, state_id))
             query = \
                 'UPDATE account_invoice_line SET state_id=\'%s\' ' \
@@ -174,9 +215,6 @@ os.system(command)
 # -----------------------------------------------------------------------------
 # Nazione:
 # -----------------------------------------------------------------------------
-# <field name="zone_id" filter_domain="[('zone_id.name','ilike',self)]"/>
-# <field name="state_id" filter_domain="[('state_id.name','ilike',self)]"/>
-# <field name="region_id" filter_domain="[('region_id.name','ilike',self)]"/>
 query_file = './sql/invoice_country.sql'
 line_ids = invoice_line_pool.search([
     ('country_id', '=', False),
@@ -192,8 +230,7 @@ if line_ids:
         counter += 1
         try:
             line_id = line.id
-            partner = line.invoice_id.partner_id
-            country_id = partner.country_id.id
+            country_id = line.invoice_id.partner_id.country_id.id
             print('Update %s of %s: %s' % (counter, total, country_id))
             query = \
                 'UPDATE account_invoice_line SET country_id=\'%s\' ' \
