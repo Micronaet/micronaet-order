@@ -20,6 +20,7 @@
 #
 ###############################################################################
 import os
+import pdb
 import sys
 import erppeek
 import ConfigParser
@@ -90,7 +91,6 @@ for line in line_pool.browse(line_ids):
         'UPDATE sale_order_line set season_period=\'%s\' WHERE id=%s;\n' % (
             season_period, line.id,
         )
-    print(query)
     query_f.write(query)  # Not work ORM with function fields
 
 query_f.close()
