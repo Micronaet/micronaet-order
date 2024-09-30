@@ -42,7 +42,7 @@ port = config.get('dbaccess', 'port')   # verify if it's necessary: getint
 
 
 # Log file:
-log_file = 'sale_activity.log'
+log_file = './log/sale_activity.log'
 log_f = open(log_file, 'a')
 update = {}
 

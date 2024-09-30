@@ -70,7 +70,7 @@ odoo = erppeek.Client(
 invoice_line_pool = odoo.model('account.invoice.line')
 
 # Log file:
-log_file = 'invoice_activity.log'
+log_file = './log/invoice_activity.log'
 log_f = open(log_file, 'a')
 update = {}
 
