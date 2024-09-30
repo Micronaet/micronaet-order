@@ -97,7 +97,8 @@ for line in line_pool.browse(line_ids):
             )
         query_f.write(query)  # Not work ORM with function fields
     except:
-        print('Error updating line %s >> %s' % (line_id, product_name))
+        print('%s. %s: Error updating line %s >> %s' % (
+            counter, total, line_id, product_name))
 
 query_f.close()
 
