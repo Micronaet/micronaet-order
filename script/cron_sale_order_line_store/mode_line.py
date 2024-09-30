@@ -84,15 +84,18 @@ pdb.set_trace()
 for line in line_pool.browse(line_ids):
     counter += 1
     try:
+        line_id = line.id
         product = line.product_id
         product_family_id = product.product_family_id.id
         print('Update %s of %s: %s' % (counter, total, product_family_id))
 
-    query = \
-        'UPDATE sale_order_line set family_id=\'%s\' WHERE id=%s;\n' % (
-            product_family_id, line.id,
-        )
-    query_f.write(query)  # Not work ORM with function fields
+        query = \
+            'UPDATE sale_order_line set family_id=\'%s\' WHERE id=%s;\n' % (
+                product_family_id, line_id,
+            )
+        query_f.write(query)  # Not work ORM with function fields
+    except:
+        print('Error updating line %s' % line_id)
 
 query_f.close()
 
