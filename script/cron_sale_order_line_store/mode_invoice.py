@@ -103,7 +103,7 @@ for line in invoice_line_pool.browse(line_ids):
     counter += 1
     try:
         line_id = line.id
-        mx_agent_id = line.order_id.partner_id.agent_id.id
+        mx_agent_id = line.invoice_id.partner_id.agent_id.id
         print('Update %s of %s: %s' % (counter, total, mx_agent_id))
         query = \
             'UPDATE account_invoice_line SET mx_agent_id=\'%s\' ' \
