@@ -95,7 +95,7 @@ line_pool = odoo.model('sale.order.line')
 # -----------------------------------------------------------------------------
 # Agente:
 # -----------------------------------------------------------------------------
-query_file = './sql/order_agent.sql' % open_mode
+query_file = './sql/%s_order_agent.sql' % open_mode
 
 line_ids = line_pool.search([
     ('state', 'not in', ('cancel', 'draft', 'sent')),
