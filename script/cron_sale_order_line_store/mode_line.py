@@ -39,6 +39,20 @@ server = config.get('dbaccess', 'server')
 port = config.get('dbaccess', 'port')   # verify if it's necessary: getint
 
 
+def get_season_from_date(date_order):
+    """ Return season from date
+    """
+    start_month = '09'
+    if not date_order:
+        return False
+    current_month = date_order[5:7]
+    year = int(date_order[2:4])
+    if current_month >= start_month:  # [09 : 12]
+        return '%02d-%02d' % (year, year + 1)
+    else:  # [01 : 08]
+        return '%02d-%02d' % (year - 1, year)
+
+
 # -----------------------------------------------------------------------------
 # Connect to ODOO:
 # -----------------------------------------------------------------------------
@@ -67,8 +81,9 @@ for line in line_pool.browse(line_ids):
     counter += 1
     order = line.order_id
     date_order = order.date_order
-    season_period = line_pool._get_season_from_date(date_order)
+    season_period = get_season_from_date(date_order)
     line_pool.write([line.id], {
         'season_period': season_period,
     })
-    print('Update %s or %s' % (counter, total))
+    print('Update %s of %s: %s >> %s' % (
+        counter, total, date_order, season_period))
