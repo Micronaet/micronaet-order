@@ -75,7 +75,6 @@ line_ids = line_pool.search([
     ('season_period', '=', False),
     ])
 counter = 0
-import pdb; pdb.set_trace()
 total = len(line_ids)
 query_file = 'order_season.sql'
 query_f = open(query_file, 'w')
@@ -92,19 +91,11 @@ for line in line_pool.browse(line_ids):
             season_period, line.id,
         )
     print(query)
-    query_f.write(query)
-    break
+    query_f.write(query)  # Not work ORM with function fields
 
-    # Non scrive
-    # line_pool.write([line.id], {
-    #    'season_period': season_period,
-    # })
 query_f.close()
 
-#command = 'psql -h %s -U %s -d %s -a -f %s' % (
 command = 'psql -d %s -a -f %s' % (
-    #server,
-    #user,
     dbname,
     query_file,
 )
