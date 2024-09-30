@@ -94,7 +94,7 @@ for line in line_pool.browse(line_ids):
             )
         query_f.write(query)  # Not work ORM with function fields
     except:
-        print('%s. %s: Error updating line %s >> %s' % (
+        print('%s. %s: Error updating line %s' % (
             counter, total, line_id))
 query_f.close()
 command = 'psql -d %s -a -f %s' % (
