@@ -26,11 +26,18 @@ import erppeek
 import ConfigParser
 from datetime import datetime
 
+argv = sys.argv
+if len(argv) == 2:
+    open_mode = argv[-1].lower()
+else:
+    open_mode = 'fia'
+print('Open Mode: %s' % open_mode)
+
 # -----------------------------------------------------------------------------
 # Read configuration parameter:
 # -----------------------------------------------------------------------------
 # From config file:
-cfg_file = os.path.expanduser('../openerp.fia')
+cfg_file = os.path.expanduser('../openerp.%s' % open_mode)
 
 config = ConfigParser.ConfigParser()
 config.read([cfg_file])
@@ -70,7 +77,7 @@ odoo = erppeek.Client(
 invoice_line_pool = odoo.model('account.invoice.line')
 
 # Log file:
-log_file = './log/invoice_activity.log'
+log_file = './log/%s_INVOICE_activity.log' % open_mode
 log_f = open(log_file, 'a')
 update = {}
 
@@ -88,7 +95,7 @@ def write_log(event, mode='INFO', verbose=False):
 # -----------------------------------------------------------------------------
 # Zona:
 # -----------------------------------------------------------------------------
-query_file = './sql/zone_state.sql'
+query_file = './sql/%s_zone_state.sql' % open_mode
 line_ids = invoice_line_pool.search([
     ('zone_id', '=', False),
     ('type', '=', 'out_invoice')
@@ -128,7 +135,7 @@ os.system(command)
 # -----------------------------------------------------------------------------
 # Regione:
 # -----------------------------------------------------------------------------
-query_file = './sql/region_state.sql'
+query_file = './sql/%s_region_state.sql' % open_mode
 line_ids = invoice_line_pool.search([
     ('region_id', '=', False),
     ('type', '=', 'out_invoice')
@@ -168,7 +175,7 @@ os.system(command)
 # -----------------------------------------------------------------------------
 # Città (state_id):
 # -----------------------------------------------------------------------------
-query_file = './sql/invoice_state.sql'
+query_file = './sql/%s_invoice_state.sql' % open_mode
 line_ids = invoice_line_pool.search([
     ('state_id', '=', False),
     ('type', '=', 'out_invoice')
@@ -208,7 +215,7 @@ os.system(command)
 # -----------------------------------------------------------------------------
 # Nazione:
 # -----------------------------------------------------------------------------
-query_file = './sql/invoice_country.sql'
+query_file = './sql/%s_invoice_country.sql' % open_mode
 line_ids = invoice_line_pool.search([
     ('country_id', '=', False),
     ('type', '=', 'out_invoice')
@@ -248,7 +255,7 @@ os.system(command)
 # -----------------------------------------------------------------------------
 # Invoice date:
 # -----------------------------------------------------------------------------
-query_file = './sql/invoice_date.sql'
+query_file = './sql/%s_invoice_date.sql' % open_mode
 line_ids = invoice_line_pool.search([
     ('date_invoice', '=', False),
     ('type', '=', 'out_invoice')
@@ -288,7 +295,7 @@ os.system(command)
 # -----------------------------------------------------------------------------
 # Agente:
 # -----------------------------------------------------------------------------
-query_file = './sql/invoice_agent.sql'
+query_file = './sql/%s_invoice_agent.sql' % open_mode
 line_ids = invoice_line_pool.search([
     ('mx_agent_id', '=', False),
     ('type', '=', 'out_invoice')
@@ -323,94 +330,92 @@ command = 'psql -d %s -a -f %s' % (
 )
 write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
     query_file, total, update[query_file][0], update[query_file][1]))
-
 os.system(command)
 
-# -----------------------------------------------------------------------------
-# Famiglia:
-# -----------------------------------------------------------------------------
-query_file = './sql/invoice_family.sql'
+if open_mode == 'fia':
+    # -------------------------------------------------------------------------
+    # Famiglia:
+    # -------------------------------------------------------------------------
+    query_file = './sql/%s_invoice_family.sql' % open_mode
 
-line_ids = invoice_line_pool.search([
-    ('family_id', '=', False),
-    ('type', '=', 'out_invoice'),
-    ])
-counter = 0
-total = len(line_ids)
-query_f = open(query_file, 'w')
-write_log('Start update %s: Tot. %s' % (query_file, total))
-update[query_file] = [0, 0]
+    line_ids = invoice_line_pool.search([
+        ('family_id', '=', False),
+        ('type', '=', 'out_invoice'),
+        ])
+    counter = 0
+    total = len(line_ids)
+    query_f = open(query_file, 'w')
+    write_log('Start update %s: Tot. %s' % (query_file, total))
+    update[query_file] = [0, 0]
 
-if line_ids:
-    for line in invoice_line_pool.browse(line_ids):
-        counter += 1
-        try:
-            line_id = line.id
-            product_name = 'Non trovato'
-            product = line.product_id
-            product_name = product.name
-            product_family_id = product.family_id.id
-            print('Update %s of %s: %s' % (counter, total, product_family_id))
+    if line_ids:
+        for line in invoice_line_pool.browse(line_ids):
+            counter += 1
+            try:
+                line_id = line.id
+                product_name = 'Non trovato'
+                product = line.product_id
+                product_name = product.name
+                product_family_id = product.family_id.id
+                print('Update %s of %s: %s' % (
+                    counter, total, product_family_id))
+
+                query = \
+                    'UPDATE account_invoice_line SET family_id=\'%s\' ' \
+                    'WHERE id=%s;\n' % (
+                        product_family_id, line_id,
+                    )
+                query_f.write(query)  # Not work ORM with function fields
+                update[query_file][0] += 1
+            except:
+                print('%s. %s: Error updating line %s >> %s' % (
+                    counter, total, line_id, product_name))
+                update[query_file][1] += 1
+    query_f.close()
+    command = 'psql -d %s -a -f %s' % (
+        dbname,
+        query_file,
+    )
+    write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+        query_file, total, update[query_file][0], update[query_file][1]))
+    os.system(command)
+
+    # -------------------------------------------------------------------------
+    # Update season:
+    # -------------------------------------------------------------------------
+    query_file = './sql/%s_invoice_season.sql' % open_mode
+    line_ids = invoice_line_pool.search([
+        ('type', '=', 'out_invoice'),
+        ('season_period', '=', False),
+        ])
+    counter = 0
+    total = len(line_ids)
+    query_f = open(query_file, 'w')
+    write_log('Start update %s: Tot. %s' % (query_file, total))
+    update[query_file] = [0, 0]
+
+    if line_id:
+        for line in invoice_line_pool.browse(line_ids):
+            counter += 1
+            invoice = line.invoice_id
+            date_invoice = invoice.date_invoice
+            season_period = get_season_from_date(date_invoice)
+            print('Update %s of %s: %s >> %s' % (
+                counter, total, date_invoice, season_period))
 
             query = \
-                'UPDATE account_invoice_line SET family_id=\'%s\' ' \
+                'UPDATE account_invoice_line set season_period=\'%s\' ' \
                 'WHERE id=%s;\n' % (
-                    product_family_id, line_id,
+                    season_period, line.id,
                 )
             query_f.write(query)  # Not work ORM with function fields
             update[query_file][0] += 1
-        except:
-            print('%s. %s: Error updating line %s >> %s' % (
-                counter, total, line_id, product_name))
-            update[query_file][1] += 1
-query_f.close()
-
-command = 'psql -d %s -a -f %s' % (
-    dbname,
-    query_file,
-)
-write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
-    query_file, total, update[query_file][0], update[query_file][1]))
-
-os.system(command)
-
-# -----------------------------------------------------------------------------
-# Update season:
-# -----------------------------------------------------------------------------
-query_file = './sql/invoice_season.sql'
-line_ids = invoice_line_pool.search([
-    ('type', '=', 'out_invoice'),
-    ('season_period', '=', False),
-    ])
-counter = 0
-total = len(line_ids)
-query_f = open(query_file, 'w')
-write_log('Start update %s: Tot. %s' % (query_file, total))
-update[query_file] = [0, 0]
-
-if line_id:
-    for line in invoice_line_pool.browse(line_ids):
-        counter += 1
-        invoice = line.invoice_id
-        date_invoice = invoice.date_invoice
-        season_period = get_season_from_date(date_invoice)
-        print('Update %s of %s: %s >> %s' % (
-            counter, total, date_invoice, season_period))
-
-        query = \
-            'UPDATE account_invoice_line set season_period=\'%s\' ' \
-            'WHERE id=%s;\n' % (
-                season_period, line.id,
-            )
-        query_f.write(query)  # Not work ORM with function fields
-        update[query_file][0] += 1
-query_f.close()
-command = 'psql -d %s -a -f %s' % (
-    dbname,
-    query_file,
-)
-write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
-    query_file, total, update[query_file][0], update[query_file][1]))
-
-os.system(command)
+    query_f.close()
+    command = 'psql -d %s -a -f %s' % (
+        dbname,
+        query_file,
+    )
+    write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+        query_file, total, update[query_file][0], update[query_file][1]))
+    os.system(command)
 

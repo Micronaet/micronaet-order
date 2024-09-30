@@ -26,11 +26,18 @@ import erppeek
 import ConfigParser
 from datetime import datetime
 
+argv = sys.argv
+if len(argv) == 2:
+    open_mode = argv[-1].lower()
+else:
+    open_mode = 'fia'
+print('Open Mode: %s' % open_mode)
+
 # -----------------------------------------------------------------------------
 # Read configuration parameter:
 # -----------------------------------------------------------------------------
 # From config file:
-cfg_file = os.path.expanduser('../openerp.fia')
+cfg_file = os.path.expanduser('../openerp.%s' % open_mode)
 
 config = ConfigParser.ConfigParser()
 config.read([cfg_file])
@@ -42,8 +49,7 @@ port = config.get('dbaccess', 'port')   # verify if it's necessary: getint
 
 
 # Log file:
-object = 'SALE'
-log_file = './log/%s_activity.log' % object
+log_file = './log/%s_SALE_activity.log' % open_mode
 log_f = open(log_file, 'a')
 update = {}
 
@@ -89,7 +95,7 @@ line_pool = odoo.model('sale.order.line')
 # -----------------------------------------------------------------------------
 # Agente:
 # -----------------------------------------------------------------------------
-query_file = './sql/order_agent.sql'
+query_file = './sql/order_agent.sql' % open_mode
 
 line_ids = line_pool.search([
     ('state', 'not in', ('cancel', 'draft', 'sent')),
@@ -109,7 +115,8 @@ if line_ids:
             mx_agent_id = line.order_id.partner_id.agent_id.id
             print('Update %s of %s: %s' % (counter, total, mx_agent_id))
             query = \
-                'UPDATE sale_order_line set mx_agent_id=\'%s\' WHERE id=%s;\n' % (
+                'UPDATE sale_order_line set mx_agent_id=\'%s\' ' \
+                'WHERE id=%s;\n' % (
                     mx_agent_id, line_id,
                 )
             query_f.write(query)  # Not work ORM with function fields
@@ -129,90 +136,90 @@ write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
 
 os.system(command)
 
-# -----------------------------------------------------------------------------
-# Famiglia:
-# -----------------------------------------------------------------------------
-query_file = './sql/order_family.sql'
+if open_mode == 'fia':
+    # -------------------------------------------------------------------------
+    # Famiglia:
+    # -------------------------------------------------------------------------
+    query_file = './sql/%s_order_family.sql' % open_mode
 
-line_ids = line_pool.search([
-    ('state', 'not in', ('cancel', 'draft', 'sent')),
-    ('family_id', '=', False),
-    ])
-counter = 0
-total = len(line_ids)
-query_f = open(query_file, 'w')
-write_log('Start update %s: Tot. %s' % (query_file, total))
-update[query_file] = [0, 0]
+    line_ids = line_pool.search([
+        ('state', 'not in', ('cancel', 'draft', 'sent')),
+        ('family_id', '=', False),
+        ])
+    counter = 0
+    total = len(line_ids)
+    query_f = open(query_file, 'w')
+    write_log('Start update %s: Tot. %s' % (query_file, total))
+    update[query_file] = [0, 0]
 
-if line_ids:
-    for line in line_pool.browse(line_ids):
-        counter += 1
-        try:
-            line_id = line.id
-            product_name = 'Non trovato'
-            product = line.product_id
-            product_name = product.name
-            product_family_id = product.family_id.id
-            print('Update %s of %s: %s' % (counter, total, product_family_id))
+    if line_ids:
+        for line in line_pool.browse(line_ids):
+            counter += 1
+            try:
+                line_id = line.id
+                product_name = 'Non trovato'
+                product = line.product_id
+                product_name = product.name
+                product_family_id = product.family_id.id
+                print('Update %s of %s: %s' % (
+                    counter, total, product_family_id))
+
+                query = \
+                    'UPDATE sale_order_line set family_id=\'%s\' ' \
+                    'WHERE id=%s;\n' % (
+                        product_family_id, line_id,
+                    )
+                query_f.write(query)  # Not work ORM with function fields
+                update[query_file][0] += 1
+
+            except:
+                print('%s. %s: Error updating line %s >> %s' % (
+                    counter, total, line_id, product_name))
+                update[query_file][1] += 1
+    query_f.close()
+    command = 'psql -d %s -a -f %s' % (
+        dbname,
+        query_file,
+    )
+    write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+        query_file, total, update[query_file][0], update[query_file][1]))
+    os.system(command)
+
+    # -------------------------------------------------------------------------
+    # Update season:
+    # -------------------------------------------------------------------------
+    query_file = './sql/%s_order_season.sql' % open_mode
+    line_ids = line_pool.search([
+        ('state', 'not in', ('cancel', 'draft', 'sent')),
+        ('season_period', '=', False),
+        ])
+    counter = 0
+    total = len(line_ids)
+    query_f = open(query_file, 'w')
+    write_log('Start update %s: Tot. %s' % (query_file, total))
+    update[query_file] = [0, 0]
+
+    if line_ids:
+        for line in line_pool.browse(line_ids):
+            counter += 1
+            order = line.order_id
+            date_order = order.date_order
+            season_period = get_season_from_date(date_order)
+            print('Update %s of %s: %s >> %s' % (
+                counter, total, date_order, season_period))
 
             query = \
-                'UPDATE sale_order_line set family_id=\'%s\' WHERE id=%s;\n' % (
-                    product_family_id, line_id,
+                'UPDATE sale_order_line set season_period=\'%s\' ' \
+                'WHERE id=%s;\n' % (
+                    season_period, line.id,
                 )
             query_f.write(query)  # Not work ORM with function fields
             update[query_file][0] += 1
-
-        except:
-            print('%s. %s: Error updating line %s >> %s' % (
-                counter, total, line_id, product_name))
-            update[query_file][1] += 1
-query_f.close()
-command = 'psql -d %s -a -f %s' % (
-    dbname,
-    query_file,
-)
-write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
-    query_file, total, update[query_file][0], update[query_file][1]))
-
-os.system(command)
-
-# -----------------------------------------------------------------------------
-# Update season:
-# -----------------------------------------------------------------------------
-query_file = './sql/order_season.sql'
-line_ids = line_pool.search([
-    ('state', 'not in', ('cancel', 'draft', 'sent')),
-    ('season_period', '=', False),
-    ])
-counter = 0
-total = len(line_ids)
-query_f = open(query_file, 'w')
-write_log('Start update %s: Tot. %s' % (query_file, total))
-update[query_file] = [0, 0]
-
-if line_ids:
-    for line in line_pool.browse(line_ids):
-        counter += 1
-        order = line.order_id
-        date_order = order.date_order
-        season_period = get_season_from_date(date_order)
-        print('Update %s of %s: %s >> %s' % (
-            counter, total, date_order, season_period))
-
-        query = \
-            'UPDATE sale_order_line set season_period=\'%s\' WHERE id=%s;\n' % (
-                season_period, line.id,
-            )
-        query_f.write(query)  # Not work ORM with function fields
-        update[query_file][0] += 1
-
-query_f.close()
-command = 'psql -d %s -a -f %s' % (
-    dbname,
-    query_file,
-)
-write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
-    query_file, total, update[query_file][0], update[query_file][1]))
-
-os.system(command)
-
+    query_f.close()
+    command = 'psql -d %s -a -f %s' % (
+        dbname,
+        query_file,
+    )
+    write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+        query_file, total, update[query_file][0], update[query_file][1]))
+    os.system(command)
