@@ -101,9 +101,10 @@ for line in line_pool.browse(line_ids):
     # })
 query_f.close()
 
-command = 'psql -h %s -U %s -d %s -a -f %s' % (
-    server,
-    user,
+#command = 'psql -h %s -U %s -d %s -a -f %s' % (
+command = 'psql -d %s -a -f %s' % (
+    #server,
+    #user,
     dbname,
     query_file,
 )
