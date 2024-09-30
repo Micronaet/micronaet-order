@@ -69,6 +69,42 @@ odoo = erppeek.Client(
 line_pool = odoo.model('sale.order.line')
 
 # -----------------------------------------------------------------------------
+# Agente:
+# -----------------------------------------------------------------------------
+query_file = 'order_agent.sql'
+
+line_ids = line_pool.search([
+    ('state', 'not in', ('cancel', 'draft', 'sent')),
+    ('mx_agent_id', '=', False),
+    ])
+counter = 0
+total = len(line_ids)
+query_f = open(query_file, 'w')
+pdb.set_trace()
+for line in line_pool.browse(line_ids):
+    counter += 1
+    try:
+        line_id = line.id
+        mx_agent_id = line.order_id.partner_id.agent_id.id
+        print('Update %s of %s: %s' % (counter, total, mx_agent_id))
+
+        query = \
+            'UPDATE sale_order_line set mx_agent_id=\'%s\' WHERE id=%s;\n' % (
+                mx_agent_id, line_id,
+            )
+        query_f.write(query)  # Not work ORM with function fields
+    except:
+        print('%s. %s: Error updating line %s >> %s' % (
+            counter, total, line_id))
+query_f.close()
+command = 'psql -d %s -a -f %s' % (
+    dbname,
+    query_file,
+)
+pdb.set_trace()
+os.system(command)
+
+# -----------------------------------------------------------------------------
 # Famiglia:
 # -----------------------------------------------------------------------------
 query_file = 'order_family.sql'
@@ -80,7 +116,6 @@ line_ids = line_pool.search([
 counter = 0
 total = len(line_ids)
 query_f = open(query_file, 'w')
-pdb.set_trace()
 for line in line_pool.browse(line_ids):
     counter += 1
     try:
@@ -106,14 +141,12 @@ command = 'psql -d %s -a -f %s' % (
     dbname,
     query_file,
 )
-pdb.set_trace()
 os.system(command)
 
 # -----------------------------------------------------------------------------
 # Update season:
 # -----------------------------------------------------------------------------
 query_file = 'order_season.sql'
-
 line_ids = line_pool.search([
     ('state', 'not in', ('cancel', 'draft', 'sent')),
     ('season_period', '=', False),
@@ -136,7 +169,6 @@ for line in line_pool.browse(line_ids):
     query_f.write(query)  # Not work ORM with function fields
 
 query_f.close()
-
 command = 'psql -d %s -a -f %s' % (
     dbname,
     query_file,
