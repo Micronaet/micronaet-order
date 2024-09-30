@@ -87,7 +87,7 @@ for line in line_pool.browse(line_ids):
         line_id = line.id
         mx_agent_id = line.order_id.partner_id.agent_id.id
         print('Update %s of %s: %s' % (counter, total, mx_agent_id))
-
+        pdb.set_trace()
         query = \
             'UPDATE sale_order_line set mx_agent_id=\'%s\' WHERE id=%s;\n' % (
                 mx_agent_id, line_id,
