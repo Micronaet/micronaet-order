@@ -30,22 +30,23 @@ from openerp import SUPERUSER_ID, api
 from openerp import tools
 from openerp.tools.translate import _
 from openerp.tools.float_utils import float_round as round
-from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT, 
-    DEFAULT_SERVER_DATETIME_FORMAT, 
-    DATETIME_FORMATS_MAP, 
+from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
+    DEFAULT_SERVER_DATETIME_FORMAT,
+    DATETIME_FORMATS_MAP,
     float_compare)
 
 
 _logger = logging.getLogger(__name__)
 
+
 class SaleOrderLine(orm.Model):
     """ Model name: Sale order line
-    """    
+    """
     _inherit = 'sale.order.line'
-    
+
     def _update_pack_from_product(self, cr, uid, ids, context=None):
-        ''' Change q_x_pack in product
-        '''
+        """ Change q_x_pack in product
+        """
         line_pool = self.pool.get('sale.order.line')
         line_ids = line_pool.search(cr, uid, [
             ('product_id', 'in', ids),
@@ -53,13 +54,13 @@ class SaleOrderLine(orm.Model):
         _logger.warning('Change q_x_pack in sale order line')
         return line_ids
 
-    # -------------------------------------------------------------------------    
-    # Field function:    
-    # -------------------------------------------------------------------------    
-    def _get_pack_from_product(self, cr, uid, ids, fields, args, 
-            context=None):
-        ''' Fields function for calculate 
-        '''
+    # -------------------------------------------------------------------------
+    # Field function:
+    # -------------------------------------------------------------------------
+    def _get_pack_from_product(
+            self, cr, uid, ids, fields, args, context=None):
+        """ Fields function for calculate
+        """
         res = {}
         for line in self.browse(cr, uid, ids, context=context):
             res[line.id] = line.product_id.q_x_pack or 0
@@ -67,12 +68,11 @@ class SaleOrderLine(orm.Model):
 
     _columns = {
         'q_x_pack': fields.function(
-            _get_pack_from_product, method=True, 
-            type='integer', string='Q x pack', 
+            _get_pack_from_product, method=True,
+            type='integer', string='Q x pack',
             store={
                 'product.product':
                     (_update_pack_from_product, ['q_x_pack'], 10),
                 }
-            )     
+            )
         }
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

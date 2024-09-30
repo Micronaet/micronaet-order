@@ -30,22 +30,23 @@ from openerp import SUPERUSER_ID, api
 from openerp import tools
 from openerp.tools.translate import _
 from openerp.tools.float_utils import float_round as round
-from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT, 
-    DEFAULT_SERVER_DATETIME_FORMAT, 
-    DATETIME_FORMATS_MAP, 
+from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
+    DEFAULT_SERVER_DATETIME_FORMAT,
+    DATETIME_FORMATS_MAP,
     float_compare)
 
 
 _logger = logging.getLogger(__name__)
 
+
 class SaleOrderLine(orm.Model):
     """ Model name: Sale order line
-    """    
+    """
     _inherit = 'sale.order.line'
-    
+
     def _get_season_from_date(self, date_order):
-        ''' Return season from date
-        '''
+        """ Return season from date
+        """
         start_month = '09'
         if not date_order:
             return False
@@ -55,24 +56,24 @@ class SaleOrderLine(orm.Model):
             return '%02d-%02d' % (year, year + 1)
         else: # [01 : 08]
             return '%02d-%02d' % (year - 1, year)
-                
+
     def _get_season_from_sale_line(self, cr, uid, ids, context=None):
-        ''' Change family in product
-        '''
+        """ Change family in product
+        """
         line_pool = self.pool.get('sale.order.line')
         line_ids = line_pool.search(cr, uid, [
             ('order_id', 'in', ids),
             ], context=context)
         _logger.warning('Change season order line as order change date')
         return line_ids
-        
-    # -------------------------------------------------------------------------    
-    # Field function:    
-    # -------------------------------------------------------------------------    
-    def _get_season_from_sale_date(self, cr, uid, ids, fields, args, 
-            context=None):
-        ''' Fields function for calculate 
-        '''
+
+    # -------------------------------------------------------------------------
+    # Field function:
+    # -------------------------------------------------------------------------
+    def _get_season_from_sale_date(
+            self, cr, uid, ids, fields, args, context=None):
+        """ Fields function for calculate
+        """
         res = {}
         for line in self.browse(cr, uid, ids, context=context):
             res[line.id] = self._get_season_from_date(
@@ -81,12 +82,11 @@ class SaleOrderLine(orm.Model):
 
     _columns = {
         'season_period': fields.function(
-            _get_season_from_sale_date, method=True, 
-            type='char', size=30, string='Season', 
+            _get_season_from_sale_date, method=True,
+            type='char', size=30, string='Season',
             store={
                 'sale.order':
                     (_get_season_from_sale_line, ['date_order'], 10),
                 }
-            )     
+            )
         }
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
