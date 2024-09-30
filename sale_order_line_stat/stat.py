@@ -30,9 +30,9 @@ from openerp import SUPERUSER_ID, api
 from openerp import tools
 from openerp.tools.translate import _
 from openerp.tools.float_utils import float_round as round
-from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT, 
-    DEFAULT_SERVER_DATETIME_FORMAT, 
-    DATETIME_FORMATS_MAP, 
+from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
+    DEFAULT_SERVER_DATETIME_FORMAT,
+    DATETIME_FORMATS_MAP,
     float_compare)
 
 
@@ -41,28 +41,28 @@ _logger = logging.getLogger(__name__)
 class SaleOrderLine(orm.Model):
     """ Model name: SaleOrderLine
     """
-    
+
     _inherit = 'sale.order.line'
-    
+
     def force_all_mrp_id(self, cr, uid, ids, context=None):
-        ''' Update
-        '''
+        """ Update
+        """
         sol_ids = self.search(cr, uid, [
             ('family_id', '=', False)], context=context)
         for line in self.browse(cr, uid, sol_ids, context=context):
             self.write(cr, uid, line.id, {
                 'is_manufactured': line.product_id.internal_manufacture,
                 'family_id': line.product_id.family_id.id or False,
-                }, context=context)                
+                }, context=context)
         return True
-        
+
     # -------------------------------------------------------------------------
     # Store function:
     # -------------------------------------------------------------------------
     # sale.order:
     def _get_date_order_from_order(self, cr, uid, ids, context=None):
-        ''' When change sol line order
-        '''
+        """ When change sol line order
+        """
         sale_pool = self.pool['sale.order']
         res = []
         for sale in sale_pool.browse(cr, uid, ids, context=context):
@@ -71,20 +71,20 @@ class SaleOrderLine(orm.Model):
         return res
 
     def _get_date_order_from_sol(self, cr, uid, ids, context=None):
-        ''' When change sol line order
-        '''
+        """ When change sol line order
+        """
         return ids
 
     # sale.order.line:
     def _get_default_code_from_sol(self, cr, uid, ids, context=None):
-        ''' When change sol line order
-        '''
+        """ When change sol line order
+        """
         _logger.warning('Change product_id in sale.order.line')
         return ids
 
     def _get_default_code_from_product(self, cr, uid, ids, context=None):
-        ''' Change defauld code in product
-        '''
+        """ Change defauld code in product
+        """
         _logger.warning('Change default_code in product.product')
         sol_pool = self.pool.get('sale.order.line')
         return sol_pool.search(cr, uid, [
@@ -104,7 +104,7 @@ class SaleOrderLine(orm.Model):
                 }, string='Default code'),
 
         'destination_partner_id': fields.related(
-            'order_id', 'destination_partner_id', 
+            'order_id', 'destination_partner_id',
             type='many2one', string='Destination', relation='res.partner',
             store=False),
 
@@ -117,5 +117,3 @@ class SaleOrderLine(orm.Model):
                     _get_date_order_from_order, ['date_order'], 10),
                 }, string='Order date'),
         }
-    
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
