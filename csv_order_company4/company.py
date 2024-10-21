@@ -50,43 +50,6 @@ class CsvImportOrderElement(orm.Model):
 
     _inherit = 'csv.import.order.element'
 
-    def _csv_format_c4_date(self, value):
-        """ Return correct date from YYYMMDD
-        """
-        try:
-            return '%s-%s-%s' % (
-                 value[:4],
-                 value[4:6],
-                 value[6:8])
-        except:
-            return False
-
-    def _csv_c4_float(self, value):
-        """ Normal float
-        """
-        try:
-            return float(value)
-        except:
-            return 0.0
-
-    def _csv_c4_logmessage(self, logfile, message, mode='info', verbose=False):
-        """ Log file operation
-            logfile: handle for log file
-            message: text to write
-            mode: info, warning, error
-            verbose: print also in odoo log files
-        """
-        if verbose:
-            _logger.info(message)
-
-        message = '%s [%s] - %s' % (
-            datetime.now,
-            mode,
-            message,
-            )
-        logfile.write(message)
-        return True
-
     # -------------------------------------------------------------------------
     # Scheduled
     # -------------------------------------------------------------------------
@@ -195,7 +158,7 @@ class CsvImportOrderElement(orm.Model):
         # ---------------------------------------------------------------------
         # Log schedule start operation:
         # ---------------------------------------------------------------------
-        self._csv_c4_logmessage(
+        self._csv_logmessage(
             f_log_scheduler,
             'Start import procedure, file selected: %s' % len(order_list),
             mode='info',
@@ -214,7 +177,7 @@ class CsvImportOrderElement(orm.Model):
             history_fullname = os.path.join(history_folder, f)
 
             # Load read file:
-            self._csv_c4_logmessage(
+            self._csv_logmessage(
                 f_log_import,
                 'Start read file: %s' % f,
                 mode='info',
@@ -239,7 +202,7 @@ class CsvImportOrderElement(orm.Model):
                     # -----------------------------------------------------
                     # Read all header fields:
                     number = line[0] # customer order number
-                    order_date = self._csv_format_c4_date(line[1])
+                    order_date = self._csv_format_date(line[1])
                     reference_code = line[2]
                     destination_code = line[3]
                     # payment_terms = line[4]
@@ -247,7 +210,7 @@ class CsvImportOrderElement(orm.Model):
                     # note = line[6]
                     total = line[7]
                     customer_id = line[8]
-                    date_deadline = self._csv_format_c4_date(line[9])
+                    date_deadline = self._csv_format_date(line[9])
 
                     # Create order:
                     if destination_code:  # XXX mandatory?
@@ -262,7 +225,7 @@ class CsvImportOrderElement(orm.Model):
                                 not found in ODOO''' % (
                                     f, destination_code)
                             error += '%s<br/>\n' % error_text
-                            self._csv_c4_logmessage(
+                            self._csv_logmessage(
                                 f_log_import,
                                 error_text,
                                 mode='error',
@@ -274,7 +237,7 @@ class CsvImportOrderElement(orm.Model):
                             not found in file''' % (
                                 f, destination_code)
                         error += '%s<br/>\n' % error_text
-                        self._csv_c4_logmessage(
+                        self._csv_logmessage(
                             f_log_import,
                             error_text,
                             mode='error',
@@ -290,7 +253,7 @@ class CsvImportOrderElement(orm.Model):
                     if order_ids:  # on same order:
                         error_text = 'Order yet present: %s' % number
                         error += '%s<br/>\n' % error_text
-                        self._csv_c4_logmessage(
+                        self._csv_logmessage(
                             f_log_import,
                             error_text,
                             mode='error',
@@ -307,7 +270,7 @@ class CsvImportOrderElement(orm.Model):
                             Onchange partner data not
                             present in order %s!''' % number
                         error += '%s<br/>\n' % error_text
-                        self._csv_c4_logmessage(
+                        self._csv_logmessage(
                             f_log_import,
                             error_text,
                             mode='error',
@@ -333,7 +296,7 @@ class CsvImportOrderElement(orm.Model):
                     error_text = 'File: %s header not created' % (
                         f)
                     error += '%s<br/>\n' % error_text
-                    self._csv_c4_logmessage(
+                    self._csv_logmessage(
                         f_log_import,
                         error_text,
                         mode='error',
@@ -353,7 +316,7 @@ class CsvImportOrderElement(orm.Model):
                 # uom_code = line[6]
                 price_unit = self._csv_c1_float(line[7])
                 # subtotal = line[8]
-                date_deadline = self._csv_format_c4_date(line[9])
+                date_deadline = self._csv_format_date(line[9])
 
                 # Product:
                 product_ids = product_pool.search(cr, uid, [
@@ -375,7 +338,7 @@ class CsvImportOrderElement(orm.Model):
                                 product_code,
                                 )
                         error += '%s<br/>\n' % error_text
-                        self._csv_c4_logmessage(
+                        self._csv_logmessage(
                             f_log_import,
                             error_text,
                             mode='error',
@@ -416,7 +379,7 @@ class CsvImportOrderElement(orm.Model):
                     }
 
                 line_pool.create(cr, uid, data, context=context)
-                self._csv_c4_logmessage(
+                self._csv_logmessage(
                     f_log_import,
                     'Create line: %s' % data,
                     mode='info',
@@ -424,7 +387,7 @@ class CsvImportOrderElement(orm.Model):
 
             # History file if not error:
             shutil.move(fullname, history_fullname)
-            self._csv_c4_logmessage(
+            self._csv_logmessage(
                 f_log_import,
                 'History file: %s > %s' % (
                     fullname, history_fullname),
@@ -440,7 +403,7 @@ class CsvImportOrderElement(orm.Model):
         # ---------------------------------------------------------------------
         # Log schedule end operation:
         # ---------------------------------------------------------------------
-        self._csv_c4_logmessage(
+        self._csv_logmessage(
             f_log_scheduler,
             'End import procedure, file imported: %s / %s' % (
                 imported,

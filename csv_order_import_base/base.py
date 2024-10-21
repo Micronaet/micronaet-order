@@ -50,11 +50,51 @@ class CsvImportOrderElement(orm.Model):
     _description = 'CSV Order import'
     _rec_name = 'name'
 
+    # Utility function (sometimes custom in Company module)
+    def _csv_format_date(self, value):
+        """ Return correct date from YYYMMDD
+        """
+        try:
+            return '%s-%s-%s' % (
+                 value[:4],
+                 value[4:6],
+                 value[6:8])
+        except:
+            return False
+
+    def _csv_float(self, value):
+        """ Normal float
+        """
+        try:
+            return float(value)
+        except:
+            return 0.0
+
+    def _csv_logmessage(self, logfile, message, mode='info', verbose=False):
+        """ Log file operation
+            logfile: handle for log file
+            message: text to write
+            mode: info, warning, error
+            verbose: print also in odoo log files
+        """
+        if verbose:
+            _logger.info(message)
+
+        message = '%s [%s] - %s' % (
+            datetime.now,
+            mode,
+            message,
+            )
+        logfile.write(message)
+        return True
+
+    # -------------------------------------------------------------------------
     # Virtual procedure:
+    # -------------------------------------------------------------------------
     def _csv_import_order(self, cr, uid, name, context=None):
         """ Import procedure that will be called from modules (depend on this)
             name is the name of element to load (data.xml of every new mod.)
-            Importatione will be as data in table
+            Importation will be as data in table
         """
         return True
 
@@ -68,7 +108,7 @@ class CsvImportOrderElement(orm.Model):
         'company_tag': fields.char('Company tag', size=10,
             help='Company tag for replate in file name'),
         'partner_id': fields.many2one('res.partner', 'Customer'),
-        'note': fields.text('Note') ,
+        'note': fields.text('Note'),
         }
 
 
