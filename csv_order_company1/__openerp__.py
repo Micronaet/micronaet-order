@@ -30,14 +30,14 @@
     'depends': [
         'base',
         'csv_order_import_base',
-        'base_log', # Micronaet/mcironaet-product.git 
+        'base_log',  # Micronaet/mcironaet-product.git
         ],
     'init_xml': [],
     'demo': [],
     'data': [
         'data/mode_data.xml',
-        
-        #'security/ir.model.access.csv',
+
+        # 'security/ir.model.access.csv',
         'company_view.xml',
         ],
     'active': False,

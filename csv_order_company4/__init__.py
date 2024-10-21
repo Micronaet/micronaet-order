@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
-#    Copyright (C) 2001-2014 Micronaet SRL (<http://www.micronaet.it>).
+#    Copyright (C) 2001-2024 Micronaet SRL (<http://www.micronaet.it>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published
