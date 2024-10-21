@@ -32,65 +32,65 @@ from openerp import SUPERUSER_ID, api
 from openerp import tools
 from openerp.tools.translate import _
 from openerp.tools.float_utils import float_round as round
-from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT, 
-    DEFAULT_SERVER_DATETIME_FORMAT, 
-    DATETIME_FORMATS_MAP, 
+from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
+    DEFAULT_SERVER_DATETIME_FORMAT,
+    DATETIME_FORMATS_MAP,
     float_compare)
 
 
 _logger = logging.getLogger(__name__)
 
+
 class CsvImportOrderElement(orm.Model):
     """ Model name: CsvImportOrderTrace
         Object for save list of type of order that could be imported
-        Virtual import procedure that will be overrided from all 
+        Virtual import procedure that will be overrided from all
         extra modules
     """
-    
+
     _inherit = 'csv.import.order.element'
-    
+
     def _csv_format_c1_date(self, value):
-        ''' Return correct date from YYYMMDD
-        '''
+        """ Return correct date from YYYMMDD
+        """
         try:
             return '%s-%s-%s' % (
                  value[:4],
                  value[4:6],
                  value[6:8])
         except:
-            return False         
+            return False
 
     def _csv_c1_float(self, value):
-        ''' Return remove . and / 10.000
-        '''
+        """ Return remove . and / 10.000
+        """
         try:
             return float(value.replace('.', '')) / 10000
         except:
             return 0.0
-                 
-    
+
     # Virtual procedure:
     def _csv_import_order(self, cr, uid, code, context=None):
-        ''' Import procedure that will be called from modules (depend on this)
+        """ Import procedure that will be called from modules (depend on this)
             code is the code of element to load (data.xml of every new mod.)
             Importatione will be as data in table
-        '''
+        """
         def only_ascii(value):
-            ''' Remove not ascii char
-            '''
+            """ Remove not ascii char
+            """
             res = ''
             value = (value or '').strip()
             for c in value:
                 if ord(c) < 128:
                     res += c
-                else:  
+                else:
                     res += '#'
             return res
-                        
+
         if code != 'company1':
             return super(CsvImportOrderElement, self)._csv_import_order(
                 cr, uid, code, context=context)
-        
+
         # ---------------------------------------------------------------------
         #                      Company 1 Import procedure:
         # ---------------------------------------------------------------------
@@ -99,7 +99,7 @@ class CsvImportOrderElement(orm.Model):
         if not item_ids:
             _logger.error(
                 'Import code not found: company1 (record deleted?)')
-            return False    
+            return False
 
         # Pool used:
         log_pool = self.pool.get('log.importation')
@@ -108,12 +108,12 @@ class CsvImportOrderElement(orm.Model):
         partner_pool = self.pool.get('res.partner')
         partic_pool = self.pool.get('res.partner.product.partic')
         product_pool = self.pool.get('product.product')
-        
+
         # ---------------------
         # Read parametric data:
         # ---------------------
         item_proxy = self.browse(cr, uid, item_ids, context=context)[0]
-        _logger.info('Start import %s order' % (item_proxy.name))
+        _logger.info('Start import %s order' % (item_proxy.name, ))
 
         filepath = os.path.expanduser(item_proxy.filepath)
         historypath = os.path.join(filepath, 'history') # TODO param
@@ -129,7 +129,7 @@ class CsvImportOrderElement(orm.Model):
         importation_id = log_pool.create(cr, uid, {
             'name': 'Import Company 1 order',
             'user_id': uid,
-            #'mode_id': 'order', # TODO search order element!!
+            # 'mode_id': 'order', # TODO search order element!!
             'note': False,
             'error': False,
             }, context=context)
@@ -141,10 +141,10 @@ class CsvImportOrderElement(orm.Model):
                     filemask) and f.endswith('csv'):
                 order_list.append(f)
         order_list.sort()
-        
+
         # -----------------------------------------------------------------
         #                      Import order:
-        # -----------------------------------------------------------------            
+        # -----------------------------------------------------------------
         # Init log elements:
         error = ''
         comment = ''
@@ -152,8 +152,8 @@ class CsvImportOrderElement(orm.Model):
             filename = os.path.join(filepath, f)
             historyname = os.path.join(historypath, f)
             _logger.info('Read file: %s' % filename)
-            f_in = open(filename)            
-            
+            f_in = open(filename)
+
             # reset header / footer element:
             note = ''
             order_id = False
@@ -167,8 +167,8 @@ class CsvImportOrderElement(orm.Model):
                     # Read as CSV:
                     line = line.strip()
                     line = line.split(';')
-                    
-                    if line[0] == 't': 
+
+                    if line[0] == 't':
                         # -----------------------------------------------------
                         #                      header data:
                         # -----------------------------------------------------
@@ -177,9 +177,9 @@ class CsvImportOrderElement(orm.Model):
                         insert_date = self._csv_format_c1_date(line[6])
                         order_date = self._csv_format_c1_date(line[7])
                         date_deadline = self._csv_format_c1_date(line[23])
-                        
+
                         # Create order:
-                        if destination_code: 
+                        if destination_code:
                             destination_ids = partner_pool.search(cr, uid, [
                                 ('parent_id', '=', partner_id),
                                 ('csv_import_code', '=', destination_code),
@@ -206,15 +206,15 @@ class CsvImportOrderElement(orm.Model):
                             ('client_order_ref', '=', number),
                             ('partner_id', '=', partner_id),
                             ], context=context)
-                        
+
                         if order_ids: # on same order:
                             order_id = order_ids[0]
-                            
+
                             # delete all previous line:
                             line_unlink_ids = line_pool.search(cr, uid, [
                                 ('order_id', '=', order_id)], context=context)
-                            if line_unlink_ids:    
-                                line_pool.unlink(cr, uid, line_unlink_ids, 
+                            if line_unlink_ids:
+                                line_pool.unlink(cr, uid, line_unlink_ids,
                                     context=context)
                                 _logger.warning(
                                     'Delete all previous line: %s' % (
@@ -223,7 +223,7 @@ class CsvImportOrderElement(orm.Model):
                             # move parent log:
                             order_pool.write(cr, uid, order_id, {
                                 'importation_id': importation_id,
-                                }, context=context)                            
+                                }, context=context)
                         else:
                             try:
                                 onchange_data = order_pool.onchange_partner_id(
@@ -234,29 +234,29 @@ class CsvImportOrderElement(orm.Model):
                                     Onchange partner data not 
                                     'present in order %s!''' % number
                                 onchange_data = {} # error
-                                            
+
                             onchange_data.update({
                                 'importation_id': importation_id,
                                 'partner_id': partner_id,
-                                #'date_order': order_date,
+                                # 'date_order': order_date,
                                 'date_deadline': date_deadline,
                                 'client_order_ref': number,
-                                'destination_partner_id':  
-                                    destination_partner_id,                                
+                                'destination_partner_id':
+                                    destination_partner_id,
                                 })
                             order_id = order_pool.create(
                                 cr, uid, onchange_data, context=context)
-                    
-                    elif line[0] == 'r': 
+
+                    elif line[0] == 'r':
                         # -----------------------------------------------------
                         #                 Details:
                         # -----------------------------------------------------
-                        if not order_id: 
+                        if not order_id:
                             move_history = False
                             error += 'File: %s header not created<br/>\n' % (
                                 f)
                             continue # next order
-                            
+
                         # detail data:
                         sequence = line[8]
                         ean = line[9]
@@ -266,7 +266,7 @@ class CsvImportOrderElement(orm.Model):
                         description = line[12]
                         product_uom_qty = self._csv_c1_float(line[13])
                         price_unit = self._csv_c1_float(line[14])
-                 
+
                         # Product:
                         # XXX Problem with spaces (1 not 3)
                         product_ids = product_pool.search(cr, uid, ['|', '|',
@@ -277,23 +277,23 @@ class CsvImportOrderElement(orm.Model):
                             ('default_code', '=', product_code.replace(
                                 ' ', '   ')),
                             ], context=context)
-                            
+
                         if product_ids:
-                            product_id = product_ids[0]                        
+                            product_id = product_ids[0]
                         else:
                             # Try search in mapping code:
                             product_id = code_mapping.get(
                                 product_customer, False)
-                            if not product_id:    
+                            if not product_id:
                                 move_history = False
                                 error += \
                                     '%s. File: %s no product: %s>%s<br/>\n' % (
                                         counter,
-                                        f, 
-                                        product_customer, 
+                                        f,
+                                        product_customer,
                                         product_code,
                                         )
-                                continue # jumnp all order # TODO delete order?    
+                                continue # jumnp all order # TODO delete order?
 
                         # Partner - product partic:
                         partic_ids = partic_pool.search(cr, uid, [
@@ -306,7 +306,7 @@ class CsvImportOrderElement(orm.Model):
                                 'partner_code': '%s - EAN %s' % (
                                     product_customer, ean)
                                 }, context=context)
-                        else: # create        
+                        else: # create
                             partic_pool.create(cr, uid, {
                                 'partner_id': partner_id,
                                 'product_id': product_id,
@@ -314,7 +314,7 @@ class CsvImportOrderElement(orm.Model):
                                 'partner_code': '%s - EAN %s' % (
                                     product_customer, ean)
                                 }, context=context)
-                                
+
                         # TODO onchange for extra data??
                         data = {
                             'order_id': order_id,
@@ -326,39 +326,39 @@ class CsvImportOrderElement(orm.Model):
                             'date_deadline': date_deadline,
                             # TODO discount, scale vat ecc.
                             }
-                        # Search sequence for update?    
-                        #line_ids = line_pool.search(cr, uid, [
+                        # Search sequence for update?
+                        # line_ids = line_pool.search(cr, uid, [
                         #    ('order_id', '=', order_id),
                         #    ('sequence', '=', sequence),
                         #    ], context=context)
-                        #if line_ids:
-                        #    line_pool.write(cr, uid, line_ids[0], data, 
-                        #        context=context)    
-                        #else:    
-                        line_pool.create(cr, uid, data, context=context)    
+                        # if line_ids:
+                        #    line_pool.write(cr, uid, line_ids[0], data,
+                        #        context=context)
+                        # else:
+                        line_pool.create(cr, uid, data, context=context)
                         _logger.info('Create line: %s' % data)
-                    
+
                     elif line[0] == 'c': # comment:
                         # -----------------------------------------------------
                         #                 Footer:
                         # -----------------------------------------------------
                         note += line[9]
-                    
+
                     else:
                         move_history = False
                         error += 'Type line not found: %s\n' % line[0]
                         continue
-                    
+
                 except:
                     # Generic record error:
                     error += '%s. %s<br/>\n' % (counter, sys.exc_info(), )
-                    
-            # Update with coment once ad the end:
+
+            # Update with comment once ad the end:
             # XXX Note not used!
-            #order_pool.write(cr, uid, order_id, {
+            # order_pool.write(cr, uid, order_id, {
             #    'text_note_post': note,
             #    }, context=context)
-                
+
             # History file if not error:
             if move_history:
                 _logger.info('History file: %s > %s' % (
@@ -376,9 +376,7 @@ class CsvImportOrderElement(orm.Model):
             'res_id': importation_id,
             'view_type': 'form',
             'view_mode': 'form',
-            #'view_id': view_id,
-            #'target': 'new',
-            #'nodestroy': True,
+            # 'view_id': view_id,
+            # 'target': 'new',
+            # 'nodestroy': True,
             }
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
