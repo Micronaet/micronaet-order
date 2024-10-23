@@ -99,12 +99,23 @@ class CsvImportOrderElement(orm.Model):
                 _('Import code not found: company4 (record deleted?)'))
             return False
 
+        mapping_id = item_ids[0]
+
         # Pool used:
         log_pool = self.pool.get('log.importation')
         order_pool = self.pool.get('sale.order')
         line_pool = self.pool.get('sale.order.line')
         partner_pool = self.pool.get('res.partner')
         product_pool = self.pool.get('product.product')
+        mapping_pool = self.pool.get('csv.import.order.element.mapping')
+
+        product_assign_ids = product_pool.search(cr, uid, [
+            ('default_code', '=', 'ASSEGNARE'),
+        ], context=context)
+        if product_assign_ids:
+            product_assign_id = product_assign_ids[0]
+        else:
+            product_assign_ids = 1  # todo?
 
         # ---------------------------------------------------------------------
         # Read parametric data:
@@ -360,8 +371,15 @@ class CsvImportOrderElement(orm.Model):
                 if product_ids:
                     product_id = product_ids[0]
                 else:
+                    # Create a mapping for next time!
+                    mapping_pool.create(cr, uid, {
+                        'item_id': mapping_id,
+                        'name': default_code,
+                        'product_id': product_assign_id,
+                    }, context=context)
+
                     error_text = \
-                        '%s. File: %s no product: %s' % (
+                        '%s. File: %s no product: %s (update mapping!)' % (
                             sequence,
                             f,
                             default_code,
