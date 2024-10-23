@@ -45,9 +45,9 @@ class SaleOrderCsvImportWizard(orm.TransientModel):
     """
     _name = 'sale.order.csv.import.wizard'
 
-    # ---------------
-    # Utility funtion
-    # ---------------
+    # -------------------------------------------------------------------------
+    # Utility function
+    # -------------------------------------------------------------------------
     def preserve_window(self, cr, uid, ids, context=None):
         """ Create action for return the same open wizard window
         """
