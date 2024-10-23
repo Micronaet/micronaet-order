@@ -397,7 +397,7 @@ class CsvImportOrderElement(orm.Model):
                 # todo onchange for extra data??
                 data = {
                     'order_id': order_id,
-                    'sequence': int(sequence) / 10000),
+                    'sequence': int(sequence) / 10000,
                     'product_id': product_id,
                     'product_uom_qty': product_uom_qty,
                     'price_unit': price_unit,
