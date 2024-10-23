@@ -417,6 +417,7 @@ class CsvImportOrderElement(orm.Model):
                         cr, uid, False, multi_discount_rate,
                         context=context).get('value', {})
                     data.update(data_extra)
+                    data['multi_discount_rate'] = multi_discount_rate
 
                 line_pool.create(cr, uid, data, context=context)
                 self._csv_logmessage(
