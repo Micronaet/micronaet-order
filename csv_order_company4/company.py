@@ -84,7 +84,6 @@ class CsvImportOrderElement(orm.Model):
         # ---------------------------------------------------------------------
         #                      PROCEDURE FOR IMPORT
         # ---------------------------------------------------------------------
-        pdb.set_trace()
         if code != 'company4':
             return super(CsvImportOrderElement, self)._csv_import_order(
                 cr, uid, code, context=context)
@@ -105,7 +104,6 @@ class CsvImportOrderElement(orm.Model):
         order_pool = self.pool.get('sale.order')
         line_pool = self.pool.get('sale.order.line')
         partner_pool = self.pool.get('res.partner')
-        partic_pool = self.pool.get('res.partner.product.partic')
         product_pool = self.pool.get('product.product')
 
         # ---------------------------------------------------------------------
@@ -173,8 +171,9 @@ class CsvImportOrderElement(orm.Model):
         #                      Import order:
         # ---------------------------------------------------------------------
         # Init log elements:
-        error = comment = ''
+        error = ''
         imported = 0
+        pdb.set_trace()
         for f in order_list:
             fullname = os.path.join(in_folder, f)
             history_fullname = os.path.join(history_folder, f)
