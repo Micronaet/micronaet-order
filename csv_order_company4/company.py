@@ -81,6 +81,10 @@ class CsvImportOrderElement(orm.Model):
                     res += '#'
             return res
 
+        # ---------------------------------------------------------------------
+        #                      PROCEDURE FOR IMPORT
+        # ---------------------------------------------------------------------
+        pdb.set_trace()
         if code != 'company4':
             return super(CsvImportOrderElement, self)._csv_import_order(
                 cr, uid, code, context=context)
@@ -88,7 +92,6 @@ class CsvImportOrderElement(orm.Model):
         # ---------------------------------------------------------------------
         #                      Company 4 Import procedure:
         # ---------------------------------------------------------------------
-        pdb.set_trace()
         item_ids = self.search(cr, uid, [
             ('code', '=', code),
             ], context=context)
