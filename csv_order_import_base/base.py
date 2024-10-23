@@ -77,7 +77,7 @@ class CsvImportOrderElement(orm.Model):
                     value[:2])
             elif mode == 'italian_2':
                 return '20%s-%s-%s' % (
-                    value[-4:],
+                    value[-2:],
                     value[5:7],
                     value[:2])
         except:
