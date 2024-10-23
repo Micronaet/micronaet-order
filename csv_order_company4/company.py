@@ -400,7 +400,7 @@ class CsvImportOrderElement(orm.Model):
                     )
 
             # History file if not error:
-            shutil.move(fullname, history_fullname)
+            # todo restore: shutil.move(fullname, history_fullname)
             self._csv_logmessage(
                 f_log_import,
                 'History file: %s > %s' % (
