@@ -51,14 +51,32 @@ class CsvImportOrderElement(orm.Model):
     _rec_name = 'name'
 
     # Utility function (sometimes custom in Company module)
-    def _csv_format_date(self, value):
-        """ Return correct date from YYYMMDD
+    def _csv_format_date(self, value, mode='iso'):
+        """ value: Date in text format
+            mode:
+             > iso: YYYYMMDD
+             > iso_separated: YYYY-MM-DD
+             > italian: DD/MM/AAAA
+             > italian_2: DD/MM/AA
+
+            @return correct date from YYYY-MM-DD
         """
         try:
-            return '%s-%s-%s' % (
-                 value[:4],
-                 value[4:6],
-                 value[6:8])
+            if mode == 'iso':
+                return '%s-%s-%s' % (
+                     value[:4],
+                     value[4:6],
+                     value[6:8])
+            elif mode == 'italian':
+                return '%s-%s-%s' % (
+                    value[-4:],
+                    value[5:7],
+                    value[:2])
+            elif mode == 'italian_2':
+                return '20%s-%s-%s' % (
+                    value[-4:],
+                    value[5:7],
+                    value[:2])
         except:
             return False
 

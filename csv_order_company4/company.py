@@ -128,7 +128,6 @@ class CsvImportOrderElement(orm.Model):
         f_log_scheduler = open(log_scheduler, 'a')
         f_log_import = open(log_import, 'a')
 
-        partner_id = item_proxy.partner_id.id
         extension = item_proxy.fileextension or ''
         mask = item_proxy.filemask or ''  # starts with
 
@@ -174,8 +173,7 @@ class CsvImportOrderElement(orm.Model):
         #                      Import order:
         # ---------------------------------------------------------------------
         # Init log elements:
-        error = ''
-        comment = ''
+        error = comment = ''
         imported = 0
         for f in order_list:
             fullname = os.path.join(in_folder, f)
@@ -192,196 +190,193 @@ class CsvImportOrderElement(orm.Model):
 
             # reset header / footer element:
             order_id = False
-            destination_partner_id = False
-            date_deadline = False  # keep header in line!
-            counter = 0  # row
+            error_text = ''  # Reset every new order
+
             for line in f_in:
-                counter += 1
                 # Read as CSV:
                 line = line.strip()
-                line = line.split('|')
+                line = line.split(';')
 
-                if counter == 1:
-                    # -----------------------------------------------------
+                discount = [0.0, 0.0, 0.0, 0.0, 0.0, ]
+                discount_promo = [0.0, 0.0, 0.0, 0.0, 0.0, ]
+                (
+                 # Header:
+                 record_type, vat_supplier, destination_code, record_id,
+                 order_number, order_date, supplier_country,
+                 supplier_fiscal_code, customer_vat, customer_country,
+                 customer_fiscal_code, destination_address,
+                 destination_city, date_deadline,
+                 order_gt, order_date_gt, supplier_order,
+                 payment_method, payment_condition, payment_iban,
+                 supplier_order_origin, commission_rate,
+                 commission_cost, transport_cost, label_cost,
+                 package_cost, truck_number, truck_plate,
+                 truck_without_plate, truck_flatbed, truck_extension_low,
+                 truck_extension_long, parcel, pallet_epal, pallet_lost,
+                 carrier_name, state,
+
+                 # Detail:
+                 sequence, ean13, default_code, supplier_code,
+                 name, product_uom_qty, uom, uom_qty, price_unit, vat_rate,
+                 discount[0], discount[1], discount[2],
+                 discount[3], discount[4],
+                 discount_promo[0], discount_promo[1], discount_promo[2],
+                 discount_promo[3], discount_promo[4],
+                 amount, amount_label, label_qty, intra_code,
+                 intra_weight, intra_weight_net, intra_parcel,
+                 passport_ruop, passport_lot, kit_qty, ean_parent,
+                 family_code) = line
+
+                if not order_id:  # First line create order header:
+                    # ---------------------------------------------------------
                     #                     HEADER DATA:
-                    # -----------------------------------------------------
-                    # Read all header fields:
-                    number = line[0] # customer order number
-                    order_date = self._csv_format_date(line[1])
-                    reference_code = line[2]
-                    destination_code = line[3]
-                    # payment_terms = line[4]
-                    # currency = line[5]
-                    # note = line[6]
-                    total = line[7]
-                    customer_id = line[8]
-                    date_deadline = self._csv_format_date(line[9])
+                    # ---------------------------------------------------------
+                    # A. Partner (from VAT):
+                    # ---------------------------------------------------------
+                    partner_ids = partner_pool.search(cr, uid, [
+                        ('vat', '=', vat_supplier),
+                        # todo add more filter?
+                    ], context=context)
 
-                    # Create order:
-                    if destination_code:  # XXX mandatory?
-                        destination_ids = partner_pool.search(cr, uid, [
-                            ('parent_id', '=', partner_id),
-                            ('csv_import_code', '=', destination_code),
-                            ], context=context)
-                        if destination_ids:
-                            destination_partner_id = destination_ids[0]
-                        else:
-                            error_text += '''File: %s destination code %s
-                                not found in ODOO''' % (
-                                    f, destination_code)
-                            error += '%s<br/>\n' % error_text
-                            self._csv_logmessage(
-                                f_log_import,
-                                error_text,
-                                mode='error',
-                                )
-                            break  # jump file
-                    else:
-                        error_text = '''
-                            File: %s destination code %s
-                            not found in file''' % (
-                                f, destination_code)
+                    if not partner_ids:
+                        error_text += '''
+                            File: %s partner VAT %s not found in ODOO
+                            ''' % (f, customer_vat)
                         error += '%s<br/>\n' % error_text
                         self._csv_logmessage(
                             f_log_import,
                             error_text,
                             mode='error',
-                            )
+                        )
                         break  # jump file
+                    partner_id = partner_ids[0]
 
+                    # ---------------------------------------------------------
+                    # B. Partner (from VAT):
+                    # ---------------------------------------------------------
+                    # todo Sale point:
+                    # destination_code
+
+                    # todo Destination
+                    if customer_vat:
+                        destination_ids = partner_pool.search(cr, uid, [
+                            ('vat', '=', customer_vat),
+                        ], context=context)
+                    else:
+                        destination_ids = False
+
+                    if not destination_ids:
+                        error_text += '''
+                            File: %s Destination VAT %s not found in ODOO
+                            ''' % (f, customer_vat)
+                        error += '%s<br/>\n' % error_text
+                        self._csv_logmessage(
+                            f_log_import,
+                            error_text,
+                            mode='error',
+                        )
+                        break  # jump file
+                    destination_id = destination_ids[0]
+
+                    # ---------------------------------------------------------
+                    # Search Order:
+                    # ---------------------------------------------------------
                     # Search if there's a previous import (not done)
                     order_ids = order_pool.search(cr, uid, [
-                        ('client_order_ref', '=', number),
+                        ('client_order_ref', '=', order_gt),
                         ('partner_id', '=', partner_id),
+                        ('destination_id', '=', destination_id),
                         ], context=context)
 
                     if order_ids:  # on same order:
-                        error_text = 'Order yet present: %s' % number
+                        error_text = 'Order yet present: %s' % order_gt
                         error += '%s<br/>\n' % error_text
                         self._csv_logmessage(
                             f_log_import,
                             error_text,
                             mode='error',
                             )
-                        # TODO delete detail and import?
+                        # todo delete detail and import?
                         break
 
+                    # ---------------------------------------------------------
+                    # Insert order:
+                    # ---------------------------------------------------------
                     try:
-                        onchange_data = order_pool.onchange_partner_id(
-                            cr, uid, [], partner_id, context=context)[
-                                'value']
+                        order_data = order_pool.onchange_partner_id(
+                            cr, uid, [], partner_id,
+                            context=context).get('value', {})
                     except:
                         error_text = '''
                             Onchange partner data not
-                            present in order %s!''' % number
+                            present in order %s!''' % order_gt
                         error += '%s<br/>\n' % error_text
                         self._csv_logmessage(
                             f_log_import,
                             error_text,
                             mode='error',
                             )
-                        break # No order creation jump file
+                        break  # No order creation jump file
 
-                    onchange_data.update({
+                    order_data.update({
                         'importation_id': importation_id,
                         'partner_id': partner_id,
-                        'date_order': order_date,
-                        'date_deadline': date_deadline,
-                        'client_order_ref': number,
-                        'destination_partner_id': destination_partner_id,
+                        'date_order': self._csv_format_date(
+                            order_date, mode='italian_2'),
+                        'date_deadline': self._csv_format_date(
+                            date_deadline, mode='italian_2'),
+                        'client_order_ref': order_gt,
+                        'destination_partner_id': destination_id,
                         })
                     order_id = order_pool.create(
-                        cr, uid, onchange_data, context=context)
-                    continue # header read
+                        cr, uid, order_data, context=context)
 
                 # -------------------------------------------------------------
                 #                          ROW DATA:
                 # -------------------------------------------------------------
-                if not order_id:
-                    error_text = 'File: %s header not created' % (
-                        f)
+                # Product:
+                product_ids = product_pool.search(cr, uid, [
+                    ('default_code', '=', default_code),
+                    ], context=context)
+
+                if product_ids:
+                    product_id = product_ids[0]
+                else:
+                    error_text = \
+                        '%s. File: %s no product: %s' % (
+                            sequence,
+                            f,
+                            default_code,
+                            )
                     error += '%s<br/>\n' % error_text
                     self._csv_logmessage(
                         f_log_import,
                         error_text,
                         mode='error',
                         )
-                    break # next order
+                    break  # End import of this order
 
-                # ------------
-                # Read fields:
-                # ------------
-                # TODO
-                sequence = line[0]
-                product_customer = line[1]
-                product_code = line[2]
-                description = line[3]
-                ean = line[4]
-                product_uom_qty = self._csv_c1_float(line[5])
-                # uom_code = line[6]
-                price_unit = self._csv_c1_float(line[7])
-                # subtotal = line[8]
-                date_deadline = self._csv_format_date(line[9])
-
-                # Product:
-                product_ids = product_pool.search(cr, uid, [
-                    ('default_code', '=', product_code),
-                    ], context=context)
-
-                if product_ids:
-                    product_id = product_ids[0]
-                else:
-                    # Try search in mapping code:
-                    product_id = code_mapping.get(
-                        product_customer, False)
-                    if not product_id:
-                        error_text = \
-                            '%s. File: %s no product: %s>%s' % (
-                                counter,
-                                f,
-                                product_customer,
-                                product_code,
-                                )
-                        error += '%s<br/>\n' % error_text
-                        self._csv_logmessage(
-                            f_log_import,
-                            error_text,
-                            mode='error',
-                            )
-                        break # End import of this order
-
-                # Partner - product partic:
-                partic_ids = partic_pool.search(cr, uid, [
-                    ('partner_id', '=', partner_id),
-                    ('product_id', '=', product_id),
-                    ], context=context)
-                if partic_ids:
-                    # TODO ask if correct
-                    partic_pool.write(cr, uid, partic_ids[0], {
-                        'partner_price': price_unit,
-                        'partner_code': '%s - EAN %s' % (
-                            product_customer, ean)
-                        }, context=context)
-                else: # create
-                    partic_pool.create(cr, uid, {
-                        'partner_id': partner_id,
-                        'product_id': product_id,
-                        'partner_price': price_unit,
-                        'partner_code': '%s - EAN %s' % (
-                            product_customer, ean)
-                        }, context=context)
-
-                # TODO onchange for extra data??
+                # todo onchange for extra data??
                 data = {
                     'order_id': order_id,
-                    'sequence': sequence,
+                    'sequence': int(sequence / 10000.0),
                     'product_id': product_id,
                     'product_uom_qty': product_uom_qty,
                     'price_unit': price_unit,
-                    'name': only_ascii(description),
+                    'name': only_ascii(name),
                     'date_deadline': date_deadline,
-                    # TODO discount, scale vat ecc.
+                    # todo discount, scale vat ecc.
                     }
+
+                # Discount:
+                multi_discount_rate = '+'.join([
+                    str(d) for d in discount if d
+                ])
+                if multi_discount_rate:
+                    data_extra = line_pool.on_change_multi_discount(
+                        cr, uid, False, multi_discount_rate,
+                        context=context).get('value', {})
+                    data.update(data_extra)
 
                 line_pool.create(cr, uid, data, context=context)
                 self._csv_logmessage(
