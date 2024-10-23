@@ -61,6 +61,9 @@ class CsvImportOrderElement(orm.Model):
 
             @return correct date from YYYY-MM-DD
         """
+        value = (value or '').strip()
+        if not value:
+            return ''
         try:
             if mode == 'iso':
                 return '%s-%s-%s' % (

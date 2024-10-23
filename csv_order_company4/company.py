@@ -216,11 +216,11 @@ class CsvImportOrderElement(orm.Model):
                 (
                  # Header:
                  record_type, vat_supplier, destination_code, record_id,
-                 order_number, order_date, supplier_country,
+                 order_number, document_date, supplier_country,
                  supplier_fiscal_code, customer_vat, customer_country,
                  customer_fiscal_code, destination_address,
                  destination_city, date_deadline,
-                 order_gt, order_date_gt, supplier_order,
+                 order_gt, order_date, supplier_order,
                  payment_method, payment_condition, payment_iban,
                  supplier_order_origin, commission_rate,
                  commission_cost, transport_cost, label_cost,
