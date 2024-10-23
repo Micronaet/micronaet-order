@@ -247,6 +247,8 @@ class CsvImportOrderElement(orm.Model):
                     # ---------------------------------------------------------
                     # A. Partner (from VAT):
                     # ---------------------------------------------------------
+                    if len(vat_supplier) == 11:
+                        vat_supplier = 'IT{}'.format(vat_supplier)
                     partner_ids = partner_pool.search(cr, uid, [
                         ('vat', '=', vat_supplier),
                         # todo add more filter?
@@ -273,6 +275,8 @@ class CsvImportOrderElement(orm.Model):
 
                     # todo Destination
                     if customer_vat:
+                        if len(customer_vat) == 11:
+                            customer_vat = 'IT{}'.format(customer_vat)
                         destination_ids = partner_pool.search(cr, uid, [
                             ('vat', '=', customer_vat),
                         ], context=context)
