@@ -73,12 +73,12 @@ class CsvImportOrderElement(orm.Model):
             elif mode == 'italian':
                 return '%s-%s-%s' % (
                     value[-4:],
-                    value[5:7],
+                    value[3:5],
                     value[:2])
             elif mode == 'italian_2':
                 return '20%s-%s-%s' % (
                     value[-2:],
-                    value[5:7],
+                    value[3:5],
                     value[:2])
         except:
             return False
