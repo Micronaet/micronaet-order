@@ -31,28 +31,29 @@ from openerp import SUPERUSER_ID, api
 from openerp import tools
 from openerp.tools.translate import _
 from openerp.tools.float_utils import float_round as round
-from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT, 
-    DEFAULT_SERVER_DATETIME_FORMAT, 
-    DATETIME_FORMATS_MAP, 
+from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
+    DEFAULT_SERVER_DATETIME_FORMAT,
+    DATETIME_FORMATS_MAP,
     float_compare)
 
 
 _logger = logging.getLogger(__name__)
 
+
 class SaleOrderCsvImportWizard(orm.TransientModel):
-    ''' Wizard to import CSV product updating price
-    '''    
+    """ Wizard to import CSV product updating price
+    """
     _name = 'sale.order.csv.import.wizard'
 
     # ---------------
     # Utility funtion
     # ---------------
     def preserve_window(self, cr, uid, ids, context=None):
-        ''' Create action for return the same open wizard window
-        '''
+        """ Create action for return the same open wizard window
+        """
         view_id = self.pool.get('ir.ui.view').search(cr,uid,[
             ('model', '=', 'product.product.csv.import.wizard'),
-            ('name', '=', 'Create production order') # TODO needed?
+            ('name', '=', 'Create production order')  # TODO needed?
             ], context=context)
 
         return {
@@ -71,18 +72,15 @@ class SaleOrderCsvImportWizard(orm.TransientModel):
     # Wizard button:
     # --------------
     def action_import_csv(self, cr, uid, ids, context=None):
-        ''' Import pricelist and product description
-        '''
-        
+        """ Import pricelist and product description
+        """
         wiz_proxy = self.browse(cr, uid, ids, context=context)[0]
         return self.pool.get('csv.import.order.element')._csv_import_order(
             cr, uid, wiz_proxy.item_id.code, context=context)
 
-        
     _columns = {
-        'item_id': fields.many2one('csv.import.order.element',
+        'item_id': fields.many2one(
+            'csv.import.order.element',
             'Import order for partner', required=True),
         'note': fields.text('Note'),
         }
-        
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -18,6 +18,7 @@
 #
 ###############################################################################
 import os
+import pdb
 import sys
 import logging
 import openerp
@@ -87,6 +88,7 @@ class CsvImportOrderElement(orm.Model):
         # ---------------------------------------------------------------------
         #                      Company 4 Import procedure:
         # ---------------------------------------------------------------------
+        pdb.set_trace()
         item_ids = self.search(cr, uid, [
             ('code', '=', code),
             ], context=context)
