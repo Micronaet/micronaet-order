@@ -393,7 +393,7 @@ class CsvImportOrderElement(orm.Model):
                             error_text,
                             mode='error',
                             )
-                        break  # End import of this order
+                        product_id = product_assign_id
 
                 # todo onchange for extra data??
                 data = {
