@@ -303,7 +303,7 @@ class CsvImportOrderElement(orm.Model):
                     order_ids = order_pool.search(cr, uid, [
                         ('client_order_ref', '=', order_gt),
                         ('partner_id', '=', partner_id),
-                        ('destination_id', '=', destination_id),
+                        ('destination_partner_id', '=', destination_id),
                         ], context=context)
 
                     if order_ids:  # on same order:
