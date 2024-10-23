@@ -86,10 +86,22 @@ class CsvImportOrderElement(orm.Model):
     def _csv_float(self, value):
         """ Normal float
         """
+        value = (value or '').strip()
+        if not value:
+            return 0.0
         try:
             return float(value)
         except:
-            return 0.0
+            pass
+
+        try:
+            value = value.replace(',', '.')
+            return float(value)
+        except:
+            pass
+
+        _logger.error('Cannot convert {} in float'.format(value))
+        return 0.0
 
     def _csv_logmessage(self, logfile, message, mode='info', verbose=False):
         """ Log file operation

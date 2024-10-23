@@ -107,6 +107,7 @@ class CsvImportOrderElement(orm.Model):
         line_pool = self.pool.get('sale.order.line')
         partner_pool = self.pool.get('res.partner')
         product_pool = self.pool.get('product.product')
+        element_pool = self.pool.get('csv.import.order.element')
         mapping_pool = self.pool.get('csv.import.order.element.mapping')
 
         product_assign_ids = product_pool.search(cr, uid, [
@@ -399,8 +400,9 @@ class CsvImportOrderElement(orm.Model):
                     'order_id': order_id,
                     'sequence': int(sequence) / 10000,
                     'product_id': product_id,
-                    'product_uom_qty': product_uom_qty,
-                    'price_unit': price_unit,
+                    'product_uom_qty':
+                        element_pool._csv_float(product_uom_qty),
+                    'price_unit': element_pool._csv_float(price_unit),
                     'name': only_ascii(name),
                     'date_deadline': date_deadline,
                     # todo discount, scale vat ecc.
