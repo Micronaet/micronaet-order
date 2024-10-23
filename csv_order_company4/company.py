@@ -202,8 +202,7 @@ class CsvImportOrderElement(orm.Model):
                     continue
 
                 if len(line) != cols:
-                    error_text += 'File: %s riga con colonne differenti' % (
-                        f, customer_vat)
+                    error_text += 'File: %s riga con colonne differenti' % f
                     error += '%s<br/>\n' % error_text
                     self._csv_logmessage(
                         f_log_import,
