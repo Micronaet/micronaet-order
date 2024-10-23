@@ -409,15 +409,15 @@ class CsvImportOrderElement(orm.Model):
                     }
 
                 # Discount:
-                multi_discount_rate = '+'.join([
+                multi_discount_rates = '+'.join([
                     str(d) for d in discount if d
                 ])
-                if multi_discount_rate:
+                if multi_discount_rates:
                     data_extra = line_pool.on_change_multi_discount(
-                        cr, uid, False, multi_discount_rate,
+                        cr, uid, False, multi_discount_rates,
                         context=context).get('value', {})
                     data.update(data_extra)  # Discount converted
-                    data['multi_discount_rates'] = multi_discount_rate
+                    data['multi_discount_rates'] = multi_discount_rates
 
                 line_pool.create(cr, uid, data, context=context)
                 self._csv_logmessage(
