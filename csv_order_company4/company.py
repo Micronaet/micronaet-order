@@ -173,7 +173,6 @@ class CsvImportOrderElement(orm.Model):
         # Init log elements:
         error = ''
         imported = 0
-        pdb.set_trace()
         for f in order_list:
             fullname = os.path.join(in_folder, f)
             history_fullname = os.path.join(history_folder, f)
@@ -352,6 +351,7 @@ class CsvImportOrderElement(orm.Model):
                 # -------------------------------------------------------------
                 #                          ROW DATA:
                 # -------------------------------------------------------------
+                pdb.set_trace()
                 # Product:
                 product_ids = product_pool.search(cr, uid, [
                     ('default_code', '=', default_code),
