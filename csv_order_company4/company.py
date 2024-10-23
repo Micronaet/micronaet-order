@@ -410,7 +410,7 @@ class CsvImportOrderElement(orm.Model):
 
                 # Discount:
                 multi_discount_rates = '+'.join([
-                    str(d) for d in discount if d
+                    str(d) for d in discount if d and float(d) > 0
                 ])
                 if multi_discount_rates:
                     data_extra = line_pool.on_change_multi_discount(
