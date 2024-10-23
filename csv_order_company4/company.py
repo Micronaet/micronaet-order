@@ -362,11 +362,14 @@ class CsvImportOrderElement(orm.Model):
                 # -------------------------------------------------------------
                 #                          ROW DATA:
                 # -------------------------------------------------------------
-                pdb.set_trace()
-                # Product:
-                product_ids = product_pool.search(cr, uid, [
-                    ('default_code', '=', default_code),
-                    ], context=context)
+                # Product search:
+                # -------------------------------------------------------------
+                product_id = code_mapping.get(default_code)
+
+                if not product_id:
+                    product_ids = product_pool.search(cr, uid, [
+                        ('default_code', '=', default_code),
+                        ], context=context)
 
                 if product_ids:
                     product_id = product_ids[0]
