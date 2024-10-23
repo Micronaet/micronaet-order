@@ -51,9 +51,9 @@ class SaleOrderCsvImportWizard(orm.TransientModel):
     def preserve_window(self, cr, uid, ids, context=None):
         """ Create action for return the same open wizard window
         """
-        view_id = self.pool.get('ir.ui.view').search(cr,uid,[
+        view_id = self.pool.get('ir.ui.view').search(cr, uid, [
             ('model', '=', 'product.product.csv.import.wizard'),
-            ('name', '=', 'Create production order')  # TODO needed?
+            ('name', '=', 'Create production order')  # todo needed?
             ], context=context)
 
         return {
