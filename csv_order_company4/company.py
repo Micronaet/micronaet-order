@@ -370,30 +370,29 @@ class CsvImportOrderElement(orm.Model):
                     product_ids = product_pool.search(cr, uid, [
                         ('default_code', '=', default_code),
                         ], context=context)
+                    if product_ids:
+                        product_id = product_ids[0]
+                    else:
+                        # Create a mapping for next time!
+                        mapping_pool.create(cr, uid, {
+                            'item_id': mapping_id,
+                            'name': default_code,
+                            'product_id': product_assign_id,
+                        }, context=context)
 
-                if product_ids:
-                    product_id = product_ids[0]
-                else:
-                    # Create a mapping for next time!
-                    mapping_pool.create(cr, uid, {
-                        'item_id': mapping_id,
-                        'name': default_code,
-                        'product_id': product_assign_id,
-                    }, context=context)
-
-                    error_text = \
-                        '%s. File: %s no product: %s (update mapping!)' % (
-                            sequence,
-                            f,
-                            default_code,
+                        error_text = \
+                            '%s. File: %s no product: %s (update mapping!)' % (
+                                sequence,
+                                f,
+                                default_code,
+                                )
+                        error += '%s<br/>\n' % error_text
+                        self._csv_logmessage(
+                            f_log_import,
+                            error_text,
+                            mode='error',
                             )
-                    error += '%s<br/>\n' % error_text
-                    self._csv_logmessage(
-                        f_log_import,
-                        error_text,
-                        mode='error',
-                        )
-                    break  # End import of this order
+                        break  # End import of this order
 
                 # todo onchange for extra data??
                 data = {
