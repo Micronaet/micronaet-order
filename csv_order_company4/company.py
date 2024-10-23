@@ -251,6 +251,7 @@ class CsvImportOrderElement(orm.Model):
                         vat_supplier = 'IT{}'.format(vat_supplier)
                     partner_ids = partner_pool.search(cr, uid, [
                         ('vat', '=', vat_supplier),
+                        ('is_company', '=', True),
                         # todo add more filter?
                     ], context=context)
 
@@ -274,19 +275,18 @@ class CsvImportOrderElement(orm.Model):
                     # destination_code
 
                     # todo Destination
-                    if customer_vat:
-                        if len(customer_vat) == 11:
-                            customer_vat = 'IT{}'.format(customer_vat)
+                    if destination_code:
                         destination_ids = partner_pool.search(cr, uid, [
-                            ('vat', '=', customer_vat),
+                            ('edi_code', '=', destination_code),
+                            ('type', '=', 'address'),
                         ], context=context)
                     else:
                         destination_ids = False
 
                     if not destination_ids:
                         error_text += '''
-                            File: %s Destination VAT %s not found in ODOO
-                            ''' % (f, customer_vat)
+                            File: %s Destination Code %s not found in ODOO
+                            ''' % (f, destination_code)
                         error += '%s<br/>\n' % error_text
                         self._csv_logmessage(
                             f_log_import,
