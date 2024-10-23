@@ -192,10 +192,26 @@ class CsvImportOrderElement(orm.Model):
             order_id = False
             error_text = ''  # Reset every new order
 
+            cols = 0
             for line in f_in:
+
                 # Read as CSV:
                 line = line.strip()
                 line = line.split(';')
+                if not cols:  # Header
+                    cols = len(line)
+                    continue
+
+                if len(line) != cols:
+                    error_text += 'File: %s riga con colonne differenti' % (
+                        f, customer_vat)
+                    error += '%s<br/>\n' % error_text
+                    self._csv_logmessage(
+                        f_log_import,
+                        error_text,
+                        mode='error',
+                    )
+                    break  # jump file
 
                 discount = [0.0, 0.0, 0.0, 0.0, 0.0, ]
                 discount_promo = [0.0, 0.0, 0.0, 0.0, 0.0, ]
