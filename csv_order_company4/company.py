@@ -289,7 +289,7 @@ class CsvImportOrderElement(orm.Model):
                     if destination_code:
                         destination_ids = partner_pool.search(cr, uid, [
                             ('edi_code', '=', destination_code),
-                            ('type', '=', 'delivery'),
+                            # ('type', '=', 'delivery'),
                         ], context=context)
                     else:
                         destination_ids = False
