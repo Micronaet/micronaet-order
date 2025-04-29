@@ -297,18 +297,19 @@ class SaleOrderLine(orm.Model):
             return res
 
         search_ean = (search_ean or '').strip()
-        if len(search_ean) == 13:
+        length = len(search_ean)
+        if  length == 13:
             product_ids = product_pool.search(cr, uid, [
                 ('ean13', '=', search_ean),
                 ('ean13_mono', '=', search_ean),
             ], context=context)
-        if len(search_ean) == 8:
+        elif length == 8:
             product_ids = product_pool.search(cr, uid, [
                 ('ean8', '=', search_ean),
                 ('ean8_mono', '=', search_ean),
             ], context=context)
         else:
-            _logge.info('No EAN 13 or EAN 8, search code')
+            _logger.error('No EAN 13 or EAN 8, search code')
             product_ids = product_pool.search(cr, uid, [
                 ('default_code', '=', search_ean),
             ], context=context)
