@@ -77,15 +77,15 @@ class SaleOrder(orm.Model):
     _inherit = 'sale.order'
     
     def show_fastorder(self, cr, uid, ids, context=None):
-        '''
-        '''
+        """
+        """
         return self.write(cr, uid, ids, {'fast_order': True}, context=context)
         
     # Utility:
     def utility_set_partner_default(self, cr, uid, ids, order_field, 
             partner_field, context=None):
-        ''' Utility to set partner element
-        '''
+        """ Utility to set partner element
+        """
         assert len(ids) == 1, 'Force only once element a time!'
         
         _logger.warning('Set default order %s > partner %s' % (
@@ -105,8 +105,8 @@ class SaleOrder(orm.Model):
         return True
         
     def set_transportation_default(self, cr, uid, ids, context=None):
-        ''' Set default value also in partner
-        '''
+        """ Set default value also in partner
+        """
         return self. utility_set_partner_default(
             cr, uid, ids, 'transportation_reason_id', 'transportation_reason_id', 
             context=context)
@@ -136,8 +136,8 @@ class SaleOrder(orm.Model):
             'transportation_method_id', context=context)
             
     def create_real_line(self, cr, uid, ids, context=None):
-        ''' Create real line from fast one's
-        '''
+        """ Create real line from fast one's
+        """
         assert len(ids) == 1, 'Only one order a time'
         """sol_pool = self.pool.get('sale.order.line')
         fastline_pool = self.pool.get('sale.order.fastline')
@@ -227,8 +227,8 @@ class SaleOrder(orm.Model):
             }"""
 
     def go_normal_view(self, cr, uid, ids, context=None):
-        ''' Open normal view
-        '''
+        """ Open normal view
+        """
         model_pool = self.pool.get('ir.model.data')
         view_id = model_pool.get_object_reference(
             cr, uid, 'sale', 'view_order_form')[1]    
@@ -248,8 +248,8 @@ class SaleOrder(orm.Model):
             }                
 
     def go_fast_view(self, cr, uid, ids, context=None):
-        ''' Open fast insert view
-        '''
+        """ Open fast insert view
+        """
         model_pool = self.pool.get('ir.model.data')
         view_id = model_pool.get_object_reference(
             cr, uid, 'sale_order_fast', 'view_sale_order_form_fast_form')[1]    
@@ -267,11 +267,49 @@ class SaleOrder(orm.Model):
             'target': 'current', # 'new'
             'nodestroy': False,
             }                
-            
+
+    def onchange_search_ean_product(self, cr, uid, ids, search_ean, context=None):
+        """ Search EAN for product
+        """
+        product_pool = self.pool.get('product.product')
+
+        res = {
+            'value': {},
+            'domain': {
+                'product_id': [],
+            },
+        }
+
+        if not search_ean:
+            # Remove filter if present
+            return res
+
+        search_ean = (search_ean or '').strip()
+        if len(search_ean) == 13:
+            product_ids = product_pool.search(cr, uid, [
+                ('ean13', '=', search_ean),
+                ('ean13_mono', '=', search_ean),
+            ], context=context)
+        if len(search_ean) == 8:
+            product_ids = product_pool.search(cr, uid, [
+                ('ean8', '=', search_ean),
+                ('ean8_mono', '=', search_ean),
+            ], context=context)
+        else:
+            _logge.info('No EAN 13 or EAN 8, search code')
+            product_ids = product_pool.search(cr, uid, [
+                ('default_code', '=', search_ean),
+            ], context=context)
+
+        if len(product_ids) == 1:
+            res['value']['product_id'] = product_ids[0] # Direct assign
+        elif len(product_ids) > 1:
+            res['domain']['product_id'] = [('id', 'in', product_ids)]  # Setup filter
+        return res
+
     _columns = {
+        'search_ean': fields.char('Ricerca EAN', size=40),
         'fastline_ids': fields.one2many(
             'sale.order.fastline', 'order_id', 'Fast line'), 
         'fast_order': fields.boolean('Fast order'),    
         }
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
