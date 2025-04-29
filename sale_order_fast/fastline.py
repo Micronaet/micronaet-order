@@ -268,6 +268,18 @@ class SaleOrder(orm.Model):
             'nodestroy': False,
             }                
 
+
+    _columns = {
+        'fastline_ids': fields.one2many(
+            'sale.order.fastline', 'order_id', 'Fast line'), 
+        'fast_order': fields.boolean('Fast order'),    
+        }
+
+class SaleOrderLine(orm.Model):
+    """ Model name: StockDdt
+    """
+    _inherit = 'sale.order.line'
+
     def onchange_search_ean_product(self, cr, uid, ids, search_ean, context=None):
         """ Search EAN for product
         """
@@ -309,7 +321,4 @@ class SaleOrder(orm.Model):
 
     _columns = {
         'search_ean': fields.char('Ricerca EAN', size=40),
-        'fastline_ids': fields.one2many(
-            'sale.order.fastline', 'order_id', 'Fast line'), 
-        'fast_order': fields.boolean('Fast order'),    
-        }
+    }
