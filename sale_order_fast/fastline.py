@@ -283,6 +283,7 @@ class SaleOrderLine(orm.Model):
     def onchange_search_ean_product(self, cr, uid, ids, search_ean, context=None):
         """ Search EAN for product
         """
+        import pdb; pdb.set_trace()
         product_pool = self.pool.get('product.product')
 
         res = {
