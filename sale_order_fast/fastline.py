@@ -301,11 +301,13 @@ class SaleOrderLine(orm.Model):
         length = len(search_ean)
         if  length == 13:
             product_ids = product_pool.search(cr, uid, [
+                '|',
                 ('ean13', '=', search_ean),
                 ('ean13_mono', '=', search_ean),
             ], context=context)
         elif length == 8:
             product_ids = product_pool.search(cr, uid, [
+                '|',
                 ('ean8', '=', search_ean),
                 ('ean8_mono', '=', search_ean),
             ], context=context)
