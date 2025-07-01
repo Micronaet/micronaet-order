@@ -106,11 +106,12 @@ line_ids = line_pool.search([
 counter = 0
 total = len(line_ids)
 write_log('Start update state: Tot. %s' % total)
+pdb.set_trace()
 if line_ids:
     for line in line_pool.browse(line_ids):
         counter += 1
         order = line.order_id
-        # print('%s / %s Update state order = %s line ID %s' % (counter, total, order.name, line.id))
+        print('%s / %s Update state order = %s line ID %s' % (counter, total, order.name, line.id))
 
 write_log('End update: Tot. %s [UPD %s]' % (total, counter))
 
