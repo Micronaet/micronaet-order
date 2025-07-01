@@ -82,7 +82,7 @@ log_f = open(log_file, 'a')
 update = {}
 
 
-def write_log(event, mode='INFO', verbose=False):
+def write_log(event, mode='INFO', verbose=True):
     """ Write log
     """
     log_f.write('%s. [%s] %s\n' % (
