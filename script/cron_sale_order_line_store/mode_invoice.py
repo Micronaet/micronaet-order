@@ -290,6 +290,9 @@ if line_ids:
         try:
             line_id = line.id
             date_invoice = line.invoice_id.date_invoice
+            if not date_invoice:
+                print('Cannot update %s of %s: %s' % (counter, total, date_invoice))
+                continue
             print('Update %s of %s: %s' % (counter, total, date_invoice))
             query = \
                 'UPDATE account_invoice_line SET date_invoice=\'%s\' ' \
