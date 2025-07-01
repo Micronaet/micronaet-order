@@ -106,7 +106,6 @@ total = len(line_ids)
 query_f = open(query_file, 'w')
 write_log('Start update %s: Tot. %s' % (query_file, total))
 update[query_file] = [0, 0]
-pdb.set_trace()
 
 if line_ids:
     for line in line_pool.browse(line_ids):
