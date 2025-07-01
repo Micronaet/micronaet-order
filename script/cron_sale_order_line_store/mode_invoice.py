@@ -399,7 +399,7 @@ if open_mode == 'fia':
                 query_f.write(query)  # Not work ORM with function fields
                 update[query_file][0] += 1
             except:
-                print('%s. %s: Error updating line %s >> %s' % (counter, total, line_id, product_name))
+                print('%s. %s: Error updating line %s' % (counter, total, line_id))
                 update[query_file][1] += 1
     query_f.close()
     if update[query_file][0]:
@@ -434,14 +434,11 @@ if open_mode == 'fia':
             invoice = line.invoice_id
             date_invoice = invoice.date_invoice
             season_period = get_season_from_date(date_invoice)
-            print('Update %s of %s: %s >> %s' % (
-                counter, total, date_invoice, season_period))
+            print('Update %s of %s: %s >> %s' % (counter, total, date_invoice, season_period))
 
             query = \
                 'UPDATE account_invoice_line set season_period=\'%s\' ' \
-                'WHERE id=%s;\n' % (
-                    season_period, line.id,
-                )
+                'WHERE id=%s;\n' % (season_period, line.id)
             query_f.write(query)  # Not work ORM with function fields
             update[query_file][0] += 1
     query_f.close()

@@ -110,7 +110,7 @@ if line_ids:
     for line in line_pool.browse(line_ids):
         counter += 1
         order = line.order_id
-        print('%s / %s Update state order = %s line ID %s' % (counter, total, order.name, line.id))
+        # print('%s / %s Update state order = %s line ID %s' % (counter, total, order.name, line.id))
 
 write_log('End update: Tot. %s [UPD %s]' % (total, counter))
 
@@ -193,8 +193,7 @@ if open_mode == 'fia':
                 update[query_file][0] += 1
 
             except:
-                print('%s. %s: Error updating line %s >> %s' % (
-                    counter, total, line_id, product_name))
+                print('%s. %s: Error updating line %s' % (counter, total, line_id))
                 update[query_file][1] += 1
     query_f.close()
     if update[query_file][0] > 0:
