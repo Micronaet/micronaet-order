@@ -133,8 +133,8 @@ update[query_file] = [0, 0]
 if line_ids:
     for line in line_pool.browse(line_ids):
         counter += 1
+        line_id = line.id
         try:
-            line_id = line.id
             mx_agent_id = line.order_id.partner_id.agent_id.id
             print('Update %s of %s: %s' % (counter, total, mx_agent_id))
             query = \
@@ -178,8 +178,8 @@ if open_mode == 'fia':
     if line_ids:
         for line in line_pool.browse(line_ids):
             counter += 1
+            line_id = line.id
             try:
-                line_id = line.id
                 product_name = 'Non trovato'
                 product = line.product_id
                 product_name = product.name
