@@ -119,9 +119,7 @@ if line_ids:
             print('Update %s of %s: %s' % (counter, total, zone_id))
             query = \
                 'UPDATE account_invoice_line SET zone_id=\'%s\' ' \
-                'WHERE id=%s;\n' % (
-                    zone_id, line_id,
-                )
+                'WHERE id=%s;\n' % (zone_id, line_id)
             query_f.write(query)  # Not work ORM with function fields
             update[query_file][0] += 1
         except:
@@ -157,8 +155,8 @@ update[query_file] = [0, 0]
 if line_ids:
     for line in invoice_line_pool.browse(line_ids):
         counter += 1
+        line_id = line.id
         try:
-            line_id = line.id
             region_id = line.invoice_id.partner_id.state_id.region_id.id
             print('Update %s of %s: %s' % (counter, total, region_id))
             query = \
@@ -202,8 +200,8 @@ update[query_file] = [0, 0]
 if line_ids:
     for line in invoice_line_pool.browse(line_ids):
         counter += 1
+        line_id = line.id
         try:
-            line_id = line.id
             state_id = line.invoice_id.partner_id.state_id.id
             print('Update %s of %s: %s' % (counter, total, state_id))
             query = \
@@ -247,8 +245,8 @@ update[query_file] = [0, 0]
 if line_ids:
     for line in invoice_line_pool.browse(line_ids):
         counter += 1
+        line_id = line.id
         try:
-            line_id = line.id
             country_id = line.invoice_id.partner_id.country_id.id
             print('Update %s of %s: %s' % (counter, total, country_id))
             query = \
@@ -292,8 +290,8 @@ update[query_file] = [0, 0]
 if line_ids:
     for line in invoice_line_pool.browse(line_ids):
         counter += 1
+        line_id = line.id
         try:
-            line_id = line.id
             date_invoice = line.invoice_id.date_invoice
             if not date_invoice:
                 print('Cannot update %s of %s: %s' % (counter, total, date_invoice))
@@ -340,8 +338,8 @@ update[query_file] = [0, 0]
 if line_ids:
     for line in invoice_line_pool.browse(line_ids):
         counter += 1
+        line_id = line.id
         try:
-            line_id = line.id
             mx_agent_id = line.invoice_id.partner_id.agent_id.id
             print('Update %s of %s: %s' % (counter, total, mx_agent_id))
             query = \
@@ -353,8 +351,7 @@ if line_ids:
             update[query_file][0] += 1
         except:
             update[query_file][1] += 1
-            print('%s. %s: Error updating line %s' % (
-                counter, total, line_id))
+            print('%s. %s: Error updating line %s' % (counter, total, line_id))
 query_f.close()
 if update[query_file][0] > 0:
     command = 'psql -d %s -a -f %s' % (
@@ -388,25 +385,21 @@ if open_mode == 'fia':
     if line_ids:
         for line in invoice_line_pool.browse(line_ids):
             counter += 1
+            line_id = line.id
             try:
-                line_id = line.id
                 product_name = 'Non trovato'
                 product = line.product_id
                 product_name = product.name
                 product_family_id = product.family_id.id
-                print('Update %s of %s: %s' % (
-                    counter, total, product_family_id))
+                print('Update %s of %s: %s' % (counter, total, product_family_id))
 
                 query = \
                     'UPDATE account_invoice_line SET family_id=\'%s\' ' \
-                    'WHERE id=%s;\n' % (
-                        product_family_id, line_id,
-                    )
+                    'WHERE id=%s;\n' % (product_family_id, line_id)
                 query_f.write(query)  # Not work ORM with function fields
                 update[query_file][0] += 1
             except:
-                print('%s. %s: Error updating line %s >> %s' % (
-                    counter, total, line_id, product_name))
+                print('%s. %s: Error updating line %s >> %s' % (counter, total, line_id, product_name))
                 update[query_file][1] += 1
     query_f.close()
     if update[query_file][0]:
@@ -435,7 +428,7 @@ if open_mode == 'fia':
     write_log('Start update %s: Tot. %s' % (query_file, total))
     update[query_file] = [0, 0]
 
-    if line_id:
+    if line_ids:
         for line in invoice_line_pool.browse(line_ids):
             counter += 1
             invoice = line.invoice_id
