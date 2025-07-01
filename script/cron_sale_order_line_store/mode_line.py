@@ -100,7 +100,7 @@ query_file = './sql/%s_order_agent.sql' % open_mode
 line_ids = line_pool.search([
     ('state', 'not in', ('cancel', 'draft', 'sent')),
     ('mx_agent_id', '=', False),
-    ('order_id.partner_id.agent_id', '!', False),
+    ('order_id.partner_id.agent_id', '!=', False),
     ])
 counter = 0
 total = len(line_ids)
