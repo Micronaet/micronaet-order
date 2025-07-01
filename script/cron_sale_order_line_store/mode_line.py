@@ -57,12 +57,15 @@ update = {}
 def write_log(event, mode='INFO', verbose=True):
     """ Write log
     """
-    log_f.write('%s. %s [%s] %s\n' % (
+    message = '%s. %s[%s] %s\n' % (
         datetime.now(),
         open_mode,
         mode,
         event,
-    ))
+    )
+    log_f.write(message)
+    if verbose:
+        print(message)
 
 
 def get_season_from_date(date_order):
