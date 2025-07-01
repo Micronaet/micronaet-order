@@ -85,8 +85,9 @@ update = {}
 def write_log(event, mode='INFO', verbose=True):
     """ Write log
     """
-    log_f.write('%s. [%s] %s\n' % (
+    log_f.write('%s. %s[%s] %s\n' % (
         datetime.now(),
+        open_mode,
         mode,
         event,
     ))
