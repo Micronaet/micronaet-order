@@ -142,7 +142,7 @@ else:
 query_file = './sql/%s_region_state.sql' % open_mode
 line_ids = invoice_line_pool.search([
     ('region_id', '=', False),
-    ('line.invoice_id.partner_id.state_id.region_id', '!=', False),
+    ('invoice_id.partner_id.state_id.region_id', '!=', False),
     ('type', '=', 'out_invoice'),
     ])
 counter = 0
