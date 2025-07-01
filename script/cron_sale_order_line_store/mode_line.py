@@ -143,6 +143,7 @@ if open_mode == 'fia':
     line_ids = line_pool.search([
         ('state', 'not in', ('cancel', 'draft', 'sent')),
         ('family_id', '=', False),
+        ('product_id.family_id', '!=', False),
         ])
     counter = 0
     total = len(line_ids)
