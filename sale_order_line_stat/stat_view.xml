@@ -12,7 +12,7 @@
                         <field name="order_id" filter_domain="[('order_id.name','ilike',self)]"/>
                         <field name="product_id" filter_domain="['|',('product_id.name','ilike',self),('product_id.default_code','ilike',self)]"/>
                         <filter name="quotation_state" string="Quotation" domain="[('state','in',('draft','sent','cancel'))]"/>
-                        <filter name="order_state" string="Order" domain="[('state','not in',('draft','sent','cancel'))]"/>
+                        <filter name="order_state" string="Order" domain="[('order_id.state','not in',('draft','sent','cancel'))]"/>
                         <!--<filter name="order_closed" string="Order closed" domain="[('mx_closed','=',True)]"/>
                         <filter name="order_opened" string="Order opened" domain="[('mx_closed','=',False)]"/>-->
                         <field name="default_code" filter_domain="[('default_code','ilike',self)]"/>
