@@ -209,6 +209,7 @@ if open_mode == 'fia':
     query_file = './sql/%s_order_season.sql' % open_mode
     line_ids = line_pool.search([
         # ('state', 'not in', ('cancel', 'draft', 'sent')),
+        ('order_id.date_order', '!=', False),
         ('season_period', '=', False),
         ])
     counter = 0

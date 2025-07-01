@@ -277,6 +277,7 @@ else:
 query_file = './sql/%s_invoice_date.sql' % open_mode
 line_ids = invoice_line_pool.search([
     ('date_invoice', '=', False),
+    ('invoice_id.date_invoice', '!=', False),
     ('type', '=', 'out_invoice'),
     ])
 counter = 0
