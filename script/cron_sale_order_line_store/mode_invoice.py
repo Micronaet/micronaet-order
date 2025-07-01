@@ -308,13 +308,17 @@ if line_ids:
             print('%s. %s: Error updating line %s' % (
                 counter, total, line_id))
 query_f.close()
-command = 'psql -d %s -a -f %s' % (
-    dbname,
-    query_file,
-)
-write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
-    query_file, total, update[query_file][0], update[query_file][1]))
-os.system(command)
+if update[query_file][0] > 0:
+    command = 'psql -d %s -a -f %s' % (
+        dbname,
+        query_file,
+    )
+    write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+        query_file, total, update[query_file][0], update[query_file][1]))
+    os.system(command)
+else:
+    write_log('No need to update %s: Tot. %s [UPD %s - ERR %s]' % (
+        query_file, total, update[query_file][0], update[query_file][1]))
 
 # -----------------------------------------------------------------------------
 # Agente:

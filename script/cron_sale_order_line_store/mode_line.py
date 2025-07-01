@@ -232,7 +232,11 @@ if open_mode == 'fia':
             query_f.write(query)  # Not work ORM with function fields
             update[query_file][0] += 1
     query_f.close()
-    command = 'psql -d %s -a -f %s' % (dbname, query_file)
-    write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
-        query_file, total, update[query_file][0], update[query_file][1]))
-    os.system(command)
+    if update[query_file][0] > 0:
+        command = 'psql -d %s -a -f %s' % (dbname, query_file)
+        write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+            query_file, total, update[query_file][0], update[query_file][1]))
+        os.system(command)
+    else:
+        write_log('No need to update %s: Tot. %s [UPD %s - ERR %s]' % (
+            query_file, total, update[query_file][0], update[query_file][1]))
