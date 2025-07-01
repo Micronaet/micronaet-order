@@ -99,6 +99,7 @@ query_file = './sql/%s_zone_state.sql' % open_mode
 line_ids = invoice_line_pool.search([
     ('zone_id', '=', False),
     ('type', '=', 'out_invoice')
+    ('invoice_id.partner_id.zone_id', '!=', False),
     ])
 counter = 0
 total = len(line_ids)
@@ -108,8 +109,8 @@ update[query_file] = [0, 0]
 if line_ids:
     for line in invoice_line_pool.browse(line_ids):
         counter += 1
+        line_id = line.id
         try:
-            line_id = line.id
             zone_id = line.invoice_id.partner_id.zone_id.id
             print('Update %s of %s: %s' % (counter, total, zone_id))
             query = \
@@ -121,16 +122,19 @@ if line_ids:
             update[query_file][0] += 1
         except:
             update[query_file][1] += 1
-            print('%s. %s: Error updating line %s' % (
-                counter, total, line_id))
+            print('%s. %s: Error updating line %s' % (counter, total, line_id))
 query_f.close()
-command = 'psql -d %s -a -f %s' % (
-    dbname,
-    query_file,
-)
-write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
-    query_file, total, update[query_file][0], update[query_file][1]))
-os.system(command)
+if update[query_file][0] > 0:
+    command = 'psql -d %s -a -f %s' % (
+        dbname,
+        query_file,
+    )
+    write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+        query_file, total, update[query_file][0], update[query_file][1]))
+    os.system(command)
+else:
+    write_log('No need to update %s: Tot. %s [UPD %s - ERR %s]' % (
+        query_file, total, update[query_file][0], update[query_file][1]))
 
 # -----------------------------------------------------------------------------
 # Regione:
@@ -138,6 +142,7 @@ os.system(command)
 query_file = './sql/%s_region_state.sql' % open_mode
 line_ids = invoice_line_pool.search([
     ('region_id', '=', False),
+    ('line.invoice_id.partner_id.state_id.region_id', '!=', False),
     ('type', '=', 'out_invoice')
     ])
 counter = 0
@@ -164,13 +169,17 @@ if line_ids:
             print('%s. %s: Error updating line %s' % (
                 counter, total, line_id))
 query_f.close()
-command = 'psql -d %s -a -f %s' % (
-    dbname,
-    query_file,
-)
-write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
-    query_file, total, update[query_file][0], update[query_file][1]))
-os.system(command)
+if update[query_file][0] > 0:
+    command = 'psql -d %s -a -f %s' % (
+        dbname,
+        query_file,
+    )
+    write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+        query_file, total, update[query_file][0], update[query_file][1]))
+    os.system(command)
+else:
+    write_log('No need to update %s: Tot. %s [UPD %s - ERR %s]' % (
+        query_file, total, update[query_file][0], update[query_file][1]))
 
 # -----------------------------------------------------------------------------
 # Città (state_id):
@@ -178,6 +187,7 @@ os.system(command)
 query_file = './sql/%s_invoice_state.sql' % open_mode
 line_ids = invoice_line_pool.search([
     ('state_id', '=', False),
+    ('invoice_id.partner_id.state_id', '!=', False),
     ('type', '=', 'out_invoice')
     ])
 counter = 0
@@ -204,13 +214,17 @@ if line_ids:
             print('%s. %s: Error updating line %s' % (
                 counter, total, line_id))
 query_f.close()
-command = 'psql -d %s -a -f %s' % (
-    dbname,
-    query_file,
-)
-write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
-    query_file, total, update[query_file][0], update[query_file][1]))
-os.system(command)
+if update[query_file][0] > 0:
+    command = 'psql -d %s -a -f %s' % (
+        dbname,
+        query_file,
+    )
+    write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+        query_file, total, update[query_file][0], update[query_file][1]))
+    os.system(command)
+else:
+    write_log('No need to update %s: Tot. %s [UPD %s - ERR %s]' % (
+        query_file, total, update[query_file][0], update[query_file][1]))
 
 # -----------------------------------------------------------------------------
 # Nazione:
@@ -218,6 +232,7 @@ os.system(command)
 query_file = './sql/%s_invoice_country.sql' % open_mode
 line_ids = invoice_line_pool.search([
     ('country_id', '=', False),
+    ('invoice_id.partner_id.country_id', '!=', False),
     ('type', '=', 'out_invoice')
     ])
 counter = 0
@@ -244,13 +259,17 @@ if line_ids:
             print('%s. %s: Error updating line %s' % (
                 counter, total, line_id))
 query_f.close()
-command = 'psql -d %s -a -f %s' % (
-    dbname,
-    query_file,
-)
-write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
-    query_file, total, update[query_file][0], update[query_file][1]))
-os.system(command)
+if update[query_file][0] > 0:
+    command = 'psql -d %s -a -f %s' % (
+        dbname,
+        query_file,
+    )
+    write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+        query_file, total, update[query_file][0], update[query_file][1]))
+    os.system(command)
+else:
+    write_log('No need to update %s: Tot. %s [UPD %s - ERR %s]' % (
+        query_file, total, update[query_file][0], update[query_file][1]))
 
 # -----------------------------------------------------------------------------
 # Invoice date:
@@ -298,6 +317,7 @@ os.system(command)
 query_file = './sql/%s_invoice_agent.sql' % open_mode
 line_ids = invoice_line_pool.search([
     ('mx_agent_id', '=', False),
+    ('invoice_id.partner_id.agent_id', '!=', False),
     ('type', '=', 'out_invoice')
     ])
 counter = 0
@@ -324,13 +344,17 @@ if line_ids:
             print('%s. %s: Error updating line %s' % (
                 counter, total, line_id))
 query_f.close()
-command = 'psql -d %s -a -f %s' % (
-    dbname,
-    query_file,
-)
-write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
-    query_file, total, update[query_file][0], update[query_file][1]))
-os.system(command)
+if update[query_file][0] > 0:
+    command = 'psql -d %s -a -f %s' % (
+        dbname,
+        query_file,
+    )
+    write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+        query_file, total, update[query_file][0], update[query_file][1]))
+    os.system(command)
+else:
+    write_log('No need to update %s: Tot. %s [UPD %s - ERR %s]' % (
+        query_file, total, update[query_file][0], update[query_file][1]))
 
 if open_mode == 'fia':
     # -------------------------------------------------------------------------
@@ -340,6 +364,7 @@ if open_mode == 'fia':
 
     line_ids = invoice_line_pool.search([
         ('family_id', '=', False),
+        ('product_id.family_id', '!=', False),
         ('type', '=', 'out_invoice'),
         ])
     counter = 0
@@ -372,13 +397,17 @@ if open_mode == 'fia':
                     counter, total, line_id, product_name))
                 update[query_file][1] += 1
     query_f.close()
-    command = 'psql -d %s -a -f %s' % (
-        dbname,
-        query_file,
-    )
-    write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
-        query_file, total, update[query_file][0], update[query_file][1]))
-    os.system(command)
+    if update[query_file][0]:
+        command = 'psql -d %s -a -f %s' % (
+            dbname,
+            query_file,
+        )
+        write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+            query_file, total, update[query_file][0], update[query_file][1]))
+        os.system(command)
+    else:
+        write_log('No need to update %s: Tot. %s [UPD %s - ERR %s]' % (
+            query_file, total, update[query_file][0], update[query_file][1]))
 
     # -------------------------------------------------------------------------
     # Update season:
@@ -418,4 +447,3 @@ if open_mode == 'fia':
     write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
         query_file, total, update[query_file][0], update[query_file][1]))
     os.system(command)
-
