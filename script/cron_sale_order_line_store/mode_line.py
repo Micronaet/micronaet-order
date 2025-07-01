@@ -82,8 +82,7 @@ def get_season_from_date(date_order):
 # Connect to ODOO:
 # -----------------------------------------------------------------------------
 odoo = erppeek.Client(
-    'http://%s:%s' % (
-        server, port),
+    'http://%s:%s' % (server, port),
     db=dbname,
     user=user,
     password=pwd,
@@ -108,6 +107,7 @@ query_f = open(query_file, 'w')
 write_log('Start update %s: Tot. %s' % (query_file, total))
 update[query_file] = [0, 0]
 pdb.set_trace()
+
 if line_ids:
     for line in line_pool.browse(line_ids):
         counter += 1
@@ -128,14 +128,11 @@ if line_ids:
             update[query_file][1] += 1
 
 query_f.close()
-command = 'psql -d %s -a -f %s' % (
-    dbname,
-    query_file,
-)
-write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
-    query_file, total, update[query_file][0], update[query_file][1]))
-
-os.system(command)
+if update[query_file][0] > 0:
+    command = 'psql -d %s -a -f %s' % (dbname, query_file)
+    os.system(command)
+    write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+        query_file, total, update[query_file][0], update[query_file][1]))
 
 if open_mode == 'fia':
     # -------------------------------------------------------------------------
@@ -162,14 +159,11 @@ if open_mode == 'fia':
                 product = line.product_id
                 product_name = product.name
                 product_family_id = product.family_id.id
-                print('Update %s of %s: %s' % (
-                    counter, total, product_family_id))
+                print('Update %s of %s: %s' % (counter, total, product_family_id))
 
                 query = \
                     'UPDATE sale_order_line set family_id=\'%s\' ' \
-                    'WHERE id=%s;\n' % (
-                        product_family_id, line_id,
-                    )
+                    'WHERE id=%s;\n' % (product_family_id, line_id)
                 query_f.write(query)  # Not work ORM with function fields
                 update[query_file][0] += 1
 
