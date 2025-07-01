@@ -97,7 +97,7 @@ line_pool = odoo.model('sale.order.line')
 query_file = './sql/%s_order_agent.sql' % open_mode
 
 line_ids = line_pool.search([
-    ('state', 'not in', ('cancel', 'draft', 'sent')),
+    # ('state', 'not in', ('cancel', 'draft', 'sent')),
     ('mx_agent_id', '=', False),
     ('order_id.partner_id.agent_id', '!=', False),
     ])
@@ -115,8 +115,7 @@ if line_ids:
             mx_agent_id = line.order_id.partner_id.agent_id.id
             print('Update %s of %s: %s' % (counter, total, mx_agent_id))
             query = \
-                'UPDATE sale_order_line set mx_agent_id=\'%s\' ' \
-                'WHERE id=%s;\n' % (
+                'UPDATE sale_order_line set mx_agent_id=%s WHERE id=%s;\n' % (
                     mx_agent_id, line_id,
                 )
             query_f.write(query)  # Not work ORM with function fields
@@ -132,6 +131,9 @@ if update[query_file][0] > 0:
     os.system(command)
     write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
         query_file, total, update[query_file][0], update[query_file][1]))
+else:
+    write_log('No neet to update agent %s: Tot. %s [UPD %s - ERR %s]' % (
+        query_file, total, update[query_file][0], update[query_file][1]))
 
 if open_mode == 'fia':
     # -------------------------------------------------------------------------
@@ -140,7 +142,7 @@ if open_mode == 'fia':
     query_file = './sql/%s_order_family.sql' % open_mode
 
     line_ids = line_pool.search([
-        ('state', 'not in', ('cancel', 'draft', 'sent')),
+        # ('state', 'not in', ('cancel', 'draft', 'sent')),
         ('family_id', '=', False),
         ('product_id.family_id', '!=', False),
         ])
@@ -177,13 +179,16 @@ if open_mode == 'fia':
         write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
             query_file, total, update[query_file][0], update[query_file][1]))
         os.system(command)
+    else:
+        write_log('No neet to update family %s: Tot. %s [UPD %s - ERR %s]' % (
+            query_file, total, update[query_file][0], update[query_file][1]))
 
     # -------------------------------------------------------------------------
     # Update season:
     # -------------------------------------------------------------------------
     query_file = './sql/%s_order_season.sql' % open_mode
     line_ids = line_pool.search([
-        ('state', 'not in', ('cancel', 'draft', 'sent')),
+        # ('state', 'not in', ('cancel', 'draft', 'sent')),
         ('season_period', '=', False),
         ])
     counter = 0
