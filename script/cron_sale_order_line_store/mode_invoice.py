@@ -98,8 +98,8 @@ def write_log(event, mode='INFO', verbose=False):
 query_file = './sql/%s_zone_state.sql' % open_mode
 line_ids = invoice_line_pool.search([
     ('zone_id', '=', False),
-    ('type', '=', 'out_invoice'),
     ('invoice_id.partner_id.zone_id', '!=', False),
+    ('type', '=', 'out_invoice'),
     ])
 counter = 0
 total = len(line_ids)
@@ -143,7 +143,7 @@ query_file = './sql/%s_region_state.sql' % open_mode
 line_ids = invoice_line_pool.search([
     ('region_id', '=', False),
     ('line.invoice_id.partner_id.state_id.region_id', '!=', False),
-    ('type', '=', 'out_invoice')
+    ('type', '=', 'out_invoice'),
     ])
 counter = 0
 total = len(line_ids)
@@ -188,7 +188,7 @@ query_file = './sql/%s_invoice_state.sql' % open_mode
 line_ids = invoice_line_pool.search([
     ('state_id', '=', False),
     ('invoice_id.partner_id.state_id', '!=', False),
-    ('type', '=', 'out_invoice')
+    ('type', '=', 'out_invoice'),
     ])
 counter = 0
 total = len(line_ids)
@@ -233,7 +233,7 @@ query_file = './sql/%s_invoice_country.sql' % open_mode
 line_ids = invoice_line_pool.search([
     ('country_id', '=', False),
     ('invoice_id.partner_id.country_id', '!=', False),
-    ('type', '=', 'out_invoice')
+    ('type', '=', 'out_invoice'),
     ])
 counter = 0
 total = len(line_ids)
@@ -277,7 +277,7 @@ else:
 query_file = './sql/%s_invoice_date.sql' % open_mode
 line_ids = invoice_line_pool.search([
     ('date_invoice', '=', False),
-    ('type', '=', 'out_invoice')
+    ('type', '=', 'out_invoice'),
     ])
 counter = 0
 total = len(line_ids)
@@ -318,7 +318,7 @@ query_file = './sql/%s_invoice_agent.sql' % open_mode
 line_ids = invoice_line_pool.search([
     ('mx_agent_id', '=', False),
     ('invoice_id.partner_id.agent_id', '!=', False),
-    ('type', '=', 'out_invoice')
+    ('type', '=', 'out_invoice'),
     ])
 counter = 0
 total = len(line_ids)
