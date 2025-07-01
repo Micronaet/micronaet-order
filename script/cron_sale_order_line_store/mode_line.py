@@ -173,13 +173,11 @@ if open_mode == 'fia':
                     counter, total, line_id, product_name))
                 update[query_file][1] += 1
     query_f.close()
-    command = 'psql -d %s -a -f %s' % (
-        dbname,
-        query_file,
-    )
-    write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
-        query_file, total, update[query_file][0], update[query_file][1]))
-    os.system(command)
+    if update[query_file][0] > 0:
+        command = 'psql -d %s -a -f %s' % (dbname, query_file)
+        write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
+            query_file, total, update[query_file][0], update[query_file][1]))
+        os.system(command)
 
     # -------------------------------------------------------------------------
     # Update season:
@@ -209,10 +207,7 @@ if open_mode == 'fia':
             query_f.write(query)  # Not work ORM with function fields
             update[query_file][0] += 1
     query_f.close()
-    command = 'psql -d %s -a -f %s' % (
-        dbname,
-        query_file,
-    )
+    command = 'psql -d %s -a -f %s' % (dbname, query_file)
     write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
         query_file, total, update[query_file][0], update[query_file][1]))
     os.system(command)
