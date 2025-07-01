@@ -93,7 +93,7 @@ def write_log(event, mode='INFO', verbose=True):
     )
     log_f.write(message)
     if verbose:
-        print(message)
+        print(message.strip())
 
 
 # -----------------------------------------------------------------------------
