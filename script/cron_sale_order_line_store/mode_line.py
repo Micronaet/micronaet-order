@@ -215,3 +215,23 @@ if open_mode == 'fia':
     write_log('End update %s: Tot. %s [UPD %s - ERR %s]' % (
         query_file, total, update[query_file][0], update[query_file][1]))
     os.system(command)
+
+    # -------------------------------------------------------------------------
+    # Update state:
+    # -------------------------------------------------------------------------
+    line_ids = line_pool.search([
+        ('order_id.state', 'not in', ('cancel', 'draft', 'sent', 'done')),
+        ('state', '=', 'draft'),
+        ])
+    counter = 0
+    total = len(line_ids)
+    write_log('Start update state: Tot. %s' % total)
+
+    if line_ids:
+        for line in line_pool.browse(line_ids):
+            counter += 1
+            order = line.order_id
+            print('%s / %s Update state order = %s line ID %s' % (counter, total, order.name, line.id))
+
+    write_log('End update: Tot. %s [UPD %s]' % (total, counter))
+    os.system(command)
