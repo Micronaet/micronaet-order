@@ -112,7 +112,7 @@ if line_ids:
         counter += 1
         order = line.order_id
         print('%s / %s Update state order = %s line ID %s' % (counter, total, order.name, line.id))
-        line_pool.write([lne.id], {
+        line_pool.write([line.id], {
             'state': 'confirmed',
         })
 
