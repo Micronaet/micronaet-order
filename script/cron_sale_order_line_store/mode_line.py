@@ -123,9 +123,9 @@ if line_ids:
             update[query_file][0] += 1
 
         except:
-            print('%s. %s: Error updating line %s' % (
-                counter, total, line_id))
+            print('%s. %s: Error updating line, no agent %s' % (counter, total, line_id))
             update[query_file][1] += 1
+
 query_f.close()
 command = 'psql -d %s -a -f %s' % (
     dbname,
