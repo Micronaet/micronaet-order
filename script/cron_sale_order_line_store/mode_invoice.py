@@ -37,7 +37,7 @@ print('Open Mode: %s' % open_mode)
 # Read configuration parameter:
 # -----------------------------------------------------------------------------
 # From config file:
-cfg_file = os.path.expanduser('../openerp.%s' % open_mode)
+cfg_file = os.path.expanduser('../openerp.%s.cfg' % open_mode)
 
 config = ConfigParser.ConfigParser()
 config.read([cfg_file])
