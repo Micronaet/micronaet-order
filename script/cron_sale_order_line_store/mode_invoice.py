@@ -98,7 +98,7 @@ def write_log(event, mode='INFO', verbose=False):
 query_file = './sql/%s_zone_state.sql' % open_mode
 line_ids = invoice_line_pool.search([
     ('zone_id', '=', False),
-    ('type', '=', 'out_invoice')
+    ('type', '=', 'out_invoice'),
     ('invoice_id.partner_id.zone_id', '!=', False),
     ])
 counter = 0
