@@ -109,7 +109,6 @@ if line_ids:
         print('%s / %s Update state order = %s line ID %s' % (counter, total, order.name, line.id))
 
 write_log('End update: Tot. %s [UPD %s]' % (total, counter))
-pdb.set_trace()
 
 # -----------------------------------------------------------------------------
 # Agente:
