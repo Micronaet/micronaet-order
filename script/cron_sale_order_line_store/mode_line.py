@@ -37,7 +37,7 @@ print('Open Mode: %s' % open_mode)
 # Read configuration parameter:
 # -----------------------------------------------------------------------------
 # From config file:
-cfg_file = os.path.expanduser('../openerp.%s' % open_mode)
+cfg_file = os.path.expanduser('../openerp.%s.cfg' % open_mode)
 
 config = ConfigParser.ConfigParser()
 config.read([cfg_file])
@@ -205,14 +205,11 @@ if open_mode == 'fia':
             order = line.order_id
             date_order = order.date_order
             season_period = get_season_from_date(date_order)
-            print('Update %s of %s: %s >> %s' % (
-                counter, total, date_order, season_period))
+            print('Update %s of %s: %s >> %s' % (counter, total, date_order, season_period))
 
             query = \
                 'UPDATE sale_order_line set season_period=\'%s\' ' \
-                'WHERE id=%s;\n' % (
-                    season_period, line.id,
-                )
+                'WHERE id=%s;\n' % (season_period, line.id)
             query_f.write(query)  # Not work ORM with function fields
             update[query_file][0] += 1
     query_f.close()

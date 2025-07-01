@@ -76,8 +76,7 @@ class SaleOrderLine(orm.Model):
         """
         res = {}
         for line in self.browse(cr, uid, ids, context=context):
-            res[line.id] = self._get_season_from_date(
-                line.order_id.date_order)
+            res[line.id] = self._get_season_from_date(line.order_id.date_order)
         return res
 
     _columns = {
